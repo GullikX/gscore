@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -O3 -pedantic-errors -Wall -Wextra -DGLEW_NO_GLU
+CFLAGS=-std=c99 -O3 -pedantic-errors -Wall -Wextra -Werror=vla -DGLEW_NO_GLU
 CFILES=gscore.c
 LIBS=-lGL -lGLEW -lglfw
 
