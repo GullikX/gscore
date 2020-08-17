@@ -1,5 +1,5 @@
 void die(const char* const message) {
-    printf("Error: %s\n", message);
+    fprintf(stderr, "Error: %s\n", message);
     exit(EXIT_FAILURE);
 }
 
