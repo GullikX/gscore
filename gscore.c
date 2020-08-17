@@ -6,8 +6,9 @@
 
 const char* const vertexShaderSource =
     "#version 120\n"
+    "attribute vec4 color;"
     "void main() {"
-    "   gl_FrontColor = gl_Color;"
+    "   gl_FrontColor = color;"
     "   gl_Position = gl_Vertex;"
     "}";
 
@@ -101,25 +102,29 @@ int main() {
     GLuint programId = createProgram();
     glUseProgram(programId);
 
-    float positions[] = {
-          0.25f,  0.25f,
-          0.25f,  0.75f,
-          0.75f,  0.75f,
-          0.75f,  0.25f,
+    float vertices[] = {
+        // Positions           // Colors (RGBA)
+         0.25f,  0.25f,        0.0f, 0.0f, 1.0f, 1.0f,
+         0.25f,  0.75f,        1.0f, 0.0f, 0.0f, 1.0f,
+         0.75f,  0.75f,        1.0f, 0.0f, 0.0f, 1.0f,
+         0.75f,  0.25f,        1.0f, 0.0f, 0.0f, 1.0f,
 
-         -0.25f, -0.25f,
-         -0.25f, -0.75f,
-         -0.75f, -0.75f,
-         -0.75f, -0.25f,
+        -0.25f, -0.25f,        1.0f, 1.0f, 0.0f, 1.0f,
+        -0.25f, -0.75f,        0.0f, 1.0f, 0.0f, 1.0f,
+        -0.75f, -0.75f,        0.0f, 1.0f, 0.0f, 1.0f,
+        -0.75f, -0.25f,        0.0f, 1.0f, 0.0f, 1.0f,
     };
 
     GLuint buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6*sizeof(float), (const void*)8);
 
     unsigned int indices[] = {
         0, 1, 2, 3,
@@ -137,7 +142,6 @@ int main() {
         }
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        glColor3f(0.2f, 0.5f, 1.0f);
 
         glBindVertexArray(buffer);
         glDrawElements(GL_QUADS, 8, GL_UNSIGNED_INT, NULL);
