@@ -12,6 +12,11 @@ const char* const FRAGMENT_SHADER_SOURCE =
     "    gl_FragColor = gl_Color;"
     "}";
 
-const int WINDOW_WIDTH = 640;
-const int WINDOW_HEIGHT = 640;
 const char* const WINDOW_TITLE = "GScore";
+
+enum {
+    WINDOW_WIDTH = 640,
+    WINDOW_HEIGHT = 640,
+    RENDERER_MAX_QUADS = 1000,
+    RENDERER_MAX_VERTICES = 4*RENDERER_MAX_QUADS,
+};

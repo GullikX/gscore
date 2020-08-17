@@ -21,33 +21,22 @@ Renderer* Renderer_new() {
     GLuint programId = createProgram();
     glUseProgram(programId);
 
-    float vertices[] = {
-        // Positions           // Colors (RGBA)
-         0.25f,  0.25f,        0.0f, 0.0f, 1.0f, 1.0f,
-         0.25f,  0.75f,        1.0f, 0.0f, 0.0f, 1.0f,
-         0.75f,  0.75f,        1.0f, 0.0f, 0.0f, 1.0f,
-         0.75f,  0.25f,        1.0f, 0.0f, 0.0f, 1.0f,
-
-        -0.25f, -0.25f,        1.0f, 1.0f, 0.0f, 1.0f,
-        -0.25f, -0.75f,        0.0f, 1.0f, 0.0f, 1.0f,
-        -0.75f, -0.75f,        0.0f, 1.0f, 0.0f, 1.0f,
-        -0.75f, -0.25f,        0.0f, 1.0f, 0.0f, 1.0f,
-    };
-
     glGenBuffers(1, &self->vertexBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, self->vertexBufferId);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, RENDERER_MAX_VERTICES*sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, position));
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 6*sizeof(float), (const void*)8);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, color));
 
-    unsigned int indices[] = {
-        0, 1, 2, 3,
-        4, 5, 6, 7
-    };
+    self->nVerticesEnqueued = 0;
+
+    unsigned int indices[RENDERER_MAX_VERTICES];
+    for (int i = 0; i < RENDERER_MAX_VERTICES; i++) {
+        indices[i] = i;
+    }
 
     GLuint indexBuffer;
     glGenBuffers(1, &indexBuffer);
@@ -80,10 +69,51 @@ void Renderer_update(Renderer* self) {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    {
+        Quad quad;
+        quad.vertices[0].position.x = 0.25f; quad.vertices[0].position.y = 0.25f;
+        quad.vertices[1].position.x = 0.25f; quad.vertices[1].position.y = 0.75f;
+        quad.vertices[2].position.x = 0.75f; quad.vertices[2].position.y = 0.75f;
+        quad.vertices[3].position.x = 0.75f; quad.vertices[3].position.y = 0.25f;
+        Vector4 color =  {0.0f, 0.0f, 1.0f, 1.0f};
+        quad.vertices[0].color = color;
+        quad.vertices[1].color = color;
+        quad.vertices[2].color = color;
+        quad.vertices[3].color = color;
+        Renderer_enqueueDraw(self, &quad);
+    }
+
+    {
+        Quad quad;
+        quad.vertices[0].position.x = -0.25f; quad.vertices[0].position.y = -0.25f;
+        quad.vertices[1].position.x = -0.25f; quad.vertices[1].position.y = -0.75f;
+        quad.vertices[2].position.x = -0.75f; quad.vertices[2].position.y = -0.75f;
+        quad.vertices[3].position.x = -0.75f; quad.vertices[3].position.y = -0.25f;
+        Vector4 color =  {1.0f, 0.0f, 0.0f, 1.0f};
+        quad.vertices[0].color = color;
+        quad.vertices[1].color = color;
+        quad.vertices[2].color = color;
+        quad.vertices[3].color = color;
+        Renderer_enqueueDraw(self, &quad);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, self->vertexBufferId);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(self->vertices), self->vertices);
+
     glBindVertexArray(self->vertexBufferId);
-    glDrawElements(GL_QUADS, 8, GL_UNSIGNED_INT, NULL);
+    glDrawElements(GL_QUADS, self->nVerticesEnqueued, GL_UNSIGNED_INT, NULL);
+    self->nVerticesEnqueued = 0;
     glfwSwapBuffers(self->window);
     glfwPollEvents();
+}
+
+
+void Renderer_enqueueDraw(Renderer* self, Quad* quad) {
+    for (int i = 0; i < 4; i++) {
+        self->vertices[self->nVerticesEnqueued].position = quad->vertices[i].position;
+        self->vertices[self->nVerticesEnqueued].color = quad->vertices[i].color;
+        self->nVerticesEnqueued++;
+    }
 }
 
 
