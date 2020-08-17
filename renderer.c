@@ -1,19 +1,3 @@
-const char* const vertexShaderSource =
-    "#version 120\n"
-    "attribute vec4 color;"
-    "void main() {"
-    "   gl_FrontColor = color;"
-    "   gl_Position = gl_Vertex;"
-    "}";
-
-
-const char* const fragmentShaderSource =
-    "#version 120\n"
-    "void main() {"
-    "    gl_FragColor = gl_Color;"
-    "}";
-
-
 Renderer* Renderer_new() {
     Renderer* self = ecalloc(1, sizeof(*self));
 
@@ -21,7 +5,7 @@ Renderer* Renderer_new() {
         die("Failed to initialize GLFW");
     }
 
-    self->window = glfwCreateWindow(640, 640, "GScore", NULL, NULL);
+    self->window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, NULL, NULL);
     if (!self->window) {
         die("Failed to create GLFW window");
     }
@@ -127,8 +111,8 @@ GLuint createShader(const GLenum type, const char* const shaderSource) {
 GLuint createProgram() {
     GLuint programId = glCreateProgram();
 
-    GLuint vertexShaderId = createShader(GL_VERTEX_SHADER, vertexShaderSource);
-    GLuint fragmentShaderId = createShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+    GLuint vertexShaderId = createShader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+    GLuint fragmentShaderId = createShader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
 
     glAttachShader(programId, vertexShaderId);
     glAttachShader(programId, fragmentShaderId);

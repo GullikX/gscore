@@ -8,6 +8,10 @@
 typedef struct Renderer Renderer;
 
 
+/* Configuration */
+#include "config.h"
+
+
 /* Type definitions */
 struct Renderer {
      GLFWwindow* window;
