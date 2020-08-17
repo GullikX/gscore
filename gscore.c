@@ -75,6 +75,12 @@ GLuint createProgram() {
 }
 
 
+void windowSizeCallback(GLFWwindow* window, int width, int height) {
+    (void)window;
+    glViewport(0, 0, width, height);
+}
+
+
 int main() {
     if (!glfwInit()) {
         die("Failed to initialize GLFW");
@@ -86,6 +92,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
+    glfwSetWindowSizeCallback(window, windowSizeCallback);
     printf("OpenGL %s\n", glGetString(GL_VERSION));
 
     if (glewInit() != GLEW_OK) {
