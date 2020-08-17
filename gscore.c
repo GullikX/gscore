@@ -8,6 +8,7 @@ const char* const vertexShaderSource =
     "#version 120\n"
     "void main()\n"
     "{\n"
+    "   gl_FrontColor = gl_Color;\n"
     "   gl_Position = gl_Vertex;\n"
     "}\0";
 
@@ -16,7 +17,7 @@ const char* const fragmentShaderSource =
     "#version 120\n"
     "void main()\n"
     "{\n"
-    "    gl_FragColor = vec4(0.2f, 0.5f, 1.0f, 1.0f);\n"
+    "    gl_FragColor = gl_Color;\n"
     "}\0";
 
 
@@ -123,6 +124,7 @@ int main() {
         }
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+        glColor3f(0.2f, 0.5f, 1.0f);
         glDrawArrays(GL_QUADS, 0, 4);
         glfwSwapBuffers(window);
         glfwPollEvents();
