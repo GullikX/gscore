@@ -6,19 +6,17 @@
 
 const char* const vertexShaderSource =
     "#version 120\n"
-    "void main()\n"
-    "{\n"
-    "   gl_FrontColor = gl_Color;\n"
-    "   gl_Position = gl_Vertex;\n"
-    "}\0";
+    "void main() {"
+    "   gl_FrontColor = gl_Color;"
+    "   gl_Position = gl_Vertex;"
+    "}";
 
 
 const char* const fragmentShaderSource =
     "#version 120\n"
-    "void main()\n"
-    "{\n"
-    "    gl_FragColor = gl_Color;\n"
-    "}\0";
+    "void main() {"
+    "    gl_FragColor = gl_Color;"
+    "}";
 
 
 void die(const char* const message) {
