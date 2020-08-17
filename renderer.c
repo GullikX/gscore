@@ -75,6 +75,7 @@ Renderer* Renderer_new() {
 
 
 Renderer* Renderer_free(Renderer* self) {
+    if (!self) return NULL;
     glDeleteProgram(self->programId);
     glfwDestroyWindow(self->window);
     glfwTerminate();
