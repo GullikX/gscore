@@ -102,10 +102,15 @@ int main() {
     glUseProgram(programId);
 
     float positions[] = {
-        -0.5f, -0.5f,
-        -0.5f,  0.5f,
-         0.5f,  0.5f,
-         0.5f, -0.5f,
+          0.25f,  0.25f,
+          0.25f,  0.75f,
+          0.75f,  0.75f,
+          0.75f,  0.25f,
+
+         -0.25f, -0.25f,
+         -0.25f, -0.75f,
+         -0.75f, -0.75f,
+         -0.75f, -0.25f,
     };
 
     GLuint buffer;
@@ -116,14 +121,26 @@ int main() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), 0);
 
+    unsigned int indices[] = {
+        0, 1, 2, 3,
+        4, 5, 6, 7
+    };
+
+    GLuint indexBuffer;
+    glGenBuffers(1, &indexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     while (!glfwWindowShouldClose(window)) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
+            glfwSetWindowShouldClose(window, GL_TRUE);
         }
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         glColor3f(0.2f, 0.5f, 1.0f);
-        glDrawArrays(GL_QUADS, 0, 4);
+
+        glBindVertexArray(buffer);
+        glDrawElements(GL_QUADS, 8, GL_UNSIGNED_INT, NULL);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
