@@ -80,7 +80,7 @@ int main() {
         die("Failed to initialize GLFW");
     }
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "GScore", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(640, 640, "GScore", NULL, NULL);
     if (!window) {
         die("Failed to create GLFW window");
     }
@@ -95,16 +95,17 @@ int main() {
     GLuint programId = createProgram();
     glUseProgram(programId);
 
-    float positions[6] = {
+    float positions[] = {
         -0.5f, -0.5f,
-         0.0f,  0.5f,
+        -0.5f,  0.5f,
+         0.5f,  0.5f,
          0.5f, -0.5f,
     };
 
     GLuint buffer;
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, 6*sizeof(float), positions, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), 0);
@@ -115,7 +116,7 @@ int main() {
         }
         glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_QUADS, 0, 4);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
