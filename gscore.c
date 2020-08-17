@@ -26,6 +26,15 @@ void die(const char* const message) {
 }
 
 
+void* ecalloc(size_t nItems, size_t itemSize) {
+    void* pointer = calloc(nItems, itemSize);
+    if (!pointer) {
+        die("Failed to allocate memory");
+    }
+    return pointer;
+}
+
+
 GLuint createShader(const GLenum type, const char* const shaderSource) {
     const char* const typeString = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
     GLuint shaderId = glCreateShader(type);
@@ -37,7 +46,7 @@ GLuint createShader(const GLenum type, const char* const shaderSource) {
     if (!compilationResult) {
         int messageLength = -1;
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &messageLength);
-        char* const message = calloc(messageLength, sizeof(char));
+        char* const message = ecalloc(messageLength, sizeof(char));
         glGetShaderInfoLog(shaderId, messageLength, &messageLength, message);
         printf("Failed to compile %s shader! Message:\n    %s\n", typeString, message);
         free(message);
