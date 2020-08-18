@@ -17,6 +17,10 @@ Synth* Synth_getInstance() {
         die("Failed to load soundfront");
     }
 
+    if (fluid_synth_program_change(self->fluidSynth, 0, PROGRAM_NUMBER) == FLUID_FAILED) {
+        die("Failed to set midi program");
+    }
+
     return self;
 }
 

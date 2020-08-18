@@ -29,6 +29,7 @@ enum {
     OCTAVES = 5,
     NOTES_IN_OCTAVE = 12,
     MOUSE_POINTER_HIDDEN=true,
+    PROGRAM_NUMBER=0,
 };
 
 const float CURSOR_SIZE_OFFSET = -0.005f;
