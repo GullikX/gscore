@@ -3,34 +3,53 @@ Canvas* Canvas_getInstance() {
     if (self) return self;
 
     self = ecalloc(1, sizeof(*self));
-    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-        self->notes[i] = NULL;
-    }
     self->noteIndex = 0;
 
+    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+
     for (int i = 0; i < BLOCK_MEASURES; i++) {
-        self->gridlinesVertical[i].x1 = -1.0f + i * (2.0f/BLOCK_MEASURES);
-        self->gridlinesVertical[i].x2 = -1.0f + i * (2.0f/BLOCK_MEASURES) + (2.0f/BLOCK_MEASURES) / MEASURE_RESOLUTION;
-        self->gridlinesVertical[i].y1 = -1.0f;
-        self->gridlinesVertical[i].y2 = 1.0f;
+        self->gridlinesVertical[i].iRow = 0;
+        self->gridlinesVertical[i].iColumn = i*MEASURE_RESOLUTION;
+        self->gridlinesVertical[i].nRows = nRows;
+        self->gridlinesVertical[i].nColumns = 1;
+        self->gridlinesVertical[i].color = COLOR_GRIDLINES;
     }
 
     for (int i = 0; i < OCTAVES; i++) {
-        self->gridlinesHorizontal[i].x1 = -1.0f;
-        self->gridlinesHorizontal[i].x2 = 1.0f;
-        self->gridlinesHorizontal[i].y1 = -1.0f + i * (2.0f/OCTAVES);
-        self->gridlinesHorizontal[i].y2 = -1.0f + i * (2.0f/OCTAVES) + (2.0f/OCTAVES) / NOTES_IN_OCTAVE;
+        self->gridlinesHorizontal[i].iRow = (i+1)*NOTES_IN_OCTAVE - 1;
+        self->gridlinesHorizontal[i].iColumn = 0;
+        self->gridlinesHorizontal[i].nRows = 1;
+        self->gridlinesHorizontal[i].nColumns = nColumns;
+        self->gridlinesHorizontal[i].color = COLOR_GRIDLINES;
     }
+
+    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
+        self->notes[i].iRow = -1;
+        self->notes[i].iColumn = -1;
+        self->notes[i].nRows = 1;
+        self->notes[i].nColumns = 1;
+        self->notes[i].color = COLOR_NOTES;
+    }
+
+    self->cursor.iRow = 0;
+    self->cursor.iColumn = 0;
+    self->cursor.nRows = 1;
+    self->cursor.nColumns = 1;
+    self->cursor.color = COLOR_CURSOR;
 
     return self;
 }
 
 
-void Canvas_addNote(Note* note) {
+void Canvas_addNote() {
     Canvas* self = Canvas_getInstance();
-    self->notes[self->noteIndex] = note;
+    self->notes[self->noteIndex].iRow = self->cursor.iRow;
+    self->notes[self->noteIndex].iColumn = self->cursor.iColumn;
     self->noteIndex++;
-    self->noteIndex %= CANVAS_MAX_NOTES;
+    if (self->noteIndex >= CANVAS_MAX_NOTES) {
+        die("Too many notes");  /* TODO: Handle this better */
+    }
 }
 
 
@@ -39,58 +58,53 @@ void Canvas_draw() {
 
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
-        Quad quad;
-        quad.vertices[0].position.x = self->gridlinesVertical[i].x1; quad.vertices[0].position.y = self->gridlinesVertical[i].y1;
-        quad.vertices[1].position.x = self->gridlinesVertical[i].x1; quad.vertices[1].position.y = self->gridlinesVertical[i].y2;
-        quad.vertices[2].position.x = self->gridlinesVertical[i].x2; quad.vertices[2].position.y = self->gridlinesVertical[i].y2;
-        quad.vertices[3].position.x = self->gridlinesVertical[i].x2; quad.vertices[3].position.y = self->gridlinesVertical[i].y1;
-        for (int i = 0; i < 4; i++) {
-            quad.vertices[i].color = COLOR_GRIDLINES;
-        }
-        Renderer_enqueueDraw(&quad);
+        Canvas_drawItem(&(self->gridlinesVertical[i]));
     }
 
     /* Horizontal gridlines marking start of octaves */
     for (int i = 0; i < OCTAVES; i++) {
-        Quad quad;
-        quad.vertices[0].position.x = self->gridlinesHorizontal[i].x1; quad.vertices[0].position.y = self->gridlinesHorizontal[i].y1;
-        quad.vertices[1].position.x = self->gridlinesHorizontal[i].x1; quad.vertices[1].position.y = self->gridlinesHorizontal[i].y2;
-        quad.vertices[2].position.x = self->gridlinesHorizontal[i].x2; quad.vertices[2].position.y = self->gridlinesHorizontal[i].y2;
-        quad.vertices[3].position.x = self->gridlinesHorizontal[i].x2; quad.vertices[3].position.y = self->gridlinesHorizontal[i].y1;
-        for (int i = 0; i < 4; i++) {
-            quad.vertices[i].color = COLOR_GRIDLINES;
-        }
-        Renderer_enqueueDraw(&quad);
+        Canvas_drawItem(&(self->gridlinesHorizontal[i]));
     }
 
     /* Draw notes */
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-        Note_draw(self->notes[i]);
+        if (self->notes[i].iRow >= 0 && self->notes[i].iColumn >= 0) {
+            Canvas_drawItem(&(self->notes[i]));
+        }
     }
 
     /* Draw cursor */
-    {
-        Quad quad;
-        quad.vertices[0].position.x = self->cursor.x1; quad.vertices[0].position.y = self->cursor.y1;
-        quad.vertices[1].position.x = self->cursor.x1; quad.vertices[1].position.y = self->cursor.y2;
-        quad.vertices[2].position.x = self->cursor.x2; quad.vertices[2].position.y = self->cursor.y2;
-        quad.vertices[3].position.x = self->cursor.x2; quad.vertices[3].position.y = self->cursor.y1;
-        for (int i = 0; i < 4; i++) {
-            quad.vertices[i].color = COLOR_CURSOR;
-        }
-        Renderer_enqueueDraw(&quad);
-    }
+    Canvas_drawItem(&(self->cursor));
 }
 
 
-void Canvas_updateCursor(int rowIndex, int columnIndex) {
+void Canvas_drawItem(CanvasItem* item) {
+    float columnWidth = 2.0f/(BLOCK_MEASURES * MEASURE_RESOLUTION);
+    float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
+
+    float x1 = -1.0f + item->iColumn * columnWidth;
+    float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth;
+    float y1 = -(-1.0f + item->iRow * rowHeight);
+    float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight);
+
+    Vector2 positions[4];
+    positions[0].x = x1; positions[0].y = y1;
+    positions[1].x = x1; positions[1].y = y2;
+    positions[2].x = x2; positions[2].y = y2;
+    positions[3].x = x2; positions[3].y = y1;
+
+    Quad quad;
+    for (int i = 0; i < 4; i++) {
+        quad.vertices[i].position = positions[i];
+        quad.vertices[i].color = item->color;
+    }
+    Renderer_enqueueDraw(&quad);
+}
+
+
+void Canvas_updateCursorPosition(float x, float y) {
     Canvas* self = Canvas_getInstance();
 
-    float columnWidth = (2.0f/BLOCK_MEASURES) / MEASURE_RESOLUTION;
-    float rowHeight = (2.0f/OCTAVES) / NOTES_IN_OCTAVE;
-
-    self->cursor.x1 = -1.0f + columnIndex * columnWidth;
-    self->cursor.x2 = -1.0f + columnIndex * columnWidth + columnWidth;
-    self->cursor.y1 = -(-1.0f + rowIndex * rowHeight);
-    self->cursor.y2 = -(-1.0f + rowIndex * rowHeight + rowHeight);
+    self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
+    self->cursor.iRow = Renderer_yCoordToRowIndex(y);
 }

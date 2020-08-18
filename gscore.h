@@ -10,8 +10,7 @@ typedef struct Vector2 Vector2;
 typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
 typedef struct Quad Quad;
-typedef struct Note Note;
-typedef struct Gridline Gridline;
+typedef struct CanvasItem CanvasItem;
 typedef struct Renderer Renderer;
 typedef struct Canvas Canvas;
 
@@ -34,15 +33,12 @@ struct Quad {
     Vertex vertices[4];
 };
 
-struct Note {
-    int start;
-    int end;
-    int pitch;
-    int velocity;
-};
-
-struct Gridline {
-    float x1, x2, y1, y2;
+struct CanvasItem {
+    int iRow;
+    int iColumn;
+    int nRows;
+    int nColumns;
+    Vector4 color;
 };
 
 
@@ -52,10 +48,10 @@ struct Gridline {
 
 /* Type definitions dependent on configuration */
 struct Canvas {
-    Note* notes[CANVAS_MAX_NOTES];
-    Gridline gridlinesVertical[BLOCK_MEASURES];
-    Gridline gridlinesHorizontal[OCTAVES];
-    Gridline cursor;
+    CanvasItem gridlinesVertical[BLOCK_MEASURES];
+    CanvasItem gridlinesHorizontal[OCTAVES];
+    CanvasItem notes[CANVAS_MAX_NOTES];
+    CanvasItem cursor;
     int noteIndex;
 };
 
@@ -74,9 +70,10 @@ struct Renderer {
 /* Function declarations */
 /* canvas.c */
 Canvas* Canvas_getInstance();
-void Canvas_addNote(Note* note);
+void Canvas_addNote();
 void Canvas_draw();
-void Canvas_updateCursor(int rowIndex, int columnIndex);
+void Canvas_drawItem(CanvasItem* canvasItem);
+void Canvas_updateCursorPosition(float x, float y);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
@@ -88,10 +85,6 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* main.c */
 int main();
-
-/* note.c */
-Note* Note_new(int start, int end, int pitch, int velocity);
-void Note_draw();
 
 /* renderer.c */
 Renderer* Renderer_getInstance();
