@@ -52,7 +52,7 @@ int main();
 /* renderer.c */
 Renderer* Renderer_getInstance();
 int Renderer_running();
-void Renderer_update();
+void Renderer_updateScreen();
 void Renderer_enqueueDraw(Quad* quad);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram();

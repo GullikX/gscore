@@ -56,7 +56,7 @@ int Renderer_running() {
 }
 
 
-void Renderer_update() {
+void Renderer_updateScreen() {
     Renderer* self = Renderer_getInstance();
     if (glfwGetKey(self->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(self->window, GL_TRUE);

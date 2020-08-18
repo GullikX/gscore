@@ -1,5 +1,5 @@
 int main() {
     while(Renderer_running()) {
-        Renderer_update();
+        Renderer_updateScreen();
     }
 }
