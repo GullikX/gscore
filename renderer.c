@@ -74,11 +74,9 @@ void Renderer_updateScreen() {
         quad.vertices[1].position.x = 0.25f; quad.vertices[1].position.y = 0.75f;
         quad.vertices[2].position.x = 0.75f; quad.vertices[2].position.y = 0.75f;
         quad.vertices[3].position.x = 0.75f; quad.vertices[3].position.y = 0.25f;
-        Vector4 color =  {0.0f, 0.0f, 1.0f, 1.0f};
-        quad.vertices[0].color = color;
-        quad.vertices[1].color = color;
-        quad.vertices[2].color = color;
-        quad.vertices[3].color = color;
+        for (int i = 0; i < 4; i++) {
+            quad.vertices[i].color = COLOR_1;
+        }
         Renderer_enqueueDraw(&quad);
     }
 
@@ -88,11 +86,9 @@ void Renderer_updateScreen() {
         quad.vertices[1].position.x = -0.25f; quad.vertices[1].position.y = -0.75f;
         quad.vertices[2].position.x = -0.75f; quad.vertices[2].position.y = -0.75f;
         quad.vertices[3].position.x = -0.75f; quad.vertices[3].position.y = -0.25f;
-        Vector4 color =  {1.0f, 0.0f, 0.0f, 1.0f};
-        quad.vertices[0].color = color;
-        quad.vertices[1].color = color;
-        quad.vertices[2].color = color;
-        quad.vertices[3].color = color;
+        for (int i = 0; i < 4; i++) {
+            quad.vertices[i].color = COLOR_2;
+        }
         Renderer_enqueueDraw(&quad);
     }
 

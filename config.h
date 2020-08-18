@@ -20,3 +20,6 @@ enum {
     RENDERER_MAX_QUADS = 1000,
     RENDERER_MAX_VERTICES = 4*RENDERER_MAX_QUADS,
 };
+
+const Vector4 COLOR_1 = {0.0f, 0.5f, 1.0f, 1.0f};
+const Vector4 COLOR_2 = {1.0f, 0.5f, 0.0f, 1.0f};

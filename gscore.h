@@ -13,10 +13,6 @@ typedef struct Quad Quad;
 typedef struct Renderer Renderer;
 
 
-/* Configuration */
-#include "config.h"
-
-
 /* Type definitions */
 struct Vector2 {
     float x, y;
@@ -35,6 +31,12 @@ struct Quad {
     Vertex vertices[4];
 };
 
+
+/* Configuration */
+#include "config.h"
+
+
+/* Type definitions dependent on configuration */
 struct Renderer {
      GLFWwindow* window;
      GLuint programId;
