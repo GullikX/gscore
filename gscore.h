@@ -11,6 +11,7 @@ typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
 typedef struct Quad Quad;
 typedef struct Note Note;
+typedef struct Gridline Gridline;
 typedef struct Renderer Renderer;
 typedef struct Canvas Canvas;
 
@@ -40,6 +41,10 @@ struct Note {
     int velocity;
 };
 
+struct Gridline {
+    float x1, x2, y1, y2;
+};
+
 
 /* Configuration */
 #include "config.h"
@@ -48,6 +53,8 @@ struct Note {
 /* Type definitions dependent on configuration */
 struct Canvas {
     Note* notes[CANVAS_MAX_NOTES];
+    Gridline gridlinesVertical[BLOCK_MEASURES];
+    Gridline gridlinesHorizontal[OCTAVES];
     int noteIndex;
 };
 
