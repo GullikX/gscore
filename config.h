@@ -24,9 +24,11 @@ enum {
     MEASURE_RESOLUTION = 16,
     OCTAVES = 5,
     NOTES_IN_OCTAVE = 12,
+    MOUSE_POINTER_HIDDEN=1,
 };
 
 const Vector4 COLOR_1 = {0.5411f, 0.7765f, 0.9490f, 1.0f};
 const Vector4 COLOR_2 = {0.9412f, 0.7765f, 0.4549f, 1.0f};
 const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
 const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
+const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};

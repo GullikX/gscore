@@ -17,6 +17,10 @@ Renderer* Renderer_getInstance() {
     Input_setupCallbacks(self->window);
     printf("OpenGL %s\n", glGetString(GL_VERSION));
 
+    if (MOUSE_POINTER_HIDDEN) {
+        glfwSetInputMode(self->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    }
+
     if (glewInit() != GLEW_OK) {
         die("Failed to initialize GLEW");
     }
@@ -92,7 +96,25 @@ void Renderer_enqueueDraw(Quad* quad) {
 }
 
 void Renderer_updateViewportSize(int width, int height) {
+    Renderer* self = Renderer_getInstance();
+    self->viewportWidth = width;
+    self->viewportHeight = height;
+
     glViewport(0, 0, width, height);
+}
+
+
+int Renderer_xCoordToColumnIndex(int x) {
+    Renderer* self = Renderer_getInstance();
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    return (nColumns * x) / self->viewportWidth;
+}
+
+
+int Renderer_yCoordToRowIndex(int y) {
+    Renderer* self = Renderer_getInstance();
+    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+    return (nRows * y) / self->viewportHeight;
 }
 
 

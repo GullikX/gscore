@@ -1,6 +1,7 @@
 void Input_setupCallbacks(GLFWwindow* window) {
     glfwSetKeyCallback(window, Input_keyCallback);
     glfwSetMouseButtonCallback(window, Input_mouseButtonCallback);
+    glfwSetCursorPosCallback(window, Input_cursorPosCallback);
     glfwSetScrollCallback(window, Input_scrollCallback);
     glfwSetWindowSizeCallback(window, Input_windowSizeCallback);
 }
@@ -31,6 +32,14 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
         int velocity = 0;
         Canvas_addNote(Note_new(start, end, pitch, velocity));
     }
+}
+
+
+void Input_cursorPosCallback(GLFWwindow* window, double x, double y) {
+    (void)window;
+    int columnIndex = Renderer_xCoordToColumnIndex(x);
+    int rowIndex = Renderer_yCoordToRowIndex(y);
+    Canvas_updateCursor(rowIndex, columnIndex);
 }
 
 

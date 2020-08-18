@@ -69,4 +69,28 @@ void Canvas_draw() {
     }
 
     /* Draw cursor */
+    {
+        Quad quad;
+        quad.vertices[0].position.x = self->cursor.x1; quad.vertices[0].position.y = self->cursor.y1;
+        quad.vertices[1].position.x = self->cursor.x1; quad.vertices[1].position.y = self->cursor.y2;
+        quad.vertices[2].position.x = self->cursor.x2; quad.vertices[2].position.y = self->cursor.y2;
+        quad.vertices[3].position.x = self->cursor.x2; quad.vertices[3].position.y = self->cursor.y1;
+        for (int i = 0; i < 4; i++) {
+            quad.vertices[i].color = COLOR_CURSOR;
+        }
+        Renderer_enqueueDraw(&quad);
+    }
+}
+
+
+void Canvas_updateCursor(int rowIndex, int columnIndex) {
+    Canvas* self = Canvas_getInstance();
+
+    float columnWidth = (2.0f/BLOCK_MEASURES) / MEASURE_RESOLUTION;
+    float rowHeight = (2.0f/OCTAVES) / NOTES_IN_OCTAVE;
+
+    self->cursor.x1 = -1.0f + columnIndex * columnWidth;
+    self->cursor.x2 = -1.0f + columnIndex * columnWidth + columnWidth;
+    self->cursor.y1 = -(-1.0f + rowIndex * rowHeight);
+    self->cursor.y2 = -(-1.0f + rowIndex * rowHeight + rowHeight);
 }

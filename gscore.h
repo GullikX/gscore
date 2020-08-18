@@ -55,6 +55,7 @@ struct Canvas {
     Note* notes[CANVAS_MAX_NOTES];
     Gridline gridlinesVertical[BLOCK_MEASURES];
     Gridline gridlinesHorizontal[OCTAVES];
+    Gridline cursor;
     int noteIndex;
 };
 
@@ -65,6 +66,8 @@ struct Renderer {
      Vertex* vertexBufferTarget;
      Vertex vertices[RENDERER_MAX_VERTICES];
      int nVerticesEnqueued;
+     int viewportWidth;
+     int viewportHeight;
 };
 
 
@@ -73,11 +76,13 @@ struct Renderer {
 Canvas* Canvas_getInstance();
 void Canvas_addNote(Note* note);
 void Canvas_draw();
+void Canvas_updateCursor(int rowIndex, int columnIndex);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
@@ -95,6 +100,8 @@ int Renderer_running();
 void Renderer_updateScreen();
 void Renderer_enqueueDraw(Quad* quad);
 void Renderer_updateViewportSize(int width, int height);
+int Renderer_xCoordToColumnIndex(int x);
+int Renderer_yCoordToRowIndex(int y);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram();
 
