@@ -3,4 +3,5 @@
 #include "input.c"
 #include "main.c"
 #include "renderer.c"
+#include "synth.c"
 #include "util.c"

@@ -14,6 +14,10 @@ const char* const FRAGMENT_SHADER_SOURCE =
 
 const char* const WINDOW_TITLE = "GScore";
 
+const char* const AUDIO_DRIVER = "alsa";
+const char* const ALSA_DEVICE = "default:CARD=S3";
+const char* const SOUNDFRONT = "soundfront.sf2";
+
 enum {
     WINDOW_WIDTH = 640,
     WINDOW_HEIGHT = 640,
@@ -24,7 +28,7 @@ enum {
     MEASURE_RESOLUTION = 16,
     OCTAVES = 5,
     NOTES_IN_OCTAVE = 12,
-    MOUSE_POINTER_HIDDEN=1,
+    MOUSE_POINTER_HIDDEN=true,
 };
 
 const Vector4 COLOR_NOTES = {0.5411f, 0.7765f, 0.9490f, 1.0f};

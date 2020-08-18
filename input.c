@@ -34,6 +34,19 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
                 Canvas_removeNote();
                 break;
         }
+    } else if (action == GLFW_RELEASE) {
+        switch (button) {
+            case GLFW_MOUSE_BUTTON_LEFT:
+                puts("Left mouse button released!");
+                Canvas_releaseNote();
+                break;
+            case GLFW_MOUSE_BUTTON_MIDDLE:
+                puts("Middle mouse button released!");
+                break;
+            case GLFW_MOUSE_BUTTON_RIGHT:
+                puts("Right mouse button released!");
+                break;
+        }
     }
 }
 

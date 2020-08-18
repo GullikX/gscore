@@ -43,7 +43,9 @@ Canvas* Canvas_getInstance() {
 
 
 void Canvas_addNote() {
+    /* TODO: Drag for longer note */
     Canvas* self = Canvas_getInstance();
+    Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
             return;
@@ -55,6 +57,12 @@ void Canvas_addNote() {
     if (self->noteIndex >= CANVAS_MAX_NOTES) {
         die("Too many notes");  /* TODO: Handle this better */
     }
+}
+
+
+void Canvas_releaseNote() {
+    /* TODO: Stop dragging note */
+    Synth_noteOffAll();
 }
 
 
@@ -124,4 +132,9 @@ void Canvas_updateCursorPosition(float x, float y) {
 
     self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
     self->cursor.iRow = Renderer_yCoordToRowIndex(y);
+}
+
+
+int Canvas_rowIndexToNoteKey(int iRow) {
+    return 95-iRow;
 }

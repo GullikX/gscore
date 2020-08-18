@@ -1,5 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <fluidsynth.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +13,7 @@ typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
 typedef struct Quad Quad;
 typedef struct CanvasItem CanvasItem;
+typedef struct Synth Synth;
 typedef struct Renderer Renderer;
 typedef struct Canvas Canvas;
 
@@ -39,6 +42,12 @@ struct CanvasItem {
     int nRows;
     int nColumns;
     Vector4 color;
+};
+
+struct Synth {
+    fluid_settings_t* settings;
+    fluid_synth_t* fluidSynth;
+    fluid_audio_driver_t* audioDriver;
 };
 
 
@@ -75,6 +84,7 @@ void Canvas_removeNote();
 void Canvas_draw();
 void Canvas_drawItem(CanvasItem* canvasItem);
 void Canvas_updateCursorPosition(float x, float y);
+int Canvas_rowIndexToNoteKey(int iRow);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
@@ -98,6 +108,11 @@ int Renderer_xCoordToColumnIndex(int x);
 int Renderer_yCoordToRowIndex(int y);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram();
+
+/* synth.c */
+Synth* Synth_getInstance();
+void Synth_noteOn(int key);
+void Synth_noteOffAll();
 
 /* util.c */
 void die(const char* const message);
