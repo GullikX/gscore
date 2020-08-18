@@ -107,7 +107,7 @@ void Renderer_enqueueDraw(Quad* quad) {
     Renderer* self = Renderer_getInstance();
     for (int i = 0; i < 4; i++) {
         if (self->nVerticesEnqueued >= RENDERER_MAX_VERTICES) {
-            die("Vertex limit reached");
+            die("Vertex limit reached");  /* TODO: Handle this better */
         }
         self->vertices[self->nVerticesEnqueued].position = quad->vertices[i].position;
         self->vertices[self->nVerticesEnqueued].color = quad->vertices[i].color;
