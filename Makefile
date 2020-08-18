@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-std=c99 -O3 -pedantic-errors -Wall -Wextra -Werror=vla -DGLEW_NO_GLU
-CFILES=config.h gscore.c gscore.h main.c renderer.c util.c
+CFILES=config.h gscore.c gscore.h input.c main.c renderer.c util.c
 
 LIBS=-lGL -lGLEW -lglfw
 

@@ -50,6 +50,12 @@ Renderer* Renderer_getInstance() {
 }
 
 
+void Renderer_stop() {
+    Renderer* self = Renderer_getInstance();
+    glfwSetWindowShouldClose(self->window, GL_TRUE);
+}
+
+
 int Renderer_running() {
     Renderer* self = Renderer_getInstance();
     return !glfwWindowShouldClose(self->window);
@@ -58,9 +64,7 @@ int Renderer_running() {
 
 void Renderer_updateScreen() {
     Renderer* self = Renderer_getInstance();
-    if (glfwGetKey(self->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(self->window, GL_TRUE);
-    }
+
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 

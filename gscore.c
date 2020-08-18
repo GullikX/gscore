@@ -1,4 +1,5 @@
 #include "gscore.h"
+#include "input.c"
 #include "main.c"
 #include "renderer.c"
 #include "util.c"

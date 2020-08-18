@@ -46,11 +46,15 @@ struct Renderer {
 
 
 /* Function declarations */
+/* input.c */
+void Input_processInput();
+
 /* main.c */
 int main();
 
 /* renderer.c */
 Renderer* Renderer_getInstance();
+void Renderer_stop();
 int Renderer_running();
 void Renderer_updateScreen();
 void Renderer_enqueueDraw(Quad* quad);
