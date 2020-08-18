@@ -17,9 +17,12 @@ Synth* Synth_getInstance() {
         die("Failed to load soundfront");
     }
 
-    if (fluid_synth_program_change(self->fluidSynth, 0, PROGRAM_NUMBER) == FLUID_FAILED) {
+    if (fluid_synth_program_change(self->fluidSynth, 0, SYNTH_PROGRAM_NUMBER) == FLUID_FAILED) {
         die("Failed to set midi program");
     }
+
+    fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
+    fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
 
     return self;
 }
