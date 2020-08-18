@@ -23,3 +23,4 @@ enum {
 
 const Vector4 COLOR_1 = {0.0f, 0.5f, 1.0f, 1.0f};
 const Vector4 COLOR_2 = {1.0f, 0.5f, 0.0f, 1.0f};
+const Vector4 COLOR_BACKGROUND = {0.5f, 0.5f, 0.5f, 1.0f};

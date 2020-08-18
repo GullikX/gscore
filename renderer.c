@@ -65,7 +65,7 @@ int Renderer_running() {
 void Renderer_updateScreen() {
     Renderer* self = Renderer_getInstance();
 
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClearColor(COLOR_BACKGROUND.x, COLOR_BACKGROUND.y, COLOR_BACKGROUND.z, COLOR_BACKGROUND.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
     {
