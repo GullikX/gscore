@@ -1,5 +1,8 @@
-Renderer* Renderer_new() {
-    Renderer* self = ecalloc(1, sizeof(*self));
+Renderer* Renderer_getInstance() {
+    static Renderer* self = NULL;
+    if (self) return self;
+
+    self = ecalloc(1, sizeof(*self));
 
     if (!glfwInit()) {
         die("Failed to initialize GLFW");
@@ -47,22 +50,14 @@ Renderer* Renderer_new() {
 }
 
 
-Renderer* Renderer_free(Renderer* self) {
-    if (!self) return NULL;
-    glDeleteProgram(self->programId);
-    glfwDestroyWindow(self->window);
-    glfwTerminate();
-    free(self);
-    return NULL;
-}
-
-
-int Renderer_running(Renderer* self) {
+int Renderer_running() {
+    Renderer* self = Renderer_getInstance();
     return !glfwWindowShouldClose(self->window);
 }
 
 
-void Renderer_update(Renderer* self) {
+void Renderer_update() {
+    Renderer* self = Renderer_getInstance();
     if (glfwGetKey(self->window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(self->window, GL_TRUE);
     }
@@ -80,7 +75,7 @@ void Renderer_update(Renderer* self) {
         quad.vertices[1].color = color;
         quad.vertices[2].color = color;
         quad.vertices[3].color = color;
-        Renderer_enqueueDraw(self, &quad);
+        Renderer_enqueueDraw(&quad);
     }
 
     {
@@ -94,7 +89,7 @@ void Renderer_update(Renderer* self) {
         quad.vertices[1].color = color;
         quad.vertices[2].color = color;
         quad.vertices[3].color = color;
-        Renderer_enqueueDraw(self, &quad);
+        Renderer_enqueueDraw(&quad);
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, self->vertexBufferId);
@@ -108,7 +103,8 @@ void Renderer_update(Renderer* self) {
 }
 
 
-void Renderer_enqueueDraw(Renderer* self, Quad* quad) {
+void Renderer_enqueueDraw(Quad* quad) {
+    Renderer* self = Renderer_getInstance();
     for (int i = 0; i < 4; i++) {
         if (self->nVerticesEnqueued >= RENDERER_MAX_VERTICES) {
             die("Vertex limit reached");

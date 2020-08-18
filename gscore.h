@@ -50,11 +50,10 @@ struct Renderer {
 int main();
 
 /* renderer.c */
-Renderer* Renderer_new();
-Renderer* Renderer_free(Renderer* self);
-int Renderer_running(Renderer* self);
-void Renderer_update(Renderer* self);
-void Renderer_enqueueDraw(Renderer* self, Quad* quad);
+Renderer* Renderer_getInstance();
+int Renderer_running();
+void Renderer_update();
+void Renderer_enqueueDraw(Quad* quad);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram();
 void windowSizeCallback(GLFWwindow* window, int width, int height);

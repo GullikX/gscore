@@ -1,7 +1,5 @@
 int main() {
-    Renderer* renderer = Renderer_new();
-    while(Renderer_running(renderer)) {
-        Renderer_update(renderer);
+    while(Renderer_running()) {
+        Renderer_update();
     }
-    renderer = Renderer_free(renderer);
 }
