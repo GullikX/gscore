@@ -53,6 +53,18 @@ void Canvas_addNote() {
 }
 
 
+void Canvas_removeNote() {
+    Canvas* self = Canvas_getInstance();
+    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
+        if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
+            self->notes[i].iRow = -1;
+            self->notes[i].iColumn = -1;
+            break;
+        }
+    }
+}
+
+
 void Canvas_draw() {
     Canvas* self = Canvas_getInstance();
 

@@ -22,11 +22,18 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
     (void)window; (void)mods;
     if (action == GLFW_PRESS) {
         switch (button) {
-            case GLFW_MOUSE_BUTTON_LEFT: puts("Left mouse button pressed!"); break;
-            case GLFW_MOUSE_BUTTON_MIDDLE: puts("Middle mouse button pressed!"); break;
-            case GLFW_MOUSE_BUTTON_RIGHT: puts("Right mouse button pressed!"); break;
+            case GLFW_MOUSE_BUTTON_LEFT:
+                puts("Left mouse button pressed!");
+                Canvas_addNote();
+                break;
+            case GLFW_MOUSE_BUTTON_MIDDLE:
+                puts("Middle mouse button pressed!");
+                break;
+            case GLFW_MOUSE_BUTTON_RIGHT:
+                puts("Right mouse button pressed!");
+                Canvas_removeNote();
+                break;
         }
-        Canvas_addNote();
     }
 }
 
