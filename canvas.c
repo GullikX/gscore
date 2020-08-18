@@ -44,6 +44,11 @@ Canvas* Canvas_getInstance() {
 
 void Canvas_addNote() {
     Canvas* self = Canvas_getInstance();
+    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
+        if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
+            return;
+        }
+    }
     self->notes[self->noteIndex].iRow = self->cursor.iRow;
     self->notes[self->noteIndex].iColumn = self->cursor.iColumn;
     self->noteIndex++;
