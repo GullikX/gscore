@@ -83,27 +83,27 @@ void Canvas_draw() {
 
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
-        Canvas_drawItem(&(self->gridlinesVertical[i]));
+        Canvas_drawItem(&(self->gridlinesVertical[i]), 0);
     }
 
     /* Horizontal gridlines marking start of octaves */
     for (int i = 0; i < OCTAVES; i++) {
-        Canvas_drawItem(&(self->gridlinesHorizontal[i]));
+        Canvas_drawItem(&(self->gridlinesHorizontal[i]), 0);
     }
 
     /* Draw notes */
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         if (self->notes[i].iRow >= 0 && self->notes[i].iColumn >= 0) {
-            Canvas_drawItem(&(self->notes[i]));
+            Canvas_drawItem(&(self->notes[i]), 0);
         }
     }
 
     /* Draw cursor */
-    Canvas_drawItem(&(self->cursor));
+    Canvas_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
 }
 
 
-void Canvas_drawItem(CanvasItem* item) {
+void Canvas_drawItem(CanvasItem* item, float offset) {
     float columnWidth = 2.0f/(BLOCK_MEASURES * MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
@@ -113,10 +113,10 @@ void Canvas_drawItem(CanvasItem* item) {
     float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight);
 
     Vector2 positions[4];
-    positions[0].x = x1; positions[0].y = y1;
-    positions[1].x = x1; positions[1].y = y2;
-    positions[2].x = x2; positions[2].y = y2;
-    positions[3].x = x2; positions[3].y = y1;
+    positions[0].x = x1 - offset; positions[0].y = y1 + offset;
+    positions[1].x = x1 - offset; positions[1].y = y2 - offset;
+    positions[2].x = x2 + offset; positions[2].y = y2 - offset;
+    positions[3].x = x2 + offset; positions[3].y = y1 + offset;
 
     Quad quad;
     for (int i = 0; i < 4; i++) {

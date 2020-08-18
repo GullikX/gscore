@@ -82,7 +82,7 @@ Canvas* Canvas_getInstance();
 void Canvas_addNote();
 void Canvas_removeNote();
 void Canvas_draw();
-void Canvas_drawItem(CanvasItem* canvasItem);
+void Canvas_drawItem(CanvasItem* canvasItem, float offset);
 void Canvas_updateCursorPosition(float x, float y);
 int Canvas_rowIndexToNoteKey(int iRow);
 
