@@ -14,7 +14,7 @@ Renderer* Renderer_getInstance() {
     }
 
     glfwMakeContextCurrent(self->window);
-    glfwSetWindowSizeCallback(self->window, windowSizeCallback);
+    Input_setupCallbacks(self->window);
     printf("OpenGL %s\n", glGetString(GL_VERSION));
 
     if (glewInit() != GLEW_OK) {
@@ -115,6 +115,10 @@ void Renderer_enqueueDraw(Quad* quad) {
     }
 }
 
+void Renderer_updateViewportSize(int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
 
 GLuint createShader(const GLenum type, const char* const shaderSource) {
     const char* const typeString = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
@@ -153,10 +157,4 @@ GLuint createProgram() {
     glDeleteShader(fragmentShaderId);
 
     return programId;
-}
-
-
-void windowSizeCallback(GLFWwindow* window, int width, int height) {
-    (void)window;
-    glViewport(0, 0, width, height);
 }

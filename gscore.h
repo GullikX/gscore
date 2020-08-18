@@ -49,7 +49,11 @@ struct Renderer {
 
 /* Function declarations */
 /* input.c */
-void Input_processInput();
+void Input_setupCallbacks(GLFWwindow* window);
+void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* main.c */
 int main();
@@ -60,9 +64,9 @@ void Renderer_stop();
 int Renderer_running();
 void Renderer_updateScreen();
 void Renderer_enqueueDraw(Quad* quad);
+void Renderer_updateViewportSize(int width, int height);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram();
-void windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* util.c */
 void die(const char* const message);
