@@ -1,5 +1,7 @@
 #include "gscore.h"
+#include "canvas.c"
 #include "input.c"
 #include "main.c"
+#include "note.c"
 #include "renderer.c"
 #include "util.c"

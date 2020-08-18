@@ -68,30 +68,6 @@ void Renderer_updateScreen() {
     glClearColor(COLOR_BACKGROUND.x, COLOR_BACKGROUND.y, COLOR_BACKGROUND.z, COLOR_BACKGROUND.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    {
-        Quad quad;
-        quad.vertices[0].position.x = 0.25f; quad.vertices[0].position.y = 0.25f;
-        quad.vertices[1].position.x = 0.25f; quad.vertices[1].position.y = 0.75f;
-        quad.vertices[2].position.x = 0.75f; quad.vertices[2].position.y = 0.75f;
-        quad.vertices[3].position.x = 0.75f; quad.vertices[3].position.y = 0.25f;
-        for (int i = 0; i < 4; i++) {
-            quad.vertices[i].color = COLOR_1;
-        }
-        Renderer_enqueueDraw(&quad);
-    }
-
-    {
-        Quad quad;
-        quad.vertices[0].position.x = -0.25f; quad.vertices[0].position.y = -0.25f;
-        quad.vertices[1].position.x = -0.25f; quad.vertices[1].position.y = -0.75f;
-        quad.vertices[2].position.x = -0.75f; quad.vertices[2].position.y = -0.75f;
-        quad.vertices[3].position.x = -0.75f; quad.vertices[3].position.y = -0.25f;
-        for (int i = 0; i < 4; i++) {
-            quad.vertices[i].color = COLOR_2;
-        }
-        Renderer_enqueueDraw(&quad);
-    }
-
     glBindBuffer(GL_ARRAY_BUFFER, self->vertexBufferId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(self->vertices), self->vertices);
 

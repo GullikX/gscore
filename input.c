@@ -25,6 +25,11 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
             case GLFW_MOUSE_BUTTON_MIDDLE: puts("Middle mouse button pressed!"); break;
             case GLFW_MOUSE_BUTTON_RIGHT: puts("Right mouse button pressed!"); break;
         }
+        int start = 0;
+        int end = 0;
+        int pitch = 0;
+        int velocity = 0;
+        Canvas_addNote(Note_new(start, end, pitch, velocity));
     }
 }
 

@@ -10,7 +10,9 @@ typedef struct Vector2 Vector2;
 typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
 typedef struct Quad Quad;
+typedef struct Note Note;
 typedef struct Renderer Renderer;
+typedef struct Canvas Canvas;
 
 
 /* Type definitions */
@@ -31,12 +33,24 @@ struct Quad {
     Vertex vertices[4];
 };
 
+struct Note {
+    int start;
+    int end;
+    int pitch;
+    int velocity;
+};
+
 
 /* Configuration */
 #include "config.h"
 
 
 /* Type definitions dependent on configuration */
+struct Canvas {
+    Note* notes[CANVAS_MAX_NOTES];
+    int noteIndex;
+};
+
 struct Renderer {
      GLFWwindow* window;
      GLuint programId;
@@ -48,6 +62,11 @@ struct Renderer {
 
 
 /* Function declarations */
+/* canvas.c */
+Canvas* Canvas_getInstance();
+void Canvas_addNote(Note* note);
+void Canvas_draw();
+
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -57,6 +76,10 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* main.c */
 int main();
+
+/* note.c */
+Note* Note_new(int start, int end, int pitch, int velocity);
+void Note_draw();
 
 /* renderer.c */
 Renderer* Renderer_getInstance();
