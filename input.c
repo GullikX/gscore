@@ -12,6 +12,12 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
     if (action == GLFW_PRESS) {
         printf("Key pressed: %d\n", key);
         switch (key) {
+            case GLFW_KEY_I:
+                spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                break;
+            case GLFW_KEY_T:
+                spawnSetXProp(ATOM_BPM);
+                break;
             case GLFW_KEY_Q:
                 Renderer_stop();
                 break;

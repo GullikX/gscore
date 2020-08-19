@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <X11/Xatom.h>
 
 
@@ -147,6 +148,8 @@ void Synth_noteOffAll();
 /* util.c */
 void die(const char* const message);
 void* ecalloc(size_t nItems, size_t itemSize);
+void spawnSetXProp(int atomId);
+void spawn(const char* cmd[]);
 
 /* xevents.c */
 XEvents* XEvents_getInstance();

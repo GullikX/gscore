@@ -40,6 +40,14 @@ enum {
     SYNTH_ENABLE_CHORUS=false,
 };
 
+const float CURSOR_SIZE_OFFSET = -0.005f;
+
+const Vector4 COLOR_NOTES = {0.5411f, 0.7765f, 0.9490f, 1.0f};
+const Vector4 COLOR_2 = {0.9412f, 0.7765f, 0.4549f, 1.0f};
+const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
+const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
+const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};
+
 enum {
     ATOM_BPM,
     ATOM_SYNTH_PROGRAM,
@@ -51,10 +59,14 @@ const char* ATOM_NAMES[] =  {
     "_GSCORE_SYNTH_PROGRAM",
 };
 
-const float CURSOR_SIZE_OFFSET = -0.005f;
+const char* ATOM_PROMPTS[] =  {
+    "Set tempo (BPM):",
+    "Set instrument:",
+};
 
-const Vector4 COLOR_NOTES = {0.5411f, 0.7765f, 0.9490f, 1.0f};
-const Vector4 COLOR_2 = {0.9412f, 0.7765f, 0.4549f, 1.0f};
-const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
-const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
-const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};
+#define CMD_SET_XPROP(promptText, atomName, windowId) { \
+    "/bin/sh", "-c", \
+    "prop=\"$(: | dmenu -b -p \"$0\" -w $2)\"" \
+    " && xprop -id $2 -f \"$1\" 8s -set \"$1\" \"$prop\"", \
+    promptText, atomName, windowId, NULL \
+}
