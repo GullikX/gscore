@@ -1,10 +1,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include <fluidsynth.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <X11/Xatom.h>
 
 
 /* Type declarations */
@@ -17,6 +19,7 @@ typedef struct Synth Synth;
 typedef struct Player Player;
 typedef struct Renderer Renderer;
 typedef struct Canvas Canvas;
+typedef struct XEvents XEvents;
 
 
 /* Type definitions */
@@ -82,6 +85,12 @@ struct Renderer {
      int viewportHeight;
 };
 
+struct XEvents {
+    Display* x11Display;
+    Window x11Window;
+    Atom atoms[ATOM_COUNT];
+};
+
 
 /* Function declarations */
 /* canvas.c */
@@ -135,3 +144,7 @@ void Synth_noteOffAll();
 /* util.c */
 void die(const char* const message);
 void* ecalloc(size_t nItems, size_t itemSize);
+
+/* xevents.c */
+XEvents* XEvents_getInstance();
+void XEvents_processXEvents();

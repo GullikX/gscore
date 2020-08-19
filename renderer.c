@@ -80,6 +80,7 @@ void Renderer_updateScreen() {
     self->nVerticesEnqueued = 0;
     glfwSwapBuffers(self->window);
     glfwPollEvents();
+    XEvents_processXEvents();
 }
 
 

@@ -40,6 +40,17 @@ enum {
     SYNTH_ENABLE_CHORUS=false,
 };
 
+enum {
+    ATOM_BPM,
+    ATOM_SYNTH_PROGRAM,
+    ATOM_COUNT,
+};
+
+const char* ATOM_NAMES[] =  {
+    "_GSCORE_BPM",
+    "_GSCORE_SYNTH_PROGRAM",
+};
+
 const float CURSOR_SIZE_OFFSET = -0.005f;
 
 const Vector4 COLOR_NOTES = {0.5411f, 0.7765f, 0.9490f, 1.0f};
