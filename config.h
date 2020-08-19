@@ -16,7 +16,7 @@ const char* const WINDOW_TITLE = "GScore";
 
 const char* const AUDIO_DRIVER = "alsa";
 const char* const ALSA_DEVICE = "default:CARD=S3";
-const char* const SOUNDFRONT = "soundfront.sf2";
+const char* const SOUNDFONT = "soundfont.sf2";
 
 enum {
     WINDOW_WIDTH = 640,

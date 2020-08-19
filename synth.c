@@ -17,8 +17,8 @@ Synth* Synth_getInstance() {
         die("Failed to initialize FluidSynth");
     }
 
-    if (fluid_synth_sfload(self->fluidSynth, SOUNDFRONT, true) == FLUID_FAILED) {
-        die("Failed to load soundfront");
+    if (fluid_synth_sfload(self->fluidSynth, SOUNDFONT, true) == FLUID_FAILED) {
+        die("Failed to load soundfont");
     }
 
     if (fluid_synth_program_change(self->fluidSynth, 0, SYNTH_PROGRAM_NUMBER) == FLUID_FAILED) {
