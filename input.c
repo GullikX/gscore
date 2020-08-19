@@ -33,6 +33,7 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 puts("Middle mouse button pressed!");
+                Canvas_previewNote();
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button pressed!");
@@ -47,6 +48,7 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 puts("Middle mouse button released!");
+                Canvas_releaseNote();
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button released!");

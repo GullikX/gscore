@@ -48,6 +48,12 @@ Canvas* Canvas_getInstance() {
 }
 
 
+void Canvas_previewNote() {
+    Canvas* self = Canvas_getInstance();
+    Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+}
+
+
 void Canvas_addNote() {
     /* TODO: Drag for longer note */
     Canvas* self = Canvas_getInstance();

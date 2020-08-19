@@ -86,6 +86,7 @@ struct Renderer {
 /* Function declarations */
 /* canvas.c */
 Canvas* Canvas_getInstance();
+void Canvas_previewNote();
 void Canvas_addNote();
 void Canvas_removeNote();
 void Canvas_draw();
