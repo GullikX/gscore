@@ -21,14 +21,20 @@ Synth* Synth_getInstance() {
         die("Failed to load soundfont");
     }
 
-    if (fluid_synth_program_change(self->fluidSynth, 0, SYNTH_PROGRAM_NUMBER) == FLUID_FAILED) {
-        die("Failed to set midi program");
-    }
+    Synth_setProgram(0, SYNTH_PROGRAM);
 
     fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
     fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
 
     return self;
+}
+
+
+void Synth_setProgram(int channel, int program) {
+    Synth* self = Synth_getInstance();
+    if (fluid_synth_program_change(self->fluidSynth, channel, program) == FLUID_FAILED) {
+        puts("Error: Failed to set midi program");
+    }
 }
 
 

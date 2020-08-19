@@ -18,7 +18,7 @@ XEvents* XEvents_getInstance() {
 void XEvents_processXEvents() {
     XEvents* self = XEvents_getInstance();
 
-    for (int i = 0; i < ATOM_COUNT; i++) {
+    for (unsigned long i = 0; i < ATOM_COUNT; i++) {
         unsigned char* propertyValue = NULL;
         Atom atomDummy;
         int intDummy;
@@ -41,6 +41,28 @@ void XEvents_processXEvents() {
 
         if (result == Success && propertyValue) {
             printf("Received: %s=%s\n", ATOM_NAMES[i], propertyValue);
+
+            switch (i) {
+                case ATOM_BPM:;
+                    int tempoBpm = atoi((char*)propertyValue);
+                    if (tempoBpm > 0) {
+                        printf("Setting BPM to %d\n", tempoBpm);
+                        Player_setTempoBpm(tempoBpm);
+                    }
+                    else {
+                        printf("Invalid BPM value '%s'\n", propertyValue);
+                    }
+                    break;
+                case ATOM_SYNTH_PROGRAM:;
+                    int synthProgram = atoi((char*)propertyValue);
+                    if (synthProgram > 0) {
+                        printf("Setting synth program to %d\n", synthProgram);
+                        Synth_setProgram(0, synthProgram);
+                    }
+                    else {
+                        printf("Invalid synth program value '%s'\n", propertyValue);
+                    }
+            }
         }
         XFree(propertyValue);
     }

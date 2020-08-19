@@ -57,6 +57,7 @@ struct Synth {
 struct Player {
     bool playing;
     double startTime;
+    int tempoBpm;
 };
 
 
@@ -118,6 +119,7 @@ int main();
 
 /* player.c */
 Player* Player_getInstance();
+void Player_setTempoBpm(int tempoBpm);
 void Player_toggle();
 bool Player_playing();
 void Player_start();
@@ -138,6 +140,7 @@ GLuint createProgram();
 
 /* synth.c */
 Synth* Synth_getInstance();
+void Synth_setProgram(int channelId, int programId);
 void Synth_noteOn(int key);
 void Synth_noteOffAll();
 

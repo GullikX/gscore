@@ -5,7 +5,15 @@ Player* Player_getInstance() {
     self = ecalloc(1, sizeof(*self));
     self->playing = false;
     self->startTime = 0;
+    self->tempoBpm = TEMPO_BPM;
+
     return self;
+}
+
+
+void Player_setTempoBpm(int tempoBpm) {
+    Player* self = Player_getInstance();
+    self->tempoBpm = tempoBpm;
 }
 
 
@@ -46,7 +54,7 @@ void Player_update() {
 
 
     double time = glfwGetTime() - self->startTime;
-    double totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / TEMPO_BPM;
+    double totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
 
     int viewportWidth = Renderer_getInstance()->viewportWidth;
     float cursorX = (float)viewportWidth * time / totalTime;
