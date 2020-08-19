@@ -51,7 +51,9 @@ Canvas* Canvas_getInstance() {
 void Canvas_addNote() {
     /* TODO: Drag for longer note */
     Canvas* self = Canvas_getInstance();
-    Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+    if (self->playerCursor.iColumn < 0) {
+        Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+    }
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
             return;
