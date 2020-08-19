@@ -11,9 +11,14 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
     (void)window; (void)scancode; (void)action; (void)mods;
     if (action == GLFW_PRESS) {
         printf("Key pressed: %d\n", key);
-    }
-    if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_Q) {
-        Renderer_stop();
+        switch (key) {
+            case GLFW_KEY_ESCAPE:
+            case GLFW_KEY_Q:
+                Renderer_stop();
+                break;
+            case GLFW_KEY_SPACE:
+                Player_toggle();
+        }
     }
 }
 

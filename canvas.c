@@ -24,6 +24,12 @@ Canvas* Canvas_getInstance() {
         self->gridlinesHorizontal[i].color = COLOR_GRIDLINES;
     }
 
+    self->playerCursor.iRow = 0;
+    self->playerCursor.iColumn = -1;
+    self->playerCursor.nRows = nRows;
+    self->playerCursor.nColumns = 1;
+    self->playerCursor.color = COLOR_CURSOR;
+
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         self->notes[i].iRow = -1;
         self->notes[i].iColumn = -1;
@@ -91,6 +97,11 @@ void Canvas_draw() {
         Canvas_drawItem(&(self->gridlinesHorizontal[i]), 0);
     }
 
+    /* Draw player cursor if playing */
+    if (self->playerCursor.iColumn >= 0) {
+        Canvas_drawItem(&(self->playerCursor), 0);
+    }
+
     /* Draw notes */
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         if (self->notes[i].iRow >= 0 && self->notes[i].iColumn >= 0) {
@@ -132,6 +143,18 @@ void Canvas_updateCursorPosition(float x, float y) {
 
     self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
     self->cursor.iRow = Renderer_yCoordToRowIndex(y);
+}
+
+
+void Canvas_updatePlayerCursorPosition(float x) {
+    Canvas* self = Canvas_getInstance();
+    self->playerCursor.iColumn = Renderer_xCoordToColumnIndex(x);
+}
+
+
+void Canvas_resetPlayerCursorPosition() {
+    Canvas* self = Canvas_getInstance();
+    self->playerCursor.iColumn = -1;
 }
 
 

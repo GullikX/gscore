@@ -2,6 +2,7 @@
 #include "canvas.c"
 #include "input.c"
 #include "main.c"
+#include "player.c"
 #include "renderer.c"
 #include "synth.c"
 #include "util.c"

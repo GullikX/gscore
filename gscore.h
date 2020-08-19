@@ -14,6 +14,7 @@ typedef struct Vertex Vertex;
 typedef struct Quad Quad;
 typedef struct CanvasItem CanvasItem;
 typedef struct Synth Synth;
+typedef struct Player Player;
 typedef struct Renderer Renderer;
 typedef struct Canvas Canvas;
 
@@ -50,6 +51,11 @@ struct Synth {
     fluid_audio_driver_t* audioDriver;
 };
 
+struct Player {
+    bool playing;
+    double startTime;
+};
+
 
 /* Configuration */
 #include "config.h"
@@ -59,6 +65,7 @@ struct Synth {
 struct Canvas {
     CanvasItem gridlinesVertical[BLOCK_MEASURES];
     CanvasItem gridlinesHorizontal[OCTAVES];
+    CanvasItem playerCursor;
     CanvasItem notes[CANVAS_MAX_NOTES];
     CanvasItem cursor;
     int noteIndex;
@@ -84,6 +91,8 @@ void Canvas_removeNote();
 void Canvas_draw();
 void Canvas_drawItem(CanvasItem* canvasItem, float offset);
 void Canvas_updateCursorPosition(float x, float y);
+void Canvas_updatePlayerCursorPosition(float x);
+void Canvas_resetPlayerCursorPosition();
 int Canvas_rowIndexToNoteKey(int iRow);
 
 /* input.c */
@@ -96,6 +105,14 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* main.c */
 int main();
+
+/* player.c */
+Player* Player_getInstance();
+void Player_toggle();
+bool Player_playing();
+void Player_start();
+void Player_stop();
+void Player_update();
 
 /* renderer.c */
 Renderer* Renderer_getInstance();
