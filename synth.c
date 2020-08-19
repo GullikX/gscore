@@ -9,6 +9,8 @@ Synth* Synth_getInstance() {
     fluid_settings_setstr(self->settings, "audio.driver", AUDIO_DRIVER);
     fluid_settings_setstr(self->settings, "audio.alsa.device", ALSA_DEVICE);
     fluid_settings_setint(self->settings, "synth.midi-channels", SYNTH_MIDI_CHANNELS);
+    fluid_settings_setint(self->settings, "audio.periods", SYNTH_AUDIO_PERIODS);
+    fluid_settings_setint(self->settings, "audio.period-size", SYNTH_AUDIO_PERIOD_SIZE);
 
     self->audioDriver = new_fluid_audio_driver(self->settings, self->fluidSynth);
     if (!self->audioDriver) {
