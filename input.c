@@ -12,12 +12,15 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
     if (action == GLFW_PRESS) {
         printf("Key pressed: %d\n", key);
         switch (key) {
-            case GLFW_KEY_ESCAPE:
             case GLFW_KEY_Q:
                 Renderer_stop();
                 break;
             case GLFW_KEY_SPACE:
                 Player_toggle();
+                break;
+            case GLFW_KEY_ESCAPE:
+                Player_stop();
+                break;
         }
     }
 }
