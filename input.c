@@ -10,23 +10,31 @@ void Input_setupCallbacks(GLFWwindow* window) {
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window; (void)scancode; (void)action; (void)mods;
     if (action == GLFW_PRESS) {
-        printf("Key pressed: %d\n", key);
-        switch (key) {
-            case GLFW_KEY_I:
-                spawnSetXProp(ATOM_SYNTH_PROGRAM);
-                break;
-            case GLFW_KEY_T:
-                spawnSetXProp(ATOM_BPM);
-                break;
-            case GLFW_KEY_Q:
-                Renderer_stop();
-                break;
-            case GLFW_KEY_SPACE:
-                Player_toggle();
-                break;
-            case GLFW_KEY_ESCAPE:
-                Player_stop();
-                break;
+        const char* const keyName = glfwGetKeyName(key, scancode);
+        if (keyName) {
+            printf("Key pressed: %s\n", keyName);
+            switch (keyName[0]) {
+                case 'i':
+                    spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    return;
+                case 't':
+                    spawnSetXProp(ATOM_BPM);
+                    return;
+                case 'q':
+                    Renderer_stop();
+                    return;
+            }
+        }
+        else {
+            printf("Key pressed: %d\n", key);
+            switch (key) {
+                case GLFW_KEY_SPACE:
+                    Player_toggle();
+                    return;
+                case GLFW_KEY_ESCAPE:
+                    Player_stop();
+                    return;
+            }
         }
     }
 }
