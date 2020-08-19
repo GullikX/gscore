@@ -60,9 +60,14 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
 
 void Input_cursorPosCallback(GLFWwindow* window, double x, double y) {
     (void)window;
-    Canvas_updateCursorPosition(x, y);
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-        Canvas_removeNote();
+    bool updated = Canvas_updateCursorPosition(x, y);
+    if (updated) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+            Canvas_removeNote();
+        }
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+            Canvas_previewNote();
+        }
     }
 }
 

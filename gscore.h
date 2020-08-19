@@ -91,7 +91,7 @@ void Canvas_addNote();
 void Canvas_removeNote();
 void Canvas_draw();
 void Canvas_drawItem(CanvasItem* canvasItem, float offset);
-void Canvas_updateCursorPosition(float x, float y);
+bool Canvas_updateCursorPosition(float x, float y);
 void Canvas_updatePlayerCursorPosition(float x);
 void Canvas_resetPlayerCursorPosition();
 int Canvas_rowIndexToNoteKey(int iRow);

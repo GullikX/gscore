@@ -146,11 +146,17 @@ void Canvas_drawItem(CanvasItem* item, float offset) {
 }
 
 
-void Canvas_updateCursorPosition(float x, float y) {
+bool Canvas_updateCursorPosition(float x, float y) {
     Canvas* self = Canvas_getInstance();
+
+    int iColumnNew = Renderer_xCoordToColumnIndex(x);
+    int iRowNew = Renderer_yCoordToRowIndex(y);
+
+    if (self->cursor.iColumn == iColumnNew && self->cursor.iRow == iRowNew) return false;
 
     self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
     self->cursor.iRow = Renderer_yCoordToRowIndex(y);
+    return true;
 }
 
 
