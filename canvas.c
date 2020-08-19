@@ -148,13 +148,23 @@ void Canvas_updateCursorPosition(float x, float y) {
 
 void Canvas_updatePlayerCursorPosition(float x) {
     Canvas* self = Canvas_getInstance();
-    self->playerCursor.iColumn = Renderer_xCoordToColumnIndex(x);
+
+    int iColumnNew = Renderer_xCoordToColumnIndex(x);
+    if (self->playerCursor.iColumn != iColumnNew) {
+        for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
+            if (self->notes[i].iColumn == iColumnNew) {
+                Synth_noteOn(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
+            }
+        }
+        self->playerCursor.iColumn = iColumnNew;
+    }
 }
 
 
 void Canvas_resetPlayerCursorPosition() {
     Canvas* self = Canvas_getInstance();
     self->playerCursor.iColumn = -1;
+    Synth_noteOffAll();
 }
 
 

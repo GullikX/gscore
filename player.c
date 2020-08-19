@@ -52,7 +52,6 @@ void Player_update() {
     float cursorX = (float)viewportWidth * time / totalTime;
 
     if (cursorX < viewportWidth) {
-        printf("player update, cursorX: %f\n", cursorX);
         Canvas_updatePlayerCursorPosition(cursorX);
     } else {
         Player_stop();
