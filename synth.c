@@ -8,6 +8,8 @@ Synth* Synth_getInstance() {
     self->fluidSynth = new_fluid_synth(self->settings);
     fluid_settings_setstr(self->settings, "audio.driver", AUDIO_DRIVER);
     fluid_settings_setstr(self->settings, "audio.alsa.device", ALSA_DEVICE);
+    fluid_settings_setint(self->settings, "synth.midi-channels", SYNTH_MIDI_CHANNELS);
+
     self->audioDriver = new_fluid_audio_driver(self->settings, self->fluidSynth);
     if (!self->audioDriver) {
         die("Failed to initialize FluidSynth");
