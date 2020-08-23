@@ -1,4 +1,4 @@
-Canvas* Canvas_getInstance() {
+Canvas* Canvas_getInstance(void) {
     static Canvas* self = NULL;
     if (self) return self;
 
@@ -48,13 +48,13 @@ Canvas* Canvas_getInstance() {
 }
 
 
-void Canvas_previewNote() {
+void Canvas_previewNote(void) {
     Canvas* self = Canvas_getInstance();
     Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
 }
 
 
-void Canvas_addNote() {
+void Canvas_addNote(void) {
     /* TODO: Drag for longer note */
     Canvas* self = Canvas_getInstance();
     if (self->playerCursor.iColumn < 0) {
@@ -74,13 +74,13 @@ void Canvas_addNote() {
 }
 
 
-void Canvas_releaseNote() {
+void Canvas_releaseNote(void) {
     /* TODO: Stop dragging note */
     Synth_noteOffAll();
 }
 
 
-void Canvas_removeNote() {
+void Canvas_removeNote(void) {
     Canvas* self = Canvas_getInstance();
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
@@ -92,7 +92,7 @@ void Canvas_removeNote() {
 }
 
 
-void Canvas_draw() {
+void Canvas_draw(void) {
     Canvas* self = Canvas_getInstance();
 
     /* Vertical gridlines marking start of measures */
@@ -175,7 +175,7 @@ void Canvas_updatePlayerCursorPosition(float x) {
 }
 
 
-void Canvas_resetPlayerCursorPosition() {
+void Canvas_resetPlayerCursorPosition(void) {
     Canvas* self = Canvas_getInstance();
     self->playerCursor.iColumn = -1;
     Synth_noteOffAll();

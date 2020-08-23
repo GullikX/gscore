@@ -1,4 +1,4 @@
-Renderer* Renderer_getInstance() {
+Renderer* Renderer_getInstance(void) {
     static Renderer* self = NULL;
     if (self) return self;
 
@@ -54,19 +54,19 @@ Renderer* Renderer_getInstance() {
 }
 
 
-void Renderer_stop() {
+void Renderer_stop(void) {
     Renderer* self = Renderer_getInstance();
     glfwSetWindowShouldClose(self->window, GL_TRUE);
 }
 
 
-int Renderer_running() {
+int Renderer_running(void) {
     Renderer* self = Renderer_getInstance();
     return !glfwWindowShouldClose(self->window);
 }
 
 
-void Renderer_updateScreen() {
+void Renderer_updateScreen(void) {
     Renderer* self = Renderer_getInstance();
 
     glClearColor(COLOR_BACKGROUND.x, COLOR_BACKGROUND.y, COLOR_BACKGROUND.z, COLOR_BACKGROUND.w);
@@ -140,7 +140,7 @@ GLuint createShader(const GLenum type, const char* const shaderSource) {
 }
 
 
-GLuint createProgram() {
+GLuint createProgram(void) {
     GLuint programId = glCreateProgram();
 
     GLuint vertexShaderId = createShader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);

@@ -1,4 +1,4 @@
-Synth* Synth_getInstance() {
+Synth* Synth_getInstance(void) {
     static Synth* self = NULL;
     if (self) return self;
 
@@ -44,7 +44,7 @@ void Synth_noteOn(int key) {
 }
 
 
-void Synth_noteOffAll() {
+void Synth_noteOffAll(void) {
     Synth* self = Synth_getInstance();
     for (int i = 0; i < 128; i++) {
         fluid_synth_noteoff(self->fluidSynth, 0, i);

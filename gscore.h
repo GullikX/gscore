@@ -96,15 +96,15 @@ struct XEvents {
 
 /* Function declarations */
 /* canvas.c */
-Canvas* Canvas_getInstance();
-void Canvas_previewNote();
-void Canvas_addNote();
-void Canvas_removeNote();
-void Canvas_draw();
+Canvas* Canvas_getInstance(void);
+void Canvas_previewNote(void);
+void Canvas_addNote(void);
+void Canvas_removeNote(void);
+void Canvas_draw(void);
 void Canvas_drawItem(CanvasItem* canvasItem, float offset);
 bool Canvas_updateCursorPosition(float x, float y);
 void Canvas_updatePlayerCursorPosition(float x);
-void Canvas_resetPlayerCursorPosition();
+void Canvas_resetPlayerCursorPosition(void);
 int Canvas_rowIndexToNoteKey(int iRow);
 
 /* input.c */
@@ -116,34 +116,34 @@ void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* main.c */
-int main();
+int main(void);
 
 /* player.c */
-Player* Player_getInstance();
+Player* Player_getInstance(void);
 void Player_setTempoBpm(int tempoBpm);
-void Player_toggle();
-bool Player_playing();
-void Player_start();
-void Player_stop();
-void Player_update();
+void Player_toggle(void);
+bool Player_playing(void);
+void Player_start(void);
+void Player_stop(void);
+void Player_update(void);
 
 /* renderer.c */
-Renderer* Renderer_getInstance();
-void Renderer_stop();
-int Renderer_running();
-void Renderer_updateScreen();
+Renderer* Renderer_getInstance(void);
+void Renderer_stop(void);
+int Renderer_running(void);
+void Renderer_updateScreen(void);
 void Renderer_enqueueDraw(Quad* quad);
 void Renderer_updateViewportSize(int width, int height);
 int Renderer_xCoordToColumnIndex(int x);
 int Renderer_yCoordToRowIndex(int y);
 GLuint createShader(const GLenum type, const char* const shaderSource);
-GLuint createProgram();
+GLuint createProgram(void);
 
 /* synth.c */
-Synth* Synth_getInstance();
+Synth* Synth_getInstance(void);
 void Synth_setProgram(int channelId, int programId);
 void Synth_noteOn(int key);
-void Synth_noteOffAll();
+void Synth_noteOffAll(void);
 
 /* util.c */
 void die(const char* const message);
@@ -152,5 +152,5 @@ void spawnSetXProp(int atomId);
 void spawn(const char* cmd[]);
 
 /* xevents.c */
-XEvents* XEvents_getInstance();
-void XEvents_processXEvents();
+XEvents* XEvents_getInstance(void);
+void XEvents_processXEvents(void);

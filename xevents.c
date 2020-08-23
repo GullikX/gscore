@@ -1,4 +1,4 @@
-XEvents* XEvents_getInstance() {
+XEvents* XEvents_getInstance(void) {
     static XEvents* self = NULL;
     if (self) return self;
 
@@ -15,7 +15,7 @@ XEvents* XEvents_getInstance() {
     return self;
 }
 
-void XEvents_processXEvents() {
+void XEvents_processXEvents(void) {
     XEvents* self = XEvents_getInstance();
 
     for (unsigned long i = 0; i < ATOM_COUNT; i++) {

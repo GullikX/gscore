@@ -1,4 +1,4 @@
-Player* Player_getInstance() {
+Player* Player_getInstance(void) {
     static Player* self = NULL;
     if (self) return self;
 
@@ -17,7 +17,7 @@ void Player_setTempoBpm(int tempoBpm) {
 }
 
 
-void Player_toggle() {
+void Player_toggle(void) {
     if (Player_playing()) {
         Player_stop();
     }
@@ -27,12 +27,12 @@ void Player_toggle() {
 }
 
 
-bool Player_playing() {
+bool Player_playing(void) {
     return Player_getInstance()->playing;
 }
 
 
-void Player_start() {
+void Player_start(void) {
     Player* self = Player_getInstance();
     self->playing = true;
     self->startTime = glfwGetTime();
@@ -40,7 +40,7 @@ void Player_start() {
 }
 
 
-void Player_stop() {
+void Player_stop(void) {
     puts("Stop playing");
     Player* self = Player_getInstance();
     self->playing = false;
@@ -48,7 +48,7 @@ void Player_stop() {
 }
 
 
-void Player_update() {
+void Player_update(void) {
     Player* self = Player_getInstance();
     if (!self->playing) return;
 
