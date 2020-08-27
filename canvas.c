@@ -51,12 +51,13 @@ Canvas* Canvas_getInstance(void) {
 
 void Canvas_previewNote(void) {
     Canvas* self = Canvas_getInstance();
-    Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+    if (self->playerCursor.iColumn < 0) {
+        Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+    }
 }
 
 
 void Canvas_addNote(void) {
-    /* TODO: Drag for longer note */
     Canvas* self = Canvas_getInstance();
     if (self->playerCursor.iColumn < 0) {
         Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
@@ -90,7 +91,9 @@ void Canvas_dragNote(void) {
 void Canvas_releaseNote(void) {
     Canvas* self = Canvas_getInstance();
     self->iNoteHeld = -1;
-    Synth_noteOffAll();
+    if (self->playerCursor.iColumn < 0) {
+        Synth_noteOffAll();
+    }
 }
 
 
