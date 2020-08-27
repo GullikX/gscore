@@ -192,6 +192,9 @@ void Canvas_updatePlayerCursorPosition(float x) {
             if (self->notes[i].iColumn == iColumnNew) {
                 Synth_noteOn(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
             }
+            else if (self->notes[i].iColumn + self->notes[i].nColumns == iColumnNew) {
+                Synth_noteOff(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
+            }
         }
         self->playerCursor.iColumn = iColumnNew;
     }

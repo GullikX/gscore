@@ -154,6 +154,7 @@ Synth* Synth_getInstance(void);
 void Synth_setProgramById(int channelId, int programId);
 void Synth_setProgramByName(int channel, const char* const instrumentName);
 void Synth_noteOn(int key);
+void Synth_noteOff(int key);
 void Synth_noteOffAll(void);
 
 /* util.c */

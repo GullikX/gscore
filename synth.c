@@ -89,6 +89,12 @@ void Synth_noteOn(int key) {
 }
 
 
+void Synth_noteOff(int key) {
+    Synth* self = Synth_getInstance();
+    fluid_synth_noteoff(self->fluidSynth, 0, key);
+}
+
+
 void Synth_noteOffAll(void) {
     Synth* self = Synth_getInstance();
     fluid_synth_all_notes_off(self->fluidSynth, 0);
