@@ -23,6 +23,28 @@ Synth* Synth_getInstance(void) {
 
     Synth_setProgram(0, SYNTH_PROGRAM);
 
+    fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
+    if (!soundFont) {
+        die("Soundfont pointer is null");
+    }
+    int instrumentListStringSize = 1;
+    int nInstruments = 0;
+    for (int i = 0;; i++) {
+        fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
+        if (!preset) break;
+        nInstruments = i + 1;
+        instrumentListStringSize += strlen(fluid_preset_get_name(preset)) + 1;
+    }
+    self->instrumentListString = ecalloc(instrumentListStringSize, sizeof(char));
+    for (int i = 0; i < nInstruments; i++) {
+        if (i > 0) {
+            strcat(self->instrumentListString, "\n");
+        }
+        fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
+        if (!preset) break;
+        strcat(self->instrumentListString, fluid_preset_get_name(preset));
+    }
+
     fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
     fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
 
