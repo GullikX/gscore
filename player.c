@@ -53,7 +53,6 @@ void Player_update(void) {
     Player* self = Player_getInstance();
     if (!self->playing) return;
 
-
     double time = glfwGetTime() - self->startTime;
     double totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
 
