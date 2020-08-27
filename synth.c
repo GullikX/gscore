@@ -22,7 +22,11 @@ Synth* Synth_getInstance(void) {
     }
 
     Synth_setProgramById(0, SYNTH_PROGRAM);
+    fluid_synth_set_gain(self->fluidSynth, SYNTH_GAIN);
+    fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
+    fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
 
+    /* Generate instrument list string */
     fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
     if (!soundFont) {
         die("Soundfont pointer is null");
@@ -44,9 +48,6 @@ Synth* Synth_getInstance(void) {
         if (!preset) break;
         strcat(self->instrumentListString, fluid_preset_get_name(preset));
     }
-
-    fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
-    fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
 
     return self;
 }

@@ -42,6 +42,7 @@ enum {
 };
 
 const float CURSOR_SIZE_OFFSET = -0.005f;
+const float SYNTH_GAIN = 1.0f;
 
 const Vector4 COLOR_NOTES = {0.5411f, 0.7765f, 0.9490f, 1.0f};
 const Vector4 COLOR_2 = {0.9412f, 0.7765f, 0.4549f, 1.0f};
