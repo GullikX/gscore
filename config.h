@@ -27,6 +27,7 @@ enum {
     BEATS_PER_MEASURE = 4,
     SECONDS_PER_MINUTE = 60,
     TEMPO_BPM = 100,
+    TEMPO_BPM_MAX = 1024,
     BLOCK_MEASURES = 4,
     MEASURE_RESOLUTION = 16,
     OCTAVES = 5,
@@ -64,9 +65,15 @@ const char* ATOM_PROMPTS[] =  {
     "Set instrument:",
 };
 
-#define CMD_SET_XPROP(promptText, atomName, windowId) { \
-    "/bin/sh", "-c", \
-    "prop=\"$(: | dmenu -b -p \"$0\" -w $2)\"" \
-    " && xprop -id $2 -f \"$1\" 8s -set \"$1\" \"$prop\"", \
-    promptText, atomName, windowId, NULL \
-}
+char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
+    Player_getTempoBpmString,
+    Synth_getInstrumentListString,
+};
+
+const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */
+    "export WINDOWID=\"%lu\";"
+    "export PROMPT=\"%s\";"
+    "export ATOM_NAME=\"%s\";"
+    "dmenu -b -i -p \"$PROMPT\" -w \"$WINDOWID\""
+    "| tr '\\n' '\\0' "
+    "| xargs -r0 xprop -id \"$WINDOWID\" -f \"$ATOM_NAME\" 8s -set \"$ATOM_NAME\"";

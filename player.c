@@ -5,7 +5,7 @@ Player* Player_getInstance(void) {
     self = ecalloc(1, sizeof(*self));
     self->playing = false;
     self->startTime = 0;
-    self->tempoBpm = TEMPO_BPM;
+    Player_setTempoBpm(TEMPO_BPM);
 
     return self;
 }
@@ -14,6 +14,7 @@ Player* Player_getInstance(void) {
 void Player_setTempoBpm(int tempoBpm) {
     Player* self = Player_getInstance();
     self->tempoBpm = tempoBpm;
+    snprintf(self->tempoBpmString, 64, "%d", tempoBpm);
 }
 
 
@@ -64,4 +65,10 @@ void Player_update(void) {
     } else {
         Player_stop();
     }
+}
+
+
+char* Player_getTempoBpmString(void) {
+    Player* self = Player_getInstance();
+    return self->tempoBpmString;
 }

@@ -14,16 +14,19 @@ void* ecalloc(size_t nItems, size_t itemSize) {
 
 
 void spawnSetXProp(int atomId) {
-    char windowId[64];
-    snprintf(windowId, 64, "%lu", XEvents_getInstance()->x11Window);
-    const char* cmd[] = CMD_SET_XPROP(ATOM_PROMPTS[atomId], ATOM_NAMES[atomId], windowId);
-    spawn(cmd);
+    int bufferLength = strlen(cmdQuery) + strlen(ATOM_PROMPTS[atomId]) + strlen(ATOM_NAMES[atomId]) + 64;
+    char* cmd = ecalloc(bufferLength, sizeof(char));
+    snprintf(cmd, bufferLength, cmdQuery, XEvents_getInstance()->x11Window, ATOM_PROMPTS[atomId], ATOM_NAMES[atomId]);
+    const char* const pipeData = ATOM_FUNCTIONS[atomId]();
+    spawn(cmd, pipeData);
 }
 
 
-void spawn(const char* cmd[]) {
-    if (!fork()) {
-        setsid();
-        execvp(((char**)cmd)[0], (char**)cmd);
+void spawn(const char* const cmd, const char* const pipeData) {
+    FILE* pipe = popen(cmd, "w");
+    if (!pipe) {
+        die("Failed to run popen");
     }
+    fprintf(pipe, "%s", pipeData);
+    pclose(pipe);
 }

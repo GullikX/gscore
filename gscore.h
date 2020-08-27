@@ -61,7 +61,13 @@ struct Player {
     bool playing;
     double startTime;
     int tempoBpm;
+    char tempoBpmString[64];
 };
+
+
+/* Function declarations needed for config */
+char* Player_getTempoBpmString(void);
+char* Synth_getInstrumentListString(void);
 
 
 /* Configuration */
@@ -143,7 +149,8 @@ GLuint createProgram(void);
 
 /* synth.c */
 Synth* Synth_getInstance(void);
-void Synth_setProgram(int channelId, int programId);
+void Synth_setProgramById(int channelId, int programId);
+void Synth_setProgramByName(int channel, const char* const instrumentName);
 void Synth_noteOn(int key);
 void Synth_noteOffAll(void);
 
@@ -151,7 +158,7 @@ void Synth_noteOffAll(void);
 void die(const char* const message);
 void* ecalloc(size_t nItems, size_t itemSize);
 void spawnSetXProp(int atomId);
-void spawn(const char* cmd[]);
+void spawn(const char* const cmd, const char* const pipeData);
 
 /* xevents.c */
 XEvents* XEvents_getInstance(void);

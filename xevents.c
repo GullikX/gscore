@@ -45,7 +45,7 @@ void XEvents_processXEvents(void) {
             switch (i) {
                 case ATOM_BPM:;
                     int tempoBpm = atoi((char*)propertyValue);
-                    if (tempoBpm > 0) {
+                    if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
                         printf("Setting BPM to %d\n", tempoBpm);
                         Player_setTempoBpm(tempoBpm);
                     }
@@ -53,15 +53,8 @@ void XEvents_processXEvents(void) {
                         printf("Invalid BPM value '%s'\n", propertyValue);
                     }
                     break;
-                case ATOM_SYNTH_PROGRAM:;
-                    int synthProgram = atoi((char*)propertyValue);
-                    if (synthProgram > 0) {
-                        printf("Setting synth program to %d\n", synthProgram);
-                        Synth_setProgram(0, synthProgram);
-                    }
-                    else {
-                        printf("Invalid synth program value '%s'\n", propertyValue);
-                    }
+                case ATOM_SYNTH_PROGRAM:
+                    Synth_setProgramByName(0, (char*)propertyValue);
             }
         }
         XFree(propertyValue);

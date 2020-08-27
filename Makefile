@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -O3 -pedantic-errors -Wall -Wextra -Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11
+CFLAGS=-std=c99 -O3 -pedantic-errors -Wall -Wextra -Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 CFILES=canvas.c config.h gscore.c gscore.h input.c main.c player.c renderer.c synth.c util.c xevents.c
 
 LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lX11

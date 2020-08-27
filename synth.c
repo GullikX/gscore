@@ -21,7 +21,7 @@ Synth* Synth_getInstance(void) {
         die("Failed to load soundfont");
     }
 
-    Synth_setProgram(0, SYNTH_PROGRAM);
+    Synth_setProgramById(0, SYNTH_PROGRAM);
 
     fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
     if (!soundFont) {
@@ -52,11 +52,34 @@ Synth* Synth_getInstance(void) {
 }
 
 
-void Synth_setProgram(int channel, int program) {
+void Synth_setProgramById(int channel, int program) {
+    printf("setProgramById %d\n", program);
     Synth* self = Synth_getInstance();
     if (fluid_synth_program_change(self->fluidSynth, channel, program) == FLUID_FAILED) {
         puts("Error: Failed to set midi program");
     }
+}
+
+
+void Synth_setProgramByName(int channel, const char* const instrumentName) {
+    Synth* self = Synth_getInstance();
+
+    fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
+    if (!soundFont) {
+        die("Soundfont pointer is null");
+    }
+
+    for (int i = 0;; i++) {
+        fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
+        if (!preset) break;
+        if (!strcmp(instrumentName, fluid_preset_get_name(preset))) {
+            printf("Setting instrument to '%s'\n", instrumentName);
+            Synth_setProgramById(channel, i);
+            return;
+        }
+    }
+
+    printf("Error: Invalid instrument name '%s'\n", instrumentName);
 }
 
 
@@ -71,4 +94,10 @@ void Synth_noteOffAll(void) {
     for (int i = 0; i < 128; i++) {
         fluid_synth_noteoff(self->fluidSynth, 0, i);
     }
+}
+
+
+char* Synth_getInstrumentListString(void) {
+    Synth* self = Synth_getInstance();
+    return self->instrumentListString;
 }
