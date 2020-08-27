@@ -79,6 +79,9 @@ void Input_cursorPosCallback(GLFWwindow* window, double x, double y) {
     (void)window;
     bool updated = Canvas_updateCursorPosition(x, y);
     if (updated) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            Canvas_dragNote();
+        }
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             Canvas_removeNote();
         }

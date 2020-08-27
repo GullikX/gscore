@@ -4,6 +4,7 @@ Canvas* Canvas_getInstance(void) {
 
     self = ecalloc(1, sizeof(*self));
     self->noteIndex = 0;
+    self->iNoteHeld = -1;
 
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -67,6 +68,7 @@ void Canvas_addNote(void) {
     }
     self->notes[self->noteIndex].iRow = self->cursor.iRow;
     self->notes[self->noteIndex].iColumn = self->cursor.iColumn;
+    self->iNoteHeld = self->noteIndex;
     self->noteIndex++;
     if (self->noteIndex >= CANVAS_MAX_NOTES) {
         die("Too many notes");  /* TODO: Handle this better */
@@ -74,8 +76,20 @@ void Canvas_addNote(void) {
 }
 
 
+void Canvas_dragNote(void) {
+    Canvas* self = Canvas_getInstance();
+    if (self->iNoteHeld < 0) return;
+    int noteLength = self->cursor.iColumn - self->notes[self->iNoteHeld].iColumn + 1;
+    printf("Note length: %d\n", noteLength);
+    if (noteLength > 0) {
+        self->notes[self->iNoteHeld].nColumns = noteLength;
+    }
+}
+
+
 void Canvas_releaseNote(void) {
-    /* TODO: Stop dragging note */
+    Canvas* self = Canvas_getInstance();
+    self->iNoteHeld = -1;
     Synth_noteOffAll();
 }
 
@@ -149,14 +163,23 @@ void Canvas_drawItem(CanvasItem* item, float offset) {
 bool Canvas_updateCursorPosition(float x, float y) {
     Canvas* self = Canvas_getInstance();
 
-    int iColumnNew = Renderer_xCoordToColumnIndex(x);
-    int iRowNew = Renderer_yCoordToRowIndex(y);
-
-    if (self->cursor.iColumn == iColumnNew && self->cursor.iRow == iRowNew) return false;
+    int iColumnOld = self->cursor.iColumn;
+    int iRowOld = self->cursor.iRow;
 
     self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
-    self->cursor.iRow = Renderer_yCoordToRowIndex(y);
-    return true;
+    if (self->iNoteHeld < 0) {
+        self->cursor.iRow = Renderer_yCoordToRowIndex(y);
+    }
+
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+
+    if (self->cursor.iColumn < 0) self->cursor.iColumn = 0;
+    else if (self->cursor.iColumn > nColumns - 1) self->cursor.iColumn = nColumns - 1;
+    if (self->cursor.iRow < 0) self->cursor.iRow = 0;
+    else if (self->cursor.iRow > nRows - 1) self->cursor.iRow = nRows - 1;
+
+    return self->cursor.iColumn == iColumnOld && self->cursor.iRow == iRowOld ? false : true;
 }
 
 

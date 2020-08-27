@@ -82,6 +82,7 @@ struct Canvas {
     CanvasItem notes[CANVAS_MAX_NOTES];
     CanvasItem cursor;
     int noteIndex;
+    int iNoteHeld;
 };
 
 struct Renderer {
@@ -107,6 +108,7 @@ struct XEvents {
 Canvas* Canvas_getInstance(void);
 void Canvas_previewNote(void);
 void Canvas_addNote(void);
+void Canvas_dragNote(void);
 void Canvas_removeNote(void);
 void Canvas_draw(void);
 void Canvas_drawItem(CanvasItem* canvasItem, float offset);
