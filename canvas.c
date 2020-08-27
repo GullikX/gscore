@@ -119,11 +119,6 @@ void Canvas_draw(void) {
         Canvas_drawItem(&(self->gridlinesHorizontal[i]), 0);
     }
 
-    /* Draw player cursor if playing */
-    if (self->playerCursor.iColumn >= 0) {
-        Canvas_drawItem(&(self->playerCursor), 0);
-    }
-
     /* Draw notes */
     for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
         if (self->notes[i].iRow >= 0 && self->notes[i].iColumn >= 0) {

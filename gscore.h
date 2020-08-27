@@ -136,6 +136,7 @@ bool Player_playing(void);
 void Player_start(void);
 void Player_stop(void);
 void Player_update(void);
+void Player_drawCursor(void);
 
 /* renderer.c */
 Renderer* Renderer_getInstance(void);

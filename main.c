@@ -3,6 +3,7 @@ int main(void) {
     while(Renderer_running()) {
         Player_update();
         Canvas_draw();
+        Player_drawCursor();
         Renderer_updateScreen();
     }
 }
