@@ -84,6 +84,24 @@ void Synth_setProgramByName(int channel, const char* const instrumentName) {
 }
 
 
+void Synth_processMessage(MidiMessage* midiMessage) {
+    Synth* self = Synth_getInstance();
+    switch (midiMessage->type) {
+        case FLUID_SEQ_NOTE:
+            break;
+        case FLUID_SEQ_NOTEON:
+            fluid_synth_noteon(self->fluidSynth, midiMessage->channel, midiMessage->pitch, midiMessage->velocity);
+            break;
+        case FLUID_SEQ_NOTEOFF:
+            fluid_synth_noteoff(self->fluidSynth, midiMessage->channel, midiMessage->pitch);
+            break;
+        default:
+            printf("Warning: ignoring invalid midi message type %d\n", midiMessage->type);
+            break;
+    }
+}
+
+
 void Synth_noteOn(int key) {
     Synth* self = Synth_getInstance();
     fluid_synth_noteon(self->fluidSynth, 0, key, 100);

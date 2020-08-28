@@ -24,12 +24,17 @@ bool Player_playing(void) {
 }
 
 
-void Player_start(float startPosition, bool repeat) {
+void Player_start(MidiMessage* midiMessageRoot, float startPosition, bool repeat) {
     Player* self = Player_getInstance();
+    self->midiMessage = midiMessageRoot;
     self->playing = true;
     self->startPosition = startPosition;
     self->repeat = repeat;
     self->startTime = glfwGetTime();
+
+    while (self->midiMessage && self->midiMessage->time < startPosition) {
+        self->midiMessage = self->midiMessage->next;
+    }
     printf("Start playing at time: %f, position %f, repeat %s\n", self->startTime, startPosition, repeat ? "true" : "false");
 }
 
@@ -44,18 +49,21 @@ void Player_stop(void) {
 
 
 void Player_update(void) {
+    if (!Player_playing()) return;
     Player* self = Player_getInstance();
-    if (!self->playing) return;
 
     float time = glfwGetTime() - self->startTime;
     float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
     float progress = self->startPosition + time / totalTime;
 
     if (progress < 1.0f) {
-        Canvas_updatePlayerCursorPosition(progress);
+        while (self->midiMessage && self->midiMessage->time < progress) {
+            Synth_processMessage(self->midiMessage);
+            self->midiMessage = self->midiMessage->next;
+        }
     } else {
-        if (self->repeat) {
-            Player_start(0.0f, true);
+        if (false /*self->repeat*/) {
+            //Player_start(0.0f, true);
         }
         else {
             Player_stop();

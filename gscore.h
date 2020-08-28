@@ -74,6 +74,7 @@ struct Synth {
 };
 
 struct Player {
+    MidiMessage* midiMessage;
     bool playing;
     bool repeat;
     float startTime;
@@ -157,7 +158,7 @@ int main(void);
 Player* Player_getInstance(void);
 void Player_setTempoBpm(int tempoBpm);
 bool Player_playing(void);
-void Player_start(float startPosition, bool repeat);
+void Player_start(MidiMessage* midiMessages, float startPosition, bool repeat);
 void Player_stop(void);
 void Player_update(void);
 void Player_drawCursor(void);
@@ -178,6 +179,7 @@ GLuint createProgram(void);
 Synth* Synth_getInstance(void);
 void Synth_setProgramById(int channelId, int programId);
 void Synth_setProgramByName(int channel, const char* const instrumentName);
+void Synth_processMessage(MidiMessage* midiMessage);
 void Synth_noteOn(int key);
 void Synth_noteOff(int key);
 void Synth_noteOffAll(void);
