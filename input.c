@@ -30,6 +30,9 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         else {
             printf("Key pressed: %d\n", key);
             switch (key) {
+                case GLFW_KEY_TAB:
+                    Application_switchState();
+                    break;
                 case GLFW_KEY_SPACE:;
                     if (Player_playing()) {
                         Player_stop();

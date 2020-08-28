@@ -15,6 +15,7 @@
 typedef struct Vector2 Vector2;
 typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
+typedef struct Application Application;
 typedef struct CanvasItem CanvasItem;
 typedef struct Synth Synth;
 typedef struct Player Player;
@@ -24,6 +25,11 @@ typedef struct XEvents XEvents;
 
 
 /* Type definitions */
+typedef enum {
+    OBJECT_MODE,
+    EDIT_MODE,
+} State;
+
 struct Vector2 {
     float x, y;
 };
@@ -35,6 +41,10 @@ struct Vector4 {
 struct Vertex {
     Vector2 position;
     Vector4 color;
+};
+
+struct Application {
+    State state;
 };
 
 struct CanvasItem {
@@ -101,6 +111,11 @@ struct XEvents {
 
 
 /* Function declarations */
+/* application.c */
+Application* Application_getInstance(void);
+void Application_run(void);
+void Application_switchState(void);
+
 /* canvas.c */
 Canvas* Canvas_getInstance(void);
 void Canvas_previewNote(void);

@@ -1,7 +1,7 @@
 CC=cc
 CFLAGS=-O3 -march=native
 
-CFILES=canvas.c config.h gscore.c gscore.h input.c main.c player.c renderer.c synth.c util.c xevents.c
+CFILES=application.c canvas.c config.h gscore.c gscore.h input.c main.c player.c renderer.c synth.c util.c xevents.c
 LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lX11
 
 WARNINGS=-Wall -Wextra
