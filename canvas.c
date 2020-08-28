@@ -138,23 +138,12 @@ void Canvas_drawItem(CanvasItem* item, float offset) {
     float columnWidth = 2.0f/(BLOCK_MEASURES * MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
-    float x1 = -1.0f + item->iColumn * columnWidth;
-    float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth;
-    float y1 = -(-1.0f + item->iRow * rowHeight);
-    float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight);
+    float x1 = -1.0f + item->iColumn * columnWidth - offset;
+    float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth + offset;
+    float y1 = -(-1.0f + item->iRow * rowHeight) + offset;
+    float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
 
-    Vector2 positions[4];
-    positions[0].x = x1 - offset; positions[0].y = y1 + offset;
-    positions[1].x = x1 - offset; positions[1].y = y2 - offset;
-    positions[2].x = x2 + offset; positions[2].y = y2 - offset;
-    positions[3].x = x2 + offset; positions[3].y = y1 + offset;
-
-    Quad quad;
-    for (int i = 0; i < 4; i++) {
-        quad.vertices[i].position = positions[i];
-        quad.vertices[i].color = item->color;
-    }
-    Renderer_enqueueDraw(&quad);
+    Renderer_drawQuad(x1, x2, y1, y2, item->color);
 }
 
 

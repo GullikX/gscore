@@ -84,17 +84,25 @@ void Renderer_updateScreen(void) {
 }
 
 
-void Renderer_enqueueDraw(Quad* quad) {
+void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color) {
     Renderer* self = Renderer_getInstance();
+    if (self->nVerticesEnqueued >= RENDERER_MAX_VERTICES) {
+        die("Vertex limit reached");  /* TODO: Handle this better */
+    }
+
+    Vector2 positions[4];
+    positions[0].x = x1; positions[0].y = y1;
+    positions[1].x = x1; positions[1].y = y2;
+    positions[2].x = x2; positions[2].y = y2;
+    positions[3].x = x2; positions[3].y = y1;
+
     for (int i = 0; i < 4; i++) {
-        if (self->nVerticesEnqueued >= RENDERER_MAX_VERTICES) {
-            die("Vertex limit reached");  /* TODO: Handle this better */
-        }
-        self->vertices[self->nVerticesEnqueued].position = quad->vertices[i].position;
-        self->vertices[self->nVerticesEnqueued].color = quad->vertices[i].color;
+        self->vertices[self->nVerticesEnqueued].position = positions[i];
+        self->vertices[self->nVerticesEnqueued].color = color;
         self->nVerticesEnqueued++;
     }
 }
+
 
 void Renderer_updateViewportSize(int width, int height) {
     Renderer* self = Renderer_getInstance();

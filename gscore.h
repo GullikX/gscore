@@ -15,7 +15,6 @@
 typedef struct Vector2 Vector2;
 typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
-typedef struct Quad Quad;
 typedef struct CanvasItem CanvasItem;
 typedef struct Synth Synth;
 typedef struct Player Player;
@@ -36,10 +35,6 @@ struct Vector4 {
 struct Vertex {
     Vector2 position;
     Vector4 color;
-};
-
-struct Quad {
-    Vertex vertices[4];
 };
 
 struct CanvasItem {
@@ -144,7 +139,7 @@ Renderer* Renderer_getInstance(void);
 void Renderer_stop(void);
 int Renderer_running(void);
 void Renderer_updateScreen(void);
-void Renderer_enqueueDraw(Quad* quad);
+void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color);
 void Renderer_updateViewportSize(int width, int height);
 int Renderer_xCoordToColumnIndex(int x);
 int Renderer_yCoordToRowIndex(int y);

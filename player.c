@@ -89,19 +89,7 @@ void Player_drawCursor(void) {
     float y1 = -1.0f;
     float y2 = 1.0f;
 
-    Vector2 positions[4];
-    positions[0].x = x1; positions[0].y = y1;
-    positions[1].x = x1; positions[1].y = y2;
-    positions[2].x = x2; positions[2].y = y2;
-    positions[3].x = x2; positions[3].y = y1;
-
-    Quad quad;
-    for (int i = 0; i < 4; i++) {
-        quad.vertices[i].position = positions[i];
-        quad.vertices[i].color = COLOR_CURSOR;
-    }
-
-    Renderer_enqueueDraw(&quad);
+    Renderer_drawQuad(x1, x2, y1, y2, COLOR_CURSOR);
 }
 
 
