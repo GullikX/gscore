@@ -17,11 +17,11 @@ typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
 typedef struct MidiMessage MidiMessage;
 typedef struct Application Application;
-typedef struct CanvasItem CanvasItem;
+typedef struct GridItem GridItem;
 typedef struct Synth Synth;
 typedef struct Player Player;
 typedef struct Renderer Renderer;
-typedef struct Canvas Canvas;
+typedef struct EditView EditView;
 typedef struct XEvents XEvents;
 
 
@@ -58,7 +58,7 @@ struct Application {
     State state;
 };
 
-struct CanvasItem {
+struct GridItem {
     int iRow;
     int iColumn;
     int nRows;
@@ -94,11 +94,11 @@ char* Synth_getInstrumentListString(void);
 
 
 /* Type definitions dependent on configuration */
-struct Canvas {
-    CanvasItem gridlinesVertical[BLOCK_MEASURES];
-    CanvasItem gridlinesHorizontal[OCTAVES];
-    CanvasItem playerCursor;
-    CanvasItem cursor;
+struct EditView {
+    GridItem gridlinesVertical[BLOCK_MEASURES];
+    GridItem gridlinesHorizontal[OCTAVES];
+    GridItem playerCursor;
+    GridItem cursor;
     MidiMessage* midiMessageRoot;
     MidiMessage* midiMessageHeld;
 };
@@ -128,18 +128,18 @@ void Application_run(void);
 void Application_switchState(void);
 
 /* canvas.c */
-Canvas* Canvas_getInstance(void);
-void Canvas_previewNote(void);
-void Canvas_addNote(void);
-void Canvas_dragNote(void);
-void Canvas_removeNote(void);
-void Canvas_draw(void);
-void Canvas_drawItem(CanvasItem* canvasItem, float offset);
-bool Canvas_updateCursorPosition(float x, float y);
-int Canvas_rowIndexToNoteKey(int iRow);
-int Canvas_pitchToRowIndex(int pitch);
-MidiMessage* Canvas_addMidiMessage(int type, float time, int channel, int pitch, int velocity);
-void Canvas_removeMidiMessage(MidiMessage* midiMessage);
+EditView* EditView_getInstance(void);
+void EditView_previewNote(void);
+void EditView_addNote(void);
+void EditView_dragNote(void);
+void EditView_removeNote(void);
+void EditView_draw(void);
+void EditView_drawItem(GridItem* canvasItem, float offset);
+bool EditView_updateCursorPosition(float x, float y);
+int EditView_rowIndexToNoteKey(int iRow);
+int EditView_pitchToRowIndex(int pitch);
+MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitch, int velocity);
+void EditView_removeMidiMessage(MidiMessage* midiMessage);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);

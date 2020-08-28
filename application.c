@@ -17,7 +17,7 @@ void Application_run() {
                 break;
             case EDIT_MODE:
                 Player_update();
-                Canvas_draw();
+                EditView_draw();
                 Player_drawCursor();
                 break;
         }

@@ -1,5 +1,5 @@
-Canvas* Canvas_getInstance(void) {
-    static Canvas* self = NULL;
+EditView* EditView_getInstance(void) {
+    static EditView* self = NULL;
     if (self) return self;
 
     self = ecalloc(1, sizeof(*self));
@@ -50,18 +50,18 @@ Canvas* Canvas_getInstance(void) {
 }
 
 
-void Canvas_previewNote(void) {
-    Canvas* self = Canvas_getInstance();
+void EditView_previewNote(void) {
+    EditView* self = EditView_getInstance();
     if (self->playerCursor.iColumn < 0) {
-        Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+        Synth_noteOn(EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
 
 
-void Canvas_addNote(void) {
-    Canvas* self = Canvas_getInstance();
+void EditView_addNote(void) {
+    EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
-    int pitch = Canvas_rowIndexToNoteKey(self->cursor.iRow);
+    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     int channel = 0;  /* TODO */
     int velocity = 100;  /* TODO */
 
@@ -70,15 +70,15 @@ void Canvas_addNote(void) {
     }
 
     float timeStart = (float)self->cursor.iColumn / (float)nColumns;
-    Canvas_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, channel, pitch, velocity);
+    EditView_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, channel, pitch, velocity);
 
     float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
-    self->midiMessageHeld = Canvas_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, channel, pitch, 0);
+    self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, channel, pitch, 0);
 }
 
 
-void Canvas_dragNote(void) {
-    Canvas* self = Canvas_getInstance();
+void EditView_dragNote(void) {
+    EditView* self = EditView_getInstance();
     if (!self->midiMessageHeld) return;
 
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -87,13 +87,13 @@ void Canvas_dragNote(void) {
     int pitch = self->midiMessageHeld->pitch;
     int velocity = self->midiMessageHeld->velocity;
 
-    Canvas_removeMidiMessage(self->midiMessageHeld);
-    self->midiMessageHeld = Canvas_addMidiMessage(FLUID_SEQ_NOTEOFF, time, channel, pitch, velocity);
+    EditView_removeMidiMessage(self->midiMessageHeld);
+    self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, time, channel, pitch, velocity);
 }
 
 
-void Canvas_releaseNote(void) {
-    Canvas* self = Canvas_getInstance();
+void EditView_releaseNote(void) {
+    EditView* self = EditView_getInstance();
     self->midiMessageHeld = NULL;
     if (!Player_playing()) {
         Synth_noteOffAll();
@@ -101,11 +101,11 @@ void Canvas_releaseNote(void) {
 }
 
 
-void Canvas_removeNote(void) {
-    Canvas* self = Canvas_getInstance();
+void EditView_removeNote(void) {
+    EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
-    int pitch = Canvas_rowIndexToNoteKey(self->cursor.iRow);
+    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
     MidiMessage* midiMessage = self->midiMessageRoot;
     while (midiMessage) {
@@ -114,8 +114,8 @@ void Canvas_removeNote(void) {
             while (midiMessageOther) {
                 if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
                     if (midiMessage->pitch == pitch && midiMessage->time <= time && midiMessageOther->time > time) {
-                        Canvas_removeMidiMessage(midiMessage);
-                        Canvas_removeMidiMessage(midiMessageOther);
+                        EditView_removeMidiMessage(midiMessage);
+                        EditView_removeMidiMessage(midiMessageOther);
                     }
                     break;
                 }
@@ -127,17 +127,17 @@ void Canvas_removeNote(void) {
 }
 
 
-void Canvas_draw(void) {
-    Canvas* self = Canvas_getInstance();
+void EditView_draw(void) {
+    EditView* self = EditView_getInstance();
 
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
-        Canvas_drawItem(&(self->gridlinesVertical[i]), 0);
+        EditView_drawItem(&(self->gridlinesVertical[i]), 0);
     }
 
     /* Horizontal gridlines marking start of octaves */
     for (int i = 0; i < OCTAVES; i++) {
-        Canvas_drawItem(&(self->gridlinesHorizontal[i]), 0);
+        EditView_drawItem(&(self->gridlinesHorizontal[i]), 0);
     }
 
     /* Draw notes */
@@ -150,15 +150,15 @@ void Canvas_draw(void) {
                     float viewportWidth = Renderer_getInstance()->viewportWidth;
                     int iColumnStart = Renderer_xCoordToColumnIndex(midiMessage->time * viewportWidth);
                     int iColumnEnd = Renderer_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
-                    int iRow = Canvas_pitchToRowIndex(midiMessage->pitch);
+                    int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
 
-                    CanvasItem item;
+                    GridItem item;
                     item.iRow = iRow;
                     item.iColumn = iColumnStart;
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
                     item.color = COLOR_NOTES;
-                    Canvas_drawItem(&item, NOTE_SIZE_OFFSET);
+                    EditView_drawItem(&item, NOTE_SIZE_OFFSET);
 
                     break;
                 }
@@ -169,11 +169,11 @@ void Canvas_draw(void) {
     }
 
     /* Draw cursor */
-    Canvas_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
+    EditView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
 }
 
 
-void Canvas_drawItem(CanvasItem* item, float offset) {
+void EditView_drawItem(GridItem* item, float offset) {
     float columnWidth = 2.0f/(BLOCK_MEASURES * MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
@@ -186,8 +186,8 @@ void Canvas_drawItem(CanvasItem* item, float offset) {
 }
 
 
-bool Canvas_updateCursorPosition(float x, float y) {
-    Canvas* self = Canvas_getInstance();
+bool EditView_updateCursorPosition(float x, float y) {
+    EditView* self = EditView_getInstance();
 
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
@@ -209,18 +209,18 @@ bool Canvas_updateCursorPosition(float x, float y) {
 }
 
 
-int Canvas_rowIndexToNoteKey(int iRow) {
+int EditView_rowIndexToNoteKey(int iRow) {
     return 95 - iRow;
 }
 
 
-int Canvas_pitchToRowIndex(int pitch) {
+int EditView_pitchToRowIndex(int pitch) {
     return 95 - pitch;
 }
 
 
-MidiMessage* Canvas_addMidiMessage(int type, float time, int channel, int pitch, int velocity) {
-    Canvas* self = Canvas_getInstance();
+MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitch, int velocity) {
+    EditView* self = EditView_getInstance();
     MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
     midiMessage->type = type;
     midiMessage->time = time;
@@ -243,7 +243,7 @@ MidiMessage* Canvas_addMidiMessage(int type, float time, int channel, int pitch,
 }
 
 
-void Canvas_removeMidiMessage(MidiMessage* midiMessage) {
+void EditView_removeMidiMessage(MidiMessage* midiMessage) {
     if (!midiMessage) return;
     midiMessage->prev->next = midiMessage->next;
     if (midiMessage->next) midiMessage->next->prev = midiMessage->prev;

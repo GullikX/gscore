@@ -47,7 +47,7 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
                             glfwGetWindowSize(window, &windowWidth, &windowHeight);
                             startPosition = (float)cursorX / (float)windowWidth;
                         }
-                        Player_start(Canvas_getInstance()->midiMessageRoot, startPosition, repeat);
+                        Player_start(EditView_getInstance()->midiMessageRoot, startPosition, repeat);
                     }
                     return;
                 case GLFW_KEY_ESCAPE:
@@ -65,26 +65,26 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 puts("Left mouse button pressed!");
-                Canvas_addNote();
+                EditView_addNote();
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 puts("Middle mouse button pressed!");
-                Canvas_previewNote();
+                EditView_previewNote();
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button pressed!");
-                Canvas_removeNote();
+                EditView_removeNote();
                 break;
         }
     } else if (action == GLFW_RELEASE) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 puts("Left mouse button released!");
-                Canvas_releaseNote();
+                EditView_releaseNote();
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 puts("Middle mouse button released!");
-                Canvas_releaseNote();
+                EditView_releaseNote();
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button released!");
@@ -96,16 +96,16 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
 
 void Input_cursorPosCallback(GLFWwindow* window, double x, double y) {
     (void)window;
-    bool updated = Canvas_updateCursorPosition(x, y);
+    bool updated = EditView_updateCursorPosition(x, y);
     if (updated) {
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-            Canvas_dragNote();
+            EditView_dragNote();
         }
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-            Canvas_removeNote();
+            EditView_removeNote();
         }
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
-            Canvas_previewNote();
+            EditView_previewNote();
         }
     }
 }
