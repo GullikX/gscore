@@ -59,6 +59,7 @@ struct Synth {
 
 struct Player {
     bool playing;
+    bool repeat;
     double startTime;
     int tempoBpm;
     char tempoBpmString[64];
@@ -131,9 +132,9 @@ int main(void);
 /* player.c */
 Player* Player_getInstance(void);
 void Player_setTempoBpm(int tempoBpm);
-void Player_toggle(void);
+void Player_toggle(bool repeat);
 bool Player_playing(void);
-void Player_start(void);
+void Player_start(bool repeat);
 void Player_stop(void);
 void Player_update(void);
 void Player_drawCursor(void);

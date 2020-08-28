@@ -28,8 +28,9 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         else {
             printf("Key pressed: %d\n", key);
             switch (key) {
-                case GLFW_KEY_SPACE:
-                    Player_toggle();
+                case GLFW_KEY_SPACE:;
+                    bool repeat = mods == GLFW_MOD_SHIFT;
+                    Player_toggle(repeat);
                     return;
                 case GLFW_KEY_ESCAPE:
                     Player_stop();

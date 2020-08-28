@@ -4,6 +4,7 @@ Player* Player_getInstance(void) {
 
     self = ecalloc(1, sizeof(*self));
     self->playing = false;
+    self->repeat = false;
     self->startTime = 0;
     Player_setTempoBpm(TEMPO_BPM);
 
@@ -18,12 +19,12 @@ void Player_setTempoBpm(int tempoBpm) {
 }
 
 
-void Player_toggle(void) {
+void Player_toggle(bool repeat) {
     if (Player_playing()) {
         Player_stop();
     }
     else {
-        Player_start();
+        Player_start(repeat);
     }
 }
 
@@ -33,11 +34,12 @@ bool Player_playing(void) {
 }
 
 
-void Player_start(void) {
+void Player_start(bool repeat) {
     Player* self = Player_getInstance();
     self->playing = true;
+    self->repeat = repeat;
     self->startTime = glfwGetTime();
-    printf("Start playing at time: %f\n", self->startTime);
+    printf("Start playing at time: %f, repeat %s\n", self->startTime, repeat ? "true" : "false");
 }
 
 
@@ -45,6 +47,7 @@ void Player_stop(void) {
     puts("Stop playing");
     Player* self = Player_getInstance();
     self->playing = false;
+    self->repeat = false;
     Canvas_resetPlayerCursorPosition();
 }
 
@@ -62,7 +65,12 @@ void Player_update(void) {
     if (cursorX < viewportWidth) {
         Canvas_updatePlayerCursorPosition(cursorX);
     } else {
-        Player_stop();
+        if (self->repeat) {
+            Player_start(true);
+        }
+        else {
+            Player_stop();
+        }
     }
 }
 
