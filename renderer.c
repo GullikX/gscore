@@ -108,7 +108,6 @@ void Renderer_updateViewportSize(int width, int height) {
     Renderer* self = Renderer_getInstance();
     self->viewportWidth = width;
     self->viewportHeight = height;
-
     glViewport(0, 0, width, height);
 }
 

@@ -81,7 +81,6 @@ void Player_drawCursor(void) {
 
     double time = glfwGetTime() - self->startTime;
     double totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
-
     float cursorX = -1.0f + 2.0f * (float)time / totalTime;
 
     float x1 = cursorX;
