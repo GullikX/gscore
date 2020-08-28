@@ -170,20 +170,21 @@ bool Canvas_updateCursorPosition(float x, float y) {
 }
 
 
-void Canvas_updatePlayerCursorPosition(float x) {
+void Canvas_updatePlayerCursorPosition(float progress) {
     Canvas* self = Canvas_getInstance();
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int iColumn = nColumns * progress;
 
-    int iColumnNew = Renderer_xCoordToColumnIndex(x);
-    if (self->playerCursor.iColumn != iColumnNew) {
+    if (self->playerCursor.iColumn != iColumn) {
         for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-            if (self->notes[i].iColumn == iColumnNew) {
+            if (self->notes[i].iColumn == iColumn) {
                 Synth_noteOn(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
             }
-            else if (self->notes[i].iColumn + self->notes[i].nColumns == iColumnNew) {
+            else if (self->notes[i].iColumn + self->notes[i].nColumns == iColumn) {
                 Synth_noteOff(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
             }
         }
-        self->playerCursor.iColumn = iColumnNew;
+        self->playerCursor.iColumn = iColumn;
     }
 }
 

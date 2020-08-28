@@ -56,14 +56,12 @@ void Player_update(void) {
     Player* self = Player_getInstance();
     if (!self->playing) return;
 
-    double time = glfwGetTime() - self->startTime;
-    double totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
+    float time = glfwGetTime() - self->startTime;
+    float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
+    float progress = time / totalTime;
 
-    int viewportWidth = Renderer_getInstance()->viewportWidth;
-    float cursorX = (float)viewportWidth * time / totalTime;
-
-    if (cursorX < viewportWidth) {
-        Canvas_updatePlayerCursorPosition(cursorX);
+    if (progress < 1.0f) {
+        Canvas_updatePlayerCursorPosition(progress);
     } else {
         if (self->repeat) {
             Player_start(true);
