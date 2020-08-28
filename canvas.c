@@ -158,7 +158,7 @@ void Canvas_draw(void) {
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
                     item.color = COLOR_NOTES;
-                    Canvas_drawItem(&item, 0.0f);
+                    Canvas_drawItem(&item, NOTE_SIZE_OFFSET);
 
                     break;
                 }
