@@ -15,6 +15,7 @@
 typedef struct Vector2 Vector2;
 typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
+typedef struct MidiMessage MidiMessage;
 typedef struct Application Application;
 typedef struct CanvasItem CanvasItem;
 typedef struct Synth Synth;
@@ -41,6 +42,16 @@ struct Vector4 {
 struct Vertex {
     Vector2 position;
     Vector4 color;
+};
+
+struct MidiMessage {
+    int type;
+    float time;
+    int channel;
+    int pitch;
+    int velocity;
+    MidiMessage* next;
+    MidiMessage* prev;
 };
 
 struct Application {
@@ -86,10 +97,9 @@ struct Canvas {
     CanvasItem gridlinesVertical[BLOCK_MEASURES];
     CanvasItem gridlinesHorizontal[OCTAVES];
     CanvasItem playerCursor;
-    CanvasItem notes[CANVAS_MAX_NOTES];
     CanvasItem cursor;
-    int noteIndex;
-    int iNoteHeld;
+    MidiMessage* midiMessageRoot;
+    MidiMessage* midiMessageHeld;
 };
 
 struct Renderer {
@@ -128,6 +138,7 @@ bool Canvas_updateCursorPosition(float x, float y);
 void Canvas_updatePlayerCursorPosition(float x);
 void Canvas_resetPlayerCursorPosition(void);
 int Canvas_rowIndexToNoteKey(int iRow);
+int Canvas_pitchToRowIndex(int pitch);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);

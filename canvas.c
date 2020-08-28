@@ -3,8 +3,6 @@ Canvas* Canvas_getInstance(void) {
     if (self) return self;
 
     self = ecalloc(1, sizeof(*self));
-    self->noteIndex = 0;
-    self->iNoteHeld = -1;
 
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -31,13 +29,16 @@ Canvas* Canvas_getInstance(void) {
     self->playerCursor.nColumns = 1;
     self->playerCursor.color = COLOR_CURSOR;
 
-    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-        self->notes[i].iRow = -1;
-        self->notes[i].iColumn = -1;
-        self->notes[i].nRows = 1;
-        self->notes[i].nColumns = 1;
-        self->notes[i].color = COLOR_NOTES;
-    }
+    self->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
+    self->midiMessageRoot->type = FLUID_SEQ_NOTE;
+    self->midiMessageRoot->time = -1.0f;
+    self->midiMessageRoot->channel = -1;
+    self->midiMessageRoot->pitch = -1;
+    self->midiMessageRoot->velocity = -1;
+    self->midiMessageRoot->next = NULL;
+    self->midiMessageRoot->prev = NULL;
+
+    self->midiMessageHeld = NULL;
 
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
@@ -59,53 +60,76 @@ void Canvas_previewNote(void) {
 
 void Canvas_addNote(void) {
     Canvas* self = Canvas_getInstance();
-    if (self->playerCursor.iColumn < 0) {
-        Synth_noteOn(Canvas_rowIndexToNoteKey(self->cursor.iRow));
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int pitch = Canvas_rowIndexToNoteKey(self->cursor.iRow);
+
+    if (!Player_playing()) {
+        Synth_noteOn(pitch);
     }
-    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-        if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
-            return;
+
+    MidiMessage* midiMessageNoteOn = ecalloc(1, sizeof(MidiMessage));
+    {
+        float timeStart = (float)self->cursor.iColumn / (float)nColumns;
+        midiMessageNoteOn->type = FLUID_SEQ_NOTEON;
+        midiMessageNoteOn->time = timeStart;
+        midiMessageNoteOn->channel = 0;
+        midiMessageNoteOn->pitch = pitch;
+        midiMessageNoteOn->velocity = 100;
+        midiMessageNoteOn->next = NULL;
+        midiMessageNoteOn->prev = NULL;
+
+        MidiMessage* midiMessage = self->midiMessageRoot;
+        while (midiMessage->next && midiMessage->next->time < midiMessageNoteOn->time) {
+            midiMessage = midiMessage->next;
         }
+        midiMessageNoteOn->next = midiMessage->next;
+        midiMessageNoteOn->prev = midiMessage;
+        if (midiMessage->next) midiMessage->next->prev = midiMessageNoteOn;
+        midiMessage->next = midiMessageNoteOn;
     }
-    self->notes[self->noteIndex].iRow = self->cursor.iRow;
-    self->notes[self->noteIndex].iColumn = self->cursor.iColumn;
-    self->iNoteHeld = self->noteIndex;
-    self->noteIndex++;
-    if (self->noteIndex >= CANVAS_MAX_NOTES) {
-        die("Too many notes");  /* TODO: Handle this better */
+
+    MidiMessage* midiMessageNoteOff = ecalloc(1, sizeof(MidiMessage));
+    {
+        float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
+        midiMessageNoteOff->type = FLUID_SEQ_NOTEOFF;
+        midiMessageNoteOff->time = timeEnd;
+        midiMessageNoteOff->channel = 0;
+        midiMessageNoteOff->pitch = pitch;
+        midiMessageNoteOff->velocity = 0;
+        midiMessageNoteOff->next = NULL;
+        midiMessageNoteOff->prev = NULL;
+
+        MidiMessage* midiMessage = self->midiMessageRoot;
+        while (midiMessage->next && midiMessage->next->time < midiMessageNoteOff->time) {
+            midiMessage = midiMessage->next;
+        }
+        midiMessageNoteOff->next = midiMessage->next;
+        midiMessageNoteOff->prev = midiMessage;
+        if (midiMessage->next) midiMessage->next->prev = midiMessageNoteOff;
+        midiMessage->next = midiMessageNoteOff;
+
+        self->midiMessageHeld = midiMessageNoteOff;
     }
 }
 
 
 void Canvas_dragNote(void) {
     Canvas* self = Canvas_getInstance();
-    if (self->iNoteHeld < 0) return;
-    int noteLength = self->cursor.iColumn - self->notes[self->iNoteHeld].iColumn + 1;
-    printf("Note length: %d\n", noteLength);
-    if (noteLength > 0) {
-        self->notes[self->iNoteHeld].nColumns = noteLength;
-    }
+    if (!self->midiMessageHeld) return;
 }
 
 
 void Canvas_releaseNote(void) {
     Canvas* self = Canvas_getInstance();
-    self->iNoteHeld = -1;
-    if (self->playerCursor.iColumn < 0) {
+    self->midiMessageHeld = NULL;
+    if (!Player_playing()) {
         Synth_noteOffAll();
     }
 }
 
 
 void Canvas_removeNote(void) {
-    Canvas* self = Canvas_getInstance();
-    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-        if (self->notes[i].iRow == self->cursor.iRow && self->notes[i].iColumn == self->cursor.iColumn) {
-            self->notes[i].iRow = -1;
-            self->notes[i].iColumn = -1;
-            break;
-        }
-    }
+    /* TODO */
 }
 
 
@@ -123,10 +147,31 @@ void Canvas_draw(void) {
     }
 
     /* Draw notes */
-    for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-        if (self->notes[i].iRow >= 0 && self->notes[i].iColumn >= 0) {
-            Canvas_drawItem(&(self->notes[i]), 0);
+    MidiMessage* midiMessage = self->midiMessageRoot;
+    while (midiMessage) {
+        if (midiMessage->type == FLUID_SEQ_NOTEON) {
+            MidiMessage* midiMessageOther = midiMessage;
+            while (midiMessageOther) {
+                if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
+                    float viewportWidth = Renderer_getInstance()->viewportWidth;
+                    int iColumnStart = Renderer_xCoordToColumnIndex(midiMessage->time * viewportWidth);
+                    int iColumnEnd = Renderer_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
+                    int iRow = Canvas_pitchToRowIndex(midiMessage->pitch);
+
+                    CanvasItem item;
+                    item.iRow = iRow;
+                    item.iColumn = iColumnStart;
+                    item.nRows = 1;
+                    item.nColumns = iColumnEnd - iColumnStart;
+                    item.color = COLOR_NOTES;
+                    Canvas_drawItem(&item, 0.0f);
+
+                    break;
+                }
+                midiMessageOther = midiMessageOther->next;
+            }
         }
+        midiMessage = midiMessage->next;
     }
 
     /* Draw cursor */
@@ -154,7 +199,7 @@ bool Canvas_updateCursorPosition(float x, float y) {
     int iRowOld = self->cursor.iRow;
 
     self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
-    if (self->iNoteHeld < 0) {
+    if (!self->midiMessageHeld) {
         self->cursor.iRow = Renderer_yCoordToRowIndex(y);
     }
 
@@ -171,21 +216,7 @@ bool Canvas_updateCursorPosition(float x, float y) {
 
 
 void Canvas_updatePlayerCursorPosition(float progress) {
-    Canvas* self = Canvas_getInstance();
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
-    int iColumn = nColumns * progress;
-
-    if (self->playerCursor.iColumn != iColumn) {
-        for (int i = 0; i < CANVAS_MAX_NOTES; i++) {
-            if (self->notes[i].iColumn == iColumn) {
-                Synth_noteOn(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
-            }
-            else if (self->notes[i].iColumn + self->notes[i].nColumns == iColumn) {
-                Synth_noteOff(Canvas_rowIndexToNoteKey(self->notes[i].iRow));
-            }
-        }
-        self->playerCursor.iColumn = iColumn;
-    }
+    /* TODO */
 }
 
 
@@ -197,5 +228,9 @@ void Canvas_resetPlayerCursorPosition(void) {
 
 
 int Canvas_rowIndexToNoteKey(int iRow) {
-    return 95-iRow;
+    return 95 - iRow;
+}
+
+int Canvas_pitchToRowIndex(int pitch) {
+    return 95 - pitch;
 }
