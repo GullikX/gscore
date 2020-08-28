@@ -1,6 +1,6 @@
 #include "gscore.h"
 #include "application.c"
-#include "canvas.c"
+#include "editview.c"
 #include "input.c"
 #include "main.c"
 #include "player.c"

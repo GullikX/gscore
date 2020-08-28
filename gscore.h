@@ -127,14 +127,14 @@ Application* Application_getInstance(void);
 void Application_run(void);
 void Application_switchState(void);
 
-/* canvas.c */
+/* editview.c */
 EditView* EditView_getInstance(void);
 void EditView_previewNote(void);
 void EditView_addNote(void);
 void EditView_dragNote(void);
 void EditView_removeNote(void);
 void EditView_draw(void);
-void EditView_drawItem(GridItem* canvasItem, float offset);
+void EditView_drawItem(GridItem* item, float offset);
 bool EditView_updateCursorPosition(float x, float y);
 int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
