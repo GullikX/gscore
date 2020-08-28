@@ -62,6 +62,7 @@ void Player_stop(void) {
     Player* self = Player_getInstance();
     self->playing = false;
     self->repeat = false;
+    Synth_noteOffAll();
 }
 
 
