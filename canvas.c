@@ -73,13 +73,22 @@ void Canvas_addNote(void) {
     Canvas_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, channel, pitch, velocity);
 
     float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
-    self->midiMessageHeld = Canvas_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, channel, pitch, velocity);
+    self->midiMessageHeld = Canvas_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, channel, pitch, 0);
 }
 
 
 void Canvas_dragNote(void) {
     Canvas* self = Canvas_getInstance();
     if (!self->midiMessageHeld) return;
+
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    float time = (float)(self->cursor.iColumn + 1) / (float)nColumns;
+    int channel = self->midiMessageHeld->channel;
+    int pitch = self->midiMessageHeld->pitch;
+    int velocity = self->midiMessageHeld->velocity;
+
+    Canvas_removeMidiMessage(self->midiMessageHeld);
+    self->midiMessageHeld = Canvas_addMidiMessage(FLUID_SEQ_NOTEOFF, time, channel, pitch, velocity);
 }
 
 
@@ -222,4 +231,12 @@ MidiMessage* Canvas_addMidiMessage(int type, float time, int channel, int pitch,
     midiMessageOther->next = midiMessage;
 
     return midiMessage;
+}
+
+
+void Canvas_removeMidiMessage(MidiMessage* midiMessage) {
+    if (!midiMessage) return;
+    midiMessage->prev->next = midiMessage->next;
+    if (midiMessage->next) midiMessage->next->prev = midiMessage->prev;
+    free(midiMessage);
 }
