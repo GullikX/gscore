@@ -44,7 +44,6 @@ void Player_stop(void) {
     Player* self = Player_getInstance();
     self->playing = false;
     self->repeat = false;
-    Canvas_resetPlayerCursorPosition();
 }
 
 

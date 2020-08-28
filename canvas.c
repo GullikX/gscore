@@ -188,18 +188,6 @@ bool Canvas_updateCursorPosition(float x, float y) {
 }
 
 
-void Canvas_updatePlayerCursorPosition(float progress) {
-    /* TODO */
-}
-
-
-void Canvas_resetPlayerCursorPosition(void) {
-    Canvas* self = Canvas_getInstance();
-    self->playerCursor.iColumn = -1;
-    Synth_noteOffAll();
-}
-
-
 int Canvas_rowIndexToNoteKey(int iRow) {
     return 95 - iRow;
 }

@@ -136,8 +136,6 @@ void Canvas_removeNote(void);
 void Canvas_draw(void);
 void Canvas_drawItem(CanvasItem* canvasItem, float offset);
 bool Canvas_updateCursorPosition(float x, float y);
-void Canvas_updatePlayerCursorPosition(float x);
-void Canvas_resetPlayerCursorPosition(void);
 int Canvas_rowIndexToNoteKey(int iRow);
 int Canvas_pitchToRowIndex(int pitch);
 MidiMessage* Canvas_addMidiMessage(int type, float time, int channel, int pitch, int velocity);
