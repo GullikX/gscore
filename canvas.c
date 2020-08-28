@@ -62,54 +62,18 @@ void Canvas_addNote(void) {
     Canvas* self = Canvas_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = Canvas_rowIndexToNoteKey(self->cursor.iRow);
+    int channel = 0;  /* TODO */
+    int velocity = 100;  /* TODO */
 
     if (!Player_playing()) {
         Synth_noteOn(pitch);
     }
 
-    MidiMessage* midiMessageNoteOn = ecalloc(1, sizeof(MidiMessage));
-    {
-        float timeStart = (float)self->cursor.iColumn / (float)nColumns;
-        midiMessageNoteOn->type = FLUID_SEQ_NOTEON;
-        midiMessageNoteOn->time = timeStart;
-        midiMessageNoteOn->channel = 0;
-        midiMessageNoteOn->pitch = pitch;
-        midiMessageNoteOn->velocity = 100;
-        midiMessageNoteOn->next = NULL;
-        midiMessageNoteOn->prev = NULL;
+    float timeStart = (float)self->cursor.iColumn / (float)nColumns;
+    Canvas_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, channel, pitch, velocity);
 
-        MidiMessage* midiMessage = self->midiMessageRoot;
-        while (midiMessage->next && midiMessage->next->time < midiMessageNoteOn->time) {
-            midiMessage = midiMessage->next;
-        }
-        midiMessageNoteOn->next = midiMessage->next;
-        midiMessageNoteOn->prev = midiMessage;
-        if (midiMessage->next) midiMessage->next->prev = midiMessageNoteOn;
-        midiMessage->next = midiMessageNoteOn;
-    }
-
-    MidiMessage* midiMessageNoteOff = ecalloc(1, sizeof(MidiMessage));
-    {
-        float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
-        midiMessageNoteOff->type = FLUID_SEQ_NOTEOFF;
-        midiMessageNoteOff->time = timeEnd;
-        midiMessageNoteOff->channel = 0;
-        midiMessageNoteOff->pitch = pitch;
-        midiMessageNoteOff->velocity = 0;
-        midiMessageNoteOff->next = NULL;
-        midiMessageNoteOff->prev = NULL;
-
-        MidiMessage* midiMessage = self->midiMessageRoot;
-        while (midiMessage->next && midiMessage->next->time < midiMessageNoteOff->time) {
-            midiMessage = midiMessage->next;
-        }
-        midiMessageNoteOff->next = midiMessage->next;
-        midiMessageNoteOff->prev = midiMessage;
-        if (midiMessage->next) midiMessage->next->prev = midiMessageNoteOff;
-        midiMessage->next = midiMessageNoteOff;
-
-        self->midiMessageHeld = midiMessageNoteOff;
-    }
+    float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
+    self->midiMessageHeld = Canvas_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, channel, pitch, velocity);
 }
 
 
@@ -231,6 +195,31 @@ int Canvas_rowIndexToNoteKey(int iRow) {
     return 95 - iRow;
 }
 
+
 int Canvas_pitchToRowIndex(int pitch) {
     return 95 - pitch;
+}
+
+
+MidiMessage* Canvas_addMidiMessage(int type, float time, int channel, int pitch, int velocity) {
+    Canvas* self = Canvas_getInstance();
+    MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
+    midiMessage->type = type;
+    midiMessage->time = time;
+    midiMessage->channel = channel;
+    midiMessage->pitch = pitch;
+    midiMessage->velocity = velocity;
+    midiMessage->next = NULL;
+    midiMessage->prev = NULL;
+
+    MidiMessage* midiMessageOther = self->midiMessageRoot;
+    while (midiMessageOther->next && midiMessageOther->next->time < midiMessage->time) {
+        midiMessageOther = midiMessageOther->next;
+    }
+    midiMessage->next = midiMessageOther->next;
+    midiMessage->prev = midiMessageOther;
+    if (midiMessageOther->next) midiMessageOther->next->prev = midiMessage;
+    midiMessageOther->next = midiMessage;
+
+    return midiMessage;
 }
