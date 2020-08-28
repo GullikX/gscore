@@ -9,6 +9,8 @@ void Input_setupCallbacks(GLFWwindow* window) {
 
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window; (void)scancode; (void)action; (void)mods;
+    bool modControl = mods & GLFW_MOD_CONTROL;
+    bool modShift = mods & GLFW_MOD_SHIFT;
     if (action == GLFW_PRESS) {
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
@@ -29,8 +31,21 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_SPACE:;
-                    bool repeat = mods == GLFW_MOD_SHIFT;
-                    Player_toggle(repeat);
+                    if (Player_playing()) {
+                        Player_stop();
+                    }
+                    else {
+                        bool repeat = modShift;
+                        float startPosition = 0.0f;
+                        if (modControl) {
+                            double cursorX, cursorY;
+                            glfwGetCursorPos(window, &cursorX, &cursorY);
+                            int windowWidth, windowHeight;
+                            glfwGetWindowSize(window, &windowWidth, &windowHeight);
+                            startPosition = (float)cursorX / (float)windowWidth;
+                        }
+                        Player_start(startPosition, repeat);
+                    }
                     return;
                 case GLFW_KEY_ESCAPE:
                     Player_stop();

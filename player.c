@@ -19,27 +19,18 @@ void Player_setTempoBpm(int tempoBpm) {
 }
 
 
-void Player_toggle(bool repeat) {
-    if (Player_playing()) {
-        Player_stop();
-    }
-    else {
-        Player_start(repeat);
-    }
-}
-
-
 bool Player_playing(void) {
     return Player_getInstance()->playing;
 }
 
 
-void Player_start(bool repeat) {
+void Player_start(float startPosition, bool repeat) {
     Player* self = Player_getInstance();
     self->playing = true;
+    self->startPosition = startPosition;
     self->repeat = repeat;
     self->startTime = glfwGetTime();
-    printf("Start playing at time: %f, repeat %s\n", self->startTime, repeat ? "true" : "false");
+    printf("Start playing at time: %f, position %f, repeat %s\n", self->startTime, startPosition, repeat ? "true" : "false");
 }
 
 
@@ -58,13 +49,13 @@ void Player_update(void) {
 
     float time = glfwGetTime() - self->startTime;
     float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
-    float progress = time / totalTime;
+    float progress = self->startPosition + time / totalTime;
 
     if (progress < 1.0f) {
         Canvas_updatePlayerCursorPosition(progress);
     } else {
         if (self->repeat) {
-            Player_start(true);
+            Player_start(0.0f, true);
         }
         else {
             Player_stop();
@@ -77,9 +68,10 @@ void Player_drawCursor(void) {
     Player* self = Player_getInstance();
     if (!self->playing) return;
 
-    double time = glfwGetTime() - self->startTime;
-    double totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
-    float cursorX = -1.0f + 2.0f * (float)time / totalTime;
+    float time = glfwGetTime() - self->startTime;
+    float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
+    float progress = self->startPosition + time / totalTime;
+    float cursorX = -1.0f + 2.0f * progress;
 
     float x1 = cursorX;
     float x2 = cursorX + PLAYER_CURSOR_WIDTH;
