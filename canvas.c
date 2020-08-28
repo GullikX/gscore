@@ -102,7 +102,28 @@ void Canvas_releaseNote(void) {
 
 
 void Canvas_removeNote(void) {
-    /* TODO */
+    Canvas* self = Canvas_getInstance();
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    float time = (float)self->cursor.iColumn / (float)nColumns;
+    int pitch = Canvas_rowIndexToNoteKey(self->cursor.iRow);
+
+    MidiMessage* midiMessage = self->midiMessageRoot;
+    while (midiMessage) {
+        if (midiMessage->type == FLUID_SEQ_NOTEON) {
+            MidiMessage* midiMessageOther = midiMessage;
+            while (midiMessageOther) {
+                if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
+                    if (midiMessage->pitch == pitch && midiMessage->time <= time && midiMessageOther->time > time) {
+                        Canvas_removeMidiMessage(midiMessage);
+                        Canvas_removeMidiMessage(midiMessageOther);
+                    }
+                    break;
+                }
+                midiMessageOther = midiMessageOther->next;
+            }
+        }
+        midiMessage = midiMessage->next;
+    }
 }
 
 
