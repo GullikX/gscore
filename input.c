@@ -26,7 +26,93 @@ void Input_setupCallbacks(GLFWwindow* window) {
 
 
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    (void)window; (void)scancode; (void)action; (void)mods;
+    switch (Application_getState()) {
+        case OBJECT_MODE:
+            Input_keyCallbackObjectMode(window, key, scancode, action, mods);
+            break;
+        case EDIT_MODE:
+            Input_keyCallbackEditMode(window, key, scancode, action, mods);
+            break;
+    }
+}
+
+
+void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+    switch (Application_getState()) {
+        case OBJECT_MODE:
+            Input_mouseButtonCallbackObjectMode(window, button, action, mods);
+            break;
+        case EDIT_MODE:
+            Input_mouseButtonCallbackEditMode(window, button, action, mods);
+            break;
+    }
+}
+
+
+void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
+    switch (Application_getState()) {
+        case OBJECT_MODE:
+            Input_cursorPosCallbackObjectMode(window, xpos, ypos);
+            break;
+        case EDIT_MODE:
+            Input_cursorPosCallbackEditMode(window, xpos, ypos);
+            break;
+    }
+}
+
+
+void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+    (void)window;
+    printf("Mouse scroll: (%f, %f)\n", xoffset, yoffset);
+}
+
+
+void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
+    (void)window;
+    printf("Window size updated: (%d, %d)\n", width, height);
+    Renderer_updateViewportSize(width, height);
+}
+
+
+/* Object mode */
+void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    (void)window; (void)mods;
+    if (action == GLFW_PRESS) {
+        const char* const keyName = glfwGetKeyName(key, scancode);
+        if (keyName) {
+            printf("Key pressed: %s\n", keyName);
+            switch (keyName[0]) {
+                case 'q':
+                    Renderer_stop();
+                    return;
+            }
+        }
+        else {
+            printf("Key pressed: %d\n", key);
+            switch (key) {
+                case GLFW_KEY_TAB:
+                    Application_switchState();
+                    break;
+            }
+        }
+    }
+}
+
+
+void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int action, int mods) {
+    (void)window; (void)button; (void)action; (void)mods;
+}
+
+
+void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
+    (void)window;
+    ObjectView_updateCursorPosition(x, y);
+}
+
+
+/* Edit mode */
+void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    (void)window;
     bool modControl = mods & GLFW_MOD_CONTROL;
     bool modShift = mods & GLFW_MOD_SHIFT;
     if (action == GLFW_PRESS) {
@@ -77,7 +163,7 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
 }
 
 
-void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int action, int mods) {
     (void)window; (void)mods;
     if (action == GLFW_PRESS) {
         switch (button) {
@@ -112,7 +198,7 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
 }
 
 
-void Input_cursorPosCallback(GLFWwindow* window, double x, double y) {
+void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y) {
     (void)window;
     bool updated = EditView_updateCursorPosition(x, y);
     if (updated) {
@@ -126,17 +212,4 @@ void Input_cursorPosCallback(GLFWwindow* window, double x, double y) {
             EditView_previewNote();
         }
     }
-}
-
-
-void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-    (void)window;
-    printf("Mouse scroll: (%f, %f)\n", xoffset, yoffset);
-}
-
-
-void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
-    (void)window;
-    printf("Window size updated: (%d, %d)\n", width, height);
-    Renderer_updateViewportSize(width, height);
 }

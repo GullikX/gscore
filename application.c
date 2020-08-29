@@ -26,6 +26,7 @@ Application* Application_getInstance() {
     return self;
 }
 
+
 void Application_run() {
     Application* self = Application_getInstance();
     Synth_getInstance();
@@ -43,6 +44,12 @@ void Application_run() {
         Renderer_updateScreen();
     }
 }
+
+
+State Application_getState(void) {
+    return Application_getInstance()->state;
+}
+
 
 void Application_switchState(void) {
     Application* self = Application_getInstance();

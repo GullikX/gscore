@@ -170,6 +170,7 @@ struct XEvents {
 /* application.c */
 Application* Application_getInstance(void);
 void Application_run(void);
+State Application_getState(void);
 void Application_switchState(void);
 
 /* editview.c */
@@ -195,6 +196,12 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
 void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
 void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
+void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int action, int mods);
+void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int action, int mods);
+void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y);
+void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int action, int mods);
+void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int action, int mods);
+void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y);
 
 /* main.c */
 int main(void);
