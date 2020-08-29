@@ -19,6 +19,7 @@
 #include "gscore.h"
 #include "application.c"
 #include "editview.c"
+#include "filereader.c"
 #include "input.c"
 #include "main.c"
 #include "objectview.c"

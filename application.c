@@ -29,7 +29,8 @@ Application* Application_getInstance() {
 
 
 void Application_run(const char* const filename) {
-    Application_loadFile(filename);
+    Application* self = Application_getInstance();
+    self->scoreCurrent = FileReader_read(filename);
     Synth_getInstance();
     while(Renderer_running()) {
         Player_update();
@@ -44,13 +45,6 @@ void Application_run(const char* const filename) {
         Player_drawCursor();
         Renderer_updateScreen();
     }
-}
-
-
-void Application_loadFile(const char* const filename) {
-    Application* self = Application_getInstance();
-    printf("Loading file '%s'... (not really)\n", filename);
-    self->scoreCurrent = NULL; /* TODO */
 }
 
 

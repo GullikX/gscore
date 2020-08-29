@@ -16,17 +16,23 @@
  *
  */
 
+#include <fluidsynth.h>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3native.h>
-#include <fluidsynth.h>
+
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
+#include <X11/Xatom.h>
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <X11/Xatom.h>
 
 
 /* Type declarations */
@@ -172,7 +178,6 @@ struct XEvents {
 /* application.c */
 Application* Application_getInstance(void);
 void Application_run(const char* const filename);
-void Application_loadFile(const char* const filename);
 State Application_getState(void);
 void Application_switchState(void);
 
@@ -191,6 +196,9 @@ MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitc
 void EditView_removeMidiMessage(MidiMessage* midiMessage);
 int EditView_xCoordToColumnIndex(float x);
 int EditView_yCoordToRowIndex(float y);
+
+/* filereader.c */
+Score* FileReader_read(const char* const filename);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
