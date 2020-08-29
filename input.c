@@ -65,7 +65,7 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
                             glfwGetWindowSize(window, &windowWidth, &windowHeight);
                             startPosition = (float)cursorX / (float)windowWidth;
                         }
-                        Player_start(EditView_getInstance()->midiMessageRoot, startPosition, repeat);
+                        Player_start(EditView_getInstance()->blockCurrent->midiMessageRoot, startPosition, repeat);
                     }
                     return;
                 case GLFW_KEY_ESCAPE:

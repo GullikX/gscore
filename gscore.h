@@ -35,10 +35,13 @@ typedef struct Vector4 Vector4;
 typedef struct Vertex Vertex;
 typedef struct MidiMessage MidiMessage;
 typedef struct Application Application;
+typedef struct Block Block;
 typedef struct GridItem GridItem;
 typedef struct Synth Synth;
 typedef struct Player Player;
 typedef struct Renderer Renderer;
+typedef struct Score Score;
+typedef struct Track Track;
 typedef struct EditView EditView;
 typedef struct XEvents XEvents;
 
@@ -74,6 +77,12 @@ struct MidiMessage {
 
 struct Application {
     State state;
+};
+
+struct Block {
+    char* name;
+    Vector4 color;
+    MidiMessage* midiMessageRoot;
 };
 
 struct GridItem {
@@ -115,9 +124,8 @@ char* Synth_getInstrumentListString(void);
 struct EditView {
     GridItem gridlinesVertical[BLOCK_MEASURES];
     GridItem gridlinesHorizontal[OCTAVES];
-    GridItem playerCursor;
     GridItem cursor;
-    MidiMessage* midiMessageRoot;
+    Block* blockCurrent;
     MidiMessage* midiMessageHeld;
 };
 
@@ -130,6 +138,18 @@ struct Renderer {
      int nVerticesEnqueued;
      int viewportWidth;
      int viewportHeight;
+};
+
+struct Score {
+    char* filename;
+    int tempo;
+    Track* tracks[N_TRACKS];
+};
+
+struct Track{
+    int program;
+    int velocity;
+    Block* blocks[SCORE_LENGTH];
 };
 
 struct XEvents {

@@ -41,20 +41,19 @@ EditView* EditView_getInstance(void) {
         self->gridlinesHorizontal[i].color = COLOR_GRIDLINES;
     }
 
-    self->playerCursor.iRow = 0;
-    self->playerCursor.iColumn = -1;
-    self->playerCursor.nRows = nRows;
-    self->playerCursor.nColumns = 1;
-    self->playerCursor.color = COLOR_CURSOR;
+    self->blockCurrent = ecalloc(1, sizeof(Block));
 
-    self->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
-    self->midiMessageRoot->type = FLUID_SEQ_NOTE;
-    self->midiMessageRoot->time = -1.0f;
-    self->midiMessageRoot->channel = -1;
-    self->midiMessageRoot->pitch = -1;
-    self->midiMessageRoot->velocity = -1;
-    self->midiMessageRoot->next = NULL;
-    self->midiMessageRoot->prev = NULL;
+    self->blockCurrent->name = "blockName";
+    self->blockCurrent->color = COLOR_NOTES;
+
+    self->blockCurrent->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
+    self->blockCurrent->midiMessageRoot->type = FLUID_SEQ_NOTE;
+    self->blockCurrent->midiMessageRoot->time = -1.0f;
+    self->blockCurrent->midiMessageRoot->channel = -1;
+    self->blockCurrent->midiMessageRoot->pitch = -1;
+    self->blockCurrent->midiMessageRoot->velocity = -1;
+    self->blockCurrent->midiMessageRoot->next = NULL;
+    self->blockCurrent->midiMessageRoot->prev = NULL;
 
     self->midiMessageHeld = NULL;
 
@@ -70,7 +69,7 @@ EditView* EditView_getInstance(void) {
 
 void EditView_previewNote(void) {
     EditView* self = EditView_getInstance();
-    if (self->playerCursor.iColumn < 0) {
+    if (!Player_playing()) {
         Synth_noteOn(EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
@@ -125,7 +124,7 @@ void EditView_removeNote(void) {
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
-    MidiMessage* midiMessage = self->midiMessageRoot;
+    MidiMessage* midiMessage = self->blockCurrent->midiMessageRoot;
     while (midiMessage) {
         if (midiMessage->type == FLUID_SEQ_NOTEON) {
             MidiMessage* midiMessageOther = midiMessage;
@@ -159,7 +158,7 @@ void EditView_draw(void) {
     }
 
     /* Draw notes */
-    MidiMessage* midiMessage = self->midiMessageRoot;
+    MidiMessage* midiMessage = self->blockCurrent->midiMessageRoot;
     while (midiMessage) {
         if (midiMessage->type == FLUID_SEQ_NOTEON) {
             MidiMessage* midiMessageOther = midiMessage;
@@ -248,7 +247,7 @@ MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitc
     midiMessage->next = NULL;
     midiMessage->prev = NULL;
 
-    MidiMessage* midiMessageOther = self->midiMessageRoot;
+    MidiMessage* midiMessageOther = self->blockCurrent->midiMessageRoot;
     while (midiMessageOther->next && midiMessageOther->next->time < midiMessage->time) {
         midiMessageOther = midiMessageOther->next;
     }
