@@ -85,13 +85,13 @@ bool ObjectView_updateCursorPosition(float x, float y) {
 }
 
 
-int ObjectView_xCoordToColumnIndex(int x) {
+int ObjectView_xCoordToColumnIndex(float x) {
     int nColumns = SCORE_LENGTH;
     return (nColumns * x) / Renderer_getInstance()->viewportWidth;
 }
 
 
-int ObjectView_yCoordToRowIndex(int y) {
+int ObjectView_yCoordToRowIndex(float y) {
     int nRows = N_TRACKS;
     return (nRows * y) / Renderer_getInstance()->viewportHeight;
 }

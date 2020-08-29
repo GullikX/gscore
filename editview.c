@@ -268,13 +268,13 @@ void EditView_removeMidiMessage(MidiMessage* midiMessage) {
 }
 
 
-int EditView_xCoordToColumnIndex(int x) {
+int EditView_xCoordToColumnIndex(float x) {
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     return (nColumns * x) / Renderer_getInstance()->viewportWidth;
 }
 
 
-int EditView_yCoordToRowIndex(int y) {
+int EditView_yCoordToRowIndex(float y) {
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     return (nRows * y) / Renderer_getInstance()->viewportHeight;
 }

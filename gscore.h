@@ -186,8 +186,8 @@ int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
 MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitch, int velocity);
 void EditView_removeMidiMessage(MidiMessage* midiMessage);
-int EditView_xCoordToColumnIndex(int x);
-int EditView_yCoordToRowIndex(int y);
+int EditView_xCoordToColumnIndex(float x);
+int EditView_yCoordToRowIndex(float y);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
@@ -211,8 +211,8 @@ ObjectView* ObjectView_getInstance(void);
 void ObjectView_draw(void);
 void ObjectView_drawItem(GridItem* item, float offset);
 bool ObjectView_updateCursorPosition(float x, float y);
-int ObjectView_xCoordToColumnIndex(int x);
-int ObjectView_yCoordToRowIndex(int y);
+int ObjectView_xCoordToColumnIndex(float x);
+int ObjectView_yCoordToRowIndex(float y);
 
 /* player.c */
 Player* Player_getInstance(void);
