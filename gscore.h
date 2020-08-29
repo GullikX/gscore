@@ -151,6 +151,7 @@ struct Renderer {
 struct Score {
     char* filename;
     int tempo;
+    Block blocks[MAX_BLOCKS];
     Track* tracks[N_TRACKS];
 };
 
