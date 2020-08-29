@@ -194,7 +194,7 @@ int main(void);
 Player* Player_getInstance(void);
 void Player_setTempoBpm(int tempoBpm);
 bool Player_playing(void);
-void Player_start(MidiMessage* midiMessages, float startPosition, bool repeat);
+void Player_playBlock(Block* block, float startPosition, bool repeat);
 void Player_stop(void);
 void Player_update(void);
 void Player_drawCursor(void);

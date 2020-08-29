@@ -42,9 +42,9 @@ bool Player_playing(void) {
 }
 
 
-void Player_start(MidiMessage* midiMessageRoot, float startPosition, bool repeat) {
+void Player_playBlock(Block* block, float startPosition, bool repeat) {
     Player* self = Player_getInstance();
-    self->midiMessage = midiMessageRoot;
+    self->midiMessage = block->midiMessageRoot;
     self->playing = true;
     self->startPosition = startPosition;
     self->repeat = repeat;
