@@ -133,6 +133,7 @@ struct EditView {
 struct ObjectView {
     GridItem gridlinesHorizontal[OCTAVES];
     GridItem cursor;
+    float viewHeight;
 };
 
 struct Renderer {

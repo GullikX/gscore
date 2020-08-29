@@ -35,6 +35,8 @@ ObjectView* ObjectView_getInstance(void) {
         iTrackColor = !iTrackColor;
     }
 
+    self->viewHeight = N_TRACKS * MAX_TRACK_HEIGHT;
+
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
     self->cursor.nRows = 1;
@@ -57,8 +59,9 @@ void ObjectView_draw(void) {
 
 
 void ObjectView_drawItem(GridItem* item, float offset) {
+    ObjectView* self = ObjectView_getInstance();
     float columnWidth = 2.0f/SCORE_LENGTH;
-    float rowHeight = 2.0f/N_TRACKS;
+    float rowHeight = self->viewHeight;
 
     float x1 = -1.0f + item->iColumn * columnWidth - offset;
     float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth + offset;
