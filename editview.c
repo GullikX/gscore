@@ -165,8 +165,8 @@ void EditView_draw(void) {
             while (midiMessageOther) {
                 if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
                     float viewportWidth = Renderer_getInstance()->viewportWidth;
-                    int iColumnStart = Renderer_xCoordToColumnIndex(midiMessage->time * viewportWidth);
-                    int iColumnEnd = Renderer_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
+                    int iColumnStart = EditView_xCoordToColumnIndex(midiMessage->time * viewportWidth);
+                    int iColumnEnd = EditView_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
                     int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
 
                     GridItem item;
@@ -209,9 +209,9 @@ bool EditView_updateCursorPosition(float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
-    self->cursor.iColumn = Renderer_xCoordToColumnIndex(x);
+    self->cursor.iColumn = EditView_xCoordToColumnIndex(x);
     if (!self->midiMessageHeld) {
-        self->cursor.iRow = Renderer_yCoordToRowIndex(y);
+        self->cursor.iRow = EditView_yCoordToRowIndex(y);
     }
 
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -265,4 +265,16 @@ void EditView_removeMidiMessage(MidiMessage* midiMessage) {
     midiMessage->prev->next = midiMessage->next;
     if (midiMessage->next) midiMessage->next->prev = midiMessage->prev;
     free(midiMessage);
+}
+
+
+int EditView_xCoordToColumnIndex(int x) {
+    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    return (nColumns * x) / Renderer_getInstance()->viewportWidth;
+}
+
+
+int EditView_yCoordToRowIndex(int y) {
+    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+    return (nRows * y) / Renderer_getInstance()->viewportHeight;
 }

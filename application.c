@@ -30,15 +30,16 @@ void Application_run() {
     Application* self = Application_getInstance();
     Synth_getInstance();
     while(Renderer_running()) {
+        Player_update();
         switch (self->state) {
             case OBJECT_MODE:
+                ObjectView_draw();
                 break;
             case EDIT_MODE:
-                Player_update();
                 EditView_draw();
-                Player_drawCursor();
                 break;
         }
+        Player_drawCursor();
         Renderer_updateScreen();
     }
 }

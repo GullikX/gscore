@@ -21,6 +21,7 @@
 #include "editview.c"
 #include "input.c"
 #include "main.c"
+#include "objectview.c"
 #include "player.c"
 #include "renderer.c"
 #include "synth.c"

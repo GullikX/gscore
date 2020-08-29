@@ -130,20 +130,6 @@ void Renderer_updateViewportSize(int width, int height) {
 }
 
 
-int Renderer_xCoordToColumnIndex(int x) {
-    Renderer* self = Renderer_getInstance();
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
-    return (nColumns * x) / self->viewportWidth;
-}
-
-
-int Renderer_yCoordToRowIndex(int y) {
-    Renderer* self = Renderer_getInstance();
-    int nRows = OCTAVES*NOTES_IN_OCTAVE;
-    return (nRows * y) / self->viewportHeight;
-}
-
-
 GLuint createShader(const GLenum type, const char* const shaderSource) {
     const char* const typeString = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
     GLuint shaderId = glCreateShader(type);

@@ -43,6 +43,7 @@ typedef struct Renderer Renderer;
 typedef struct Score Score;
 typedef struct Track Track;
 typedef struct EditView EditView;
+typedef struct ObjectView ObjectView;
 typedef struct XEvents XEvents;
 
 
@@ -129,6 +130,11 @@ struct EditView {
     MidiMessage* midiMessageHeld;
 };
 
+struct ObjectView {
+    GridItem gridlinesHorizontal[OCTAVES];
+    GridItem cursor;
+};
+
 struct Renderer {
      GLFWwindow* window;
      GLuint programId;
@@ -178,6 +184,8 @@ int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
 MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitch, int velocity);
 void EditView_removeMidiMessage(MidiMessage* midiMessage);
+int EditView_xCoordToColumnIndex(int x);
+int EditView_yCoordToRowIndex(int y);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
@@ -189,6 +197,14 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height);
 
 /* main.c */
 int main(void);
+
+/* objectview.c */
+ObjectView* ObjectView_getInstance(void);
+void ObjectView_draw(void);
+void ObjectView_drawItem(GridItem* item, float offset);
+bool ObjectView_updateCursorPosition(float x, float y);
+int ObjectView_xCoordToColumnIndex(int x);
+int ObjectView_yCoordToRowIndex(int y);
 
 /* player.c */
 Player* Player_getInstance(void);
@@ -206,8 +222,6 @@ int Renderer_running(void);
 void Renderer_updateScreen(void);
 void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color);
 void Renderer_updateViewportSize(int width, int height);
-int Renderer_xCoordToColumnIndex(int x);
-int Renderer_yCoordToRowIndex(int y);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram(void);
 
