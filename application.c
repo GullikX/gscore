@@ -22,17 +22,18 @@ Application* Application_getInstance() {
 
     self = ecalloc(1, sizeof(*self));
     self->state = EDIT_MODE;
+    self->scoreCurrent = NULL;
 
     return self;
 }
 
 
-void Application_run() {
-    Application* self = Application_getInstance();
+void Application_run(const char* const filename) {
+    Application_loadFile(filename);
     Synth_getInstance();
     while(Renderer_running()) {
         Player_update();
-        switch (self->state) {
+        switch (Application_getState()) {
             case OBJECT_MODE:
                 ObjectView_draw();
                 break;
@@ -43,6 +44,13 @@ void Application_run() {
         Player_drawCursor();
         Renderer_updateScreen();
     }
+}
+
+
+void Application_loadFile(const char* const filename) {
+    Application* self = Application_getInstance();
+    printf("Loading file '%s'... (not really)\n", filename);
+    self->scoreCurrent = NULL; /* TODO */
 }
 
 

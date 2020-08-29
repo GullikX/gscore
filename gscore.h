@@ -78,6 +78,7 @@ struct MidiMessage {
 
 struct Application {
     State state;
+    Score* scoreCurrent;
 };
 
 struct Block {
@@ -169,7 +170,8 @@ struct XEvents {
 /* Function declarations */
 /* application.c */
 Application* Application_getInstance(void);
-void Application_run(void);
+void Application_run(const char* const filename);
+void Application_loadFile(const char* const filename);
 State Application_getState(void);
 void Application_switchState(void);
 
@@ -204,7 +206,7 @@ void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int actio
 void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y);
 
 /* main.c */
-int main(void);
+int main(int argc, char* argv[]);
 
 /* objectview.c */
 ObjectView* ObjectView_getInstance(void);

@@ -16,6 +16,9 @@
  *
  */
 
-int main(void) {
-    Application_run();
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        die("Needs a filename argument");
+    }
+    Application_run(argv[1]);
 }
