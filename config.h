@@ -58,7 +58,7 @@ enum {
     MEASURE_RESOLUTION = 16,
     OCTAVES = 5,
     NOTES_IN_OCTAVE = 12,
-    MOUSE_POINTER_HIDDEN=true,
+    MOUSE_POINTER_HIDDEN=false,
     SYNTH_AUDIO_PERIODS=2,
     SYNTH_AUDIO_PERIOD_SIZE=64,
     SYNTH_MIDI_CHANNELS=16,
@@ -71,7 +71,7 @@ enum {
 const float CURSOR_SIZE_OFFSET = -0.005f;
 const float NOTE_SIZE_OFFSET = -0.002f;
 const float PLAYER_CURSOR_WIDTH = 0.005f;
-const float MAX_TRACK_HEIGHT = 0.025f;
+const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
 
 const Vector4 COLOR_BLOCK_DEFAULT = {0.5411f, 0.7765f, 0.9490f, 1.0f};

@@ -61,7 +61,7 @@ void ObjectView_draw(void) {
 void ObjectView_drawItem(GridItem* item, float offset) {
     ObjectView* self = ObjectView_getInstance();
     float columnWidth = 2.0f/SCORE_LENGTH;
-    float rowHeight = self->viewHeight;
+    float rowHeight = self->viewHeight / N_TRACKS;
 
     float x1 = -1.0f + item->iColumn * columnWidth - offset;
     float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth + offset;
@@ -92,6 +92,7 @@ int ObjectView_xCoordToColumnIndex(float x) {
 
 
 int ObjectView_yCoordToRowIndex(float y) {
+    ObjectView* self = ObjectView_getInstance();
     int nRows = N_TRACKS;
-    return (nRows * y) / Renderer_getInstance()->viewportHeight;
+    return (nRows * y) / (Renderer_getInstance()->viewportHeight * self->viewHeight / 2.0f);
 }
