@@ -199,7 +199,7 @@ int EditView_yCoordToRowIndex(float y);
 
 /* filereader.c */
 Score* FileReader_read(const char* const filename);
-void FileReader_createScore(Score* score, xmlNode* node);
+Score* FileReader_createScoreFromFile(Score* score, const char* const filename);
 void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
 void FileReader_createTracks(Score* score, xmlNode* nodeTracks);
 

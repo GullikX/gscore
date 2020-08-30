@@ -17,40 +17,49 @@
  */
 
 Score* FileReader_read(const char* const filename) {
+    Score* score = ecalloc(1, sizeof(*score));
+    score->filename = filename;
+
+    bool fileExists = true; /* TODO */
+
+    if (fileExists) {
+        score = FileReader_createScoreFromFile(score, filename);
+    }
+    else {
+        /* Create score */
+    }
+
+    return score;
+}
+
+
+Score* FileReader_createScoreFromFile(Score* score, const char* const filename) {
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
     if (!nodeRoot) {
         die("Failed to parse input file '%s'", filename);
     }
-
-    Score* score = ecalloc(1, sizeof(*score));
-    score->filename = filename;
-
     if (strcmp(XMLNODE_GSCORE, (char*)nodeRoot->name)) {
         die("Unexpected node name '%s', expected '%s'", (char*)nodeRoot->name, XMLNODE_GSCORE);
     }
-    FileReader_createScore(score, nodeRoot);
 
-    xmlFreeDoc(doc);
-    return NULL;
-}
-
-
-void FileReader_createScore(Score* score, xmlNode* node) {
-    score->tempo = atoi((char*)xmlGetProp(node, BAD_CAST XMLATTRIB_TEMPO));
+    score->tempo = atoi((char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO));
     if (!score->tempo) die("Invalid tempo value");
 
-    for (xmlNode* nodeChild = node->children; nodeChild; nodeChild = nodeChild->next) {
-        if (nodeChild->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEFS, (char*)nodeChild->name)) {
-            FileReader_createBlockDefs(score, nodeChild);
+    for (xmlNode* node = nodeRoot->children; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEFS, (char*)node->name)) {
+            FileReader_createBlockDefs(score, node);
         }
     }
 
-    for (xmlNode* nodeChild = node->children; nodeChild; nodeChild = nodeChild->next) {
-        if (nodeChild->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACKS, (char*)nodeChild->name)) {
-            FileReader_createTracks(score, nodeChild);
+    for (xmlNode* node = nodeRoot->children; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACKS, (char*)node->name)) {
+            FileReader_createTracks(score, node);
         }
     }
+
+    xmlFreeDoc(doc);
+    return score;
 }
 
 

@@ -41,21 +41,7 @@ EditView* EditView_getInstance(void) {
         self->gridlinesHorizontal[i].color = COLOR_GRIDLINES;
     }
 
-    self->blockCurrent = ecalloc(1, sizeof(Block));
-
-    self->blockCurrent->name = "blockName";
-    self->blockCurrent->color = COLOR_NOTES;
-
-    self->blockCurrent->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
-    self->blockCurrent->midiMessageRoot->type = FLUID_SEQ_NOTE;
-    self->blockCurrent->midiMessageRoot->time = -1.0f;
-    self->blockCurrent->midiMessageRoot->channel = -1;
-    self->blockCurrent->midiMessageRoot->pitch = -1;
-    self->blockCurrent->midiMessageRoot->velocity = -1;
-    self->blockCurrent->midiMessageRoot->next = NULL;
-    self->blockCurrent->midiMessageRoot->prev = NULL;
-
-    self->midiMessageHeld = NULL;
+    self->blockCurrent = &Application_getInstance()->scoreCurrent->blocks[0];
 
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
