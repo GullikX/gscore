@@ -109,7 +109,7 @@ void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int act
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button pressed!");
-                //ObjectView_removeBlock();
+                ObjectView_removeBlock();
                 break;
         }
     }

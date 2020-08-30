@@ -58,6 +58,16 @@ void ObjectView_addBlock(void) {
 }
 
 
+void ObjectView_removeBlock(void) {
+    ObjectView* self = ObjectView_getInstance();
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
+
+    Application_getInstance()->scoreCurrent->tracks[iTrack].blocks[iBlock] = NULL;
+}
+
+
 void ObjectView_draw(void) {
     ObjectView* self = ObjectView_getInstance();
 

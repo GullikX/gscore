@@ -229,6 +229,7 @@ int main(int argc, char* argv[]);
 /* objectview.c */
 ObjectView* ObjectView_getInstance(void);
 void ObjectView_addBlock(void);
+void ObjectView_removeBlock(void);
 void ObjectView_draw(void);
 void ObjectView_drawItem(GridItem* item, float offset);
 bool ObjectView_updateCursorPosition(float x, float y);
