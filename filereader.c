@@ -11,26 +11,26 @@ Score* FileReader_read(const char* const filename) {
     if (strcmp(XMLNODE_GSCORE, (char*)nodeRoot->name)) {
         die("Unexpected node name '%s', expected '%s'", (char*)nodeRoot->name, XMLNODE_GSCORE);
     }
-    createScore(score, nodeRoot);
+    FileReader_createScore(score, nodeRoot);
 
     xmlFreeDoc(doc);
     return NULL;
 }
 
 
-void createScore(Score* score, xmlNode* node) {
+void FileReader_createScore(Score* score, xmlNode* node) {
     score->tempo = atoi((char*)xmlGetProp(node, BAD_CAST XMLATTRIB_TEMPO));
     if (!score->tempo) die("Invalid tempo value");
 
     for (xmlNode* nodeChild = node->children; nodeChild; nodeChild = nodeChild->next) {
         if (nodeChild->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEFS, (char*)nodeChild->name)) {
-            createBlockDefs(score, nodeChild);
+            FileReader_createBlockDefs(score, nodeChild);
         }
     }
 }
 
 
-void createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
+void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
     int iBlock = 0;
     for (xmlNode* nodeBlockDef = nodeBlockDefs->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
         if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
