@@ -35,8 +35,8 @@ Score* FileReader_createScoreFromFile(const char* const filename) {
     if (!nodeRoot) {
         die("Failed to parse input file '%s'", filename);
     }
-    if (strcmp(XMLNODE_GSCORE, (char*)nodeRoot->name)) {
-        die("Unexpected node name '%s', expected '%s'", (char*)nodeRoot->name, XMLNODE_GSCORE);
+    if (strcmp(XMLNODE_SCORE, (char*)nodeRoot->name)) {
+        die("Unexpected node name '%s', expected '%s'", (char*)nodeRoot->name, XMLNODE_SCORE);
     }
 
     score->tempo = atoi((char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO));

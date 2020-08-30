@@ -18,7 +18,7 @@
 
 void FileWriter_write(const Score* const score, const char* const filename) {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST XML_VERSION);
-    xmlNode* nodeScore = xmlNewNode(NULL, BAD_CAST XMLNODE_GSCORE);
+    xmlNode* nodeScore = xmlNewNode(NULL, BAD_CAST XMLNODE_SCORE);
     xmlDocSetRootElement(doc, nodeScore);
 
     char buffer[XML_BUFFER_SIZE];
