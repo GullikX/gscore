@@ -118,7 +118,15 @@ void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int act
 
 void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
     (void)window;
-    ObjectView_updateCursorPosition(x, y);
+    bool updated = ObjectView_updateCursorPosition(x, y);
+    if (updated) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            ObjectView_addBlock();
+        }
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+            ObjectView_removeBlock();
+        }
+    }
 }
 
 
