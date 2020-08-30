@@ -254,7 +254,7 @@ void Synth_noteOff(int key);
 void Synth_noteOffAll(void);
 
 /* util.c */
-void die(const char* const message);
+void die(const char* const format, ...);
 void* ecalloc(size_t nItems, size_t itemSize);
 void spawnSetXProp(int atomId);
 void spawn(const char* const cmd, const char* const pipeData);

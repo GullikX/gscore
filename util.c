@@ -16,8 +16,13 @@
  *
  */
 
-void die(const char* const message) {
-    fprintf(stderr, "Error: %s\n", message);
+void die(const char* const format, ...) {
+    fputs("Error: ", stderr);
+    va_list vaList;
+    va_start(vaList, format);
+    vfprintf(stderr, format, vaList);
+    va_end(vaList);
+    fputc('\n', stderr);
     exit(EXIT_FAILURE);
 }
 
