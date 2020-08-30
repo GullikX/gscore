@@ -54,6 +54,21 @@ void FileWrite_writeBlockDefs(const Score* const score, xmlNode* nodeRoot) {
     }
 }
 
-void FileWrite_writeTracks(const Score* const score, xmlNode* nodeRoot) {
 
+void FileWrite_writeTracks(const Score* const score, xmlNode* nodeRoot) {
+    xmlNode* nodeTracks = xmlNewChild(nodeRoot, NULL, BAD_CAST XMLNODE_TRACKS, NULL);
+    for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
+        xmlNode* nodeTrack = xmlNewChild(nodeTracks, NULL, BAD_CAST XMLNODE_TRACK, NULL);
+
+        char buffer[XML_BUFFER_SIZE];
+        snprintf(buffer, XML_BUFFER_SIZE, "%d", score->tracks[iTrack].program);
+        xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM, BAD_CAST buffer);
+
+        for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
+            xmlNode* nodeBlock = xmlNewChild(nodeTrack, NULL, BAD_CAST XMLNODE_BLOCK, NULL);
+            if (score->tracks[iTrack].blocks[iBlock]) {
+                xmlNewProp(nodeBlock, BAD_CAST XMLATTRIB_NAME, BAD_CAST score->tracks[iTrack].blocks[iBlock]->name);
+            }
+        }
+    }
 }
