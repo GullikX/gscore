@@ -23,7 +23,7 @@ Score* FileReader_read(const char* const filename) {
     bool fileExists = true; /* TODO */
 
     if (fileExists) {
-        score = FileReader_createScoreFromFile(score, filename);
+        FileReader_createScoreFromFile(score, filename);
     }
     else {
         /* Create score */
@@ -33,7 +33,7 @@ Score* FileReader_read(const char* const filename) {
 }
 
 
-Score* FileReader_createScoreFromFile(Score* score, const char* const filename) {
+void FileReader_createScoreFromFile(Score* score, const char* const filename) {
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
     if (!nodeRoot) {
@@ -59,7 +59,6 @@ Score* FileReader_createScoreFromFile(Score* score, const char* const filename) 
     }
 
     xmlFreeDoc(doc);
-    return score;
 }
 
 
