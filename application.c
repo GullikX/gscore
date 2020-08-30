@@ -21,7 +21,7 @@ Application* Application_getInstance() {
     if (self) return self;
 
     self = ecalloc(1, sizeof(*self));
-    self->state = EDIT_MODE;
+    self->state = OBJECT_MODE;
     self->scoreCurrent = NULL;
 
     return self;
