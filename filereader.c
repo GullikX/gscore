@@ -45,6 +45,12 @@ void FileReader_createScore(Score* score, xmlNode* node) {
             FileReader_createBlockDefs(score, nodeChild);
         }
     }
+
+    for (xmlNode* nodeChild = node->children; nodeChild; nodeChild = nodeChild->next) {
+        if (nodeChild->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACKS, (char*)nodeChild->name)) {
+            FileReader_createTracks(score, nodeChild);
+        }
+    }
 }
 
 
@@ -80,6 +86,42 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
                 }
             }
             iBlock++;
+        }
+    }
+}
+
+
+void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
+    int iTrack = 0;
+    for (xmlNode* nodeTrack = nodeTracks->children; nodeTrack; nodeTrack = nodeTrack ->next) {
+        if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
+            int iBlock = 0;
+            printf("program %s\n", (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
+            score->tracks[iTrack].program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
+            for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
+                if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
+                    if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
+                    const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
+                    printf("node block name='%s'\n", name);
+                    if (name) {
+                        Block* block = NULL;
+                        for (int i = 0; i < MAX_BLOCKS; i++) {
+                            if (!score->blocks[i].name) continue;
+                            if (!strcmp(score->blocks[i].name, name)) {
+                                block = &score->blocks[i];
+                                break;
+                            }
+                        }
+                        if (!block) die("Did not find blockdef '%s'", name);
+                        score->tracks[iTrack].blocks[iBlock] = block;
+                    }
+                    else {
+                        score->tracks[iTrack].blocks[iBlock] = NULL;
+                    }
+                    iBlock++;
+                }
+            }
+            iTrack++;
         }
     }
 }

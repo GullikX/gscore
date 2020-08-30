@@ -154,17 +154,17 @@ struct Renderer {
      int viewportHeight;
 };
 
-struct Score {
-    const char* filename;
-    int tempo;
-    Block blocks[MAX_BLOCKS];
-    Track* tracks[N_TRACKS];
-};
-
 struct Track{
     int program;
     int velocity;
     Block* blocks[SCORE_LENGTH];
+};
+
+struct Score {
+    const char* filename;
+    int tempo;
+    Block blocks[MAX_BLOCKS];
+    Track tracks[N_TRACKS];
 };
 
 struct XEvents {
@@ -201,6 +201,7 @@ int EditView_yCoordToRowIndex(float y);
 Score* FileReader_read(const char* const filename);
 void FileReader_createScore(Score* score, xmlNode* node);
 void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
+void FileReader_createTracks(Score* score, xmlNode* nodeTracks);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
