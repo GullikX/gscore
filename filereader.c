@@ -21,11 +21,12 @@ Score* FileReader_read(const char* const filename) {
     score->filename = filename;
 
     if (fileExists(filename)) {
+        printf("Loading file '%s'...\n", filename);
         FileReader_createScoreFromFile(score, filename);
     }
     else {
-        /* TODO: Create score */
-        die("File '%s' does not exist", filename);
+        printf("File '%s' does not exist, creating new empty score...\n", filename);
+        FileReader_createNewEmptyScore(score);
     }
 
     return score;
@@ -131,4 +132,17 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
             iTrack++;
         }
     }
+}
+
+
+void FileReader_createNewEmptyScore(Score* score) {
+    score->tempo = TEMPO_BPM;
+    score->blocks[0].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
+    score->blocks[0].midiMessageRoot->type = FLUID_SEQ_NOTE;
+    score->blocks[0].midiMessageRoot->time = -1.0f;
+    score->blocks[0].midiMessageRoot->channel = -1;
+    score->blocks[0].midiMessageRoot->pitch = -1;
+    score->blocks[0].midiMessageRoot->velocity = -1;
+    score->blocks[0].midiMessageRoot->next = NULL;
+    score->blocks[0].midiMessageRoot->prev = NULL;
 }

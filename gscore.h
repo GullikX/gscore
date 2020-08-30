@@ -202,6 +202,7 @@ Score* FileReader_read(const char* const filename);
 void FileReader_createScoreFromFile(Score* score, const char* const filename);
 void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
 void FileReader_createTracks(Score* score, xmlNode* nodeTracks);
+void FileReader_createNewEmptyScore(Score* score);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
