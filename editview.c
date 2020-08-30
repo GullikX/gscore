@@ -62,6 +62,7 @@ void EditView_previewNote(void) {
 
 
 void EditView_addNote(void) {
+    if (Player_playing()) return; /* TODO: allow this */
     EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
@@ -80,6 +81,7 @@ void EditView_addNote(void) {
 
 
 void EditView_dragNote(void) {
+    if (Player_playing()) return; /* TODO: allow this */
     EditView* self = EditView_getInstance();
     if (!self->midiMessageHeld) return;
 
@@ -103,6 +105,7 @@ void EditView_releaseNote(void) {
 
 
 void EditView_removeNote(void) {
+    if (Player_playing()) return; /* TODO: allow this */
     EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
