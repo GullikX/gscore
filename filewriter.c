@@ -21,8 +21,8 @@ void FileWriter_write(const Score* const score, const char* const filename) {
     xmlNode* nodeRoot = xmlNewNode(NULL, BAD_CAST XMLNODE_GSCORE);
     xmlDocSetRootElement(doc, nodeRoot);
 
-    FileWrite_writeBlockDefs(score, nodeRoot);
-    FileWrite_writeTracks(score, nodeRoot);
+    FileWriter_writeBlockDefs(score, nodeRoot);
+    FileWriter_writeTracks(score, nodeRoot);
 
     xmlSaveFormatFileEnc("-", doc, XML_ENCODING, 1);
     xmlFreeDoc(doc);
@@ -30,7 +30,7 @@ void FileWriter_write(const Score* const score, const char* const filename) {
 }
 
 
-void FileWrite_writeBlockDefs(const Score* const score, xmlNode* nodeRoot) {
+void FileWriter_writeBlockDefs(const Score* const score, xmlNode* nodeRoot) {
     xmlNode* nodeBlockDefs = xmlNewChild(nodeRoot, NULL, BAD_CAST XMLNODE_BLOCKDEFS, NULL);
     for (int iBlockDef = 0; iBlockDef < MAX_BLOCKS; iBlockDef++) {
         const char* name = score->blocks[iBlockDef].name;
@@ -55,7 +55,7 @@ void FileWrite_writeBlockDefs(const Score* const score, xmlNode* nodeRoot) {
 }
 
 
-void FileWrite_writeTracks(const Score* const score, xmlNode* nodeRoot) {
+void FileWriter_writeTracks(const Score* const score, xmlNode* nodeRoot) {
     xmlNode* nodeTracks = xmlNewChild(nodeRoot, NULL, BAD_CAST XMLNODE_TRACKS, NULL);
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
         xmlNode* nodeTrack = NULL;
