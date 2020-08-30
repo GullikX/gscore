@@ -198,9 +198,9 @@ int EditView_xCoordToColumnIndex(float x);
 int EditView_yCoordToRowIndex(float y);
 
 /* filereader.c */
-void createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
-void createScore(Score* score, xmlNode* node);
 Score* FileReader_read(const char* const filename);
+void createScore(Score* score, xmlNode* node);
+void createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
 
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
