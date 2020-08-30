@@ -160,7 +160,7 @@ void EditView_draw(void) {
                     item.iColumn = iColumnStart;
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
-                    item.color = COLOR_NOTES;
+                    item.color = self->blockCurrent->color;
                     EditView_drawItem(&item, NOTE_SIZE_OFFSET);
 
                     break;

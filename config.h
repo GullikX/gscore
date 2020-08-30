@@ -18,6 +18,8 @@ const char* const AUDIO_DRIVER = "alsa";
 const char* const ALSA_DEVICE = "default";
 const char* const SOUNDFONT = "soundfont.sf2";
 
+const char* const BLOCK_NAME_DEFAULT = "default";
+
 const char* const XMLATTRIB_COLOR = "color";
 const char* const XMLATTRIB_GAIN = "gain";
 const char* const XMLATTRIB_NAME = "name";
@@ -69,8 +71,7 @@ const float PLAYER_CURSOR_WIDTH = 0.005f;
 const float MAX_TRACK_HEIGHT = 0.025f;
 const float SYNTH_GAIN = 1.0f;
 
-const Vector4 COLOR_NOTES = {0.5411f, 0.7765f, 0.9490f, 1.0f};
-const Vector4 COLOR_2 = {0.9412f, 0.7765f, 0.4549f, 1.0f};
+const Vector4 COLOR_BLOCK_DEFAULT = {0.5411f, 0.7765f, 0.9490f, 1.0f};
 const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
 const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
 const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};

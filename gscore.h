@@ -88,7 +88,7 @@ struct Application {
 };
 
 struct Block {
-    char* name;
+    const char* name;
     Vector4 color;
     MidiMessage* midiMessageRoot;
 };

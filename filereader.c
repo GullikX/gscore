@@ -68,6 +68,7 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
         if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
             if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
             score->blocks[iBlock].name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
+            score->blocks[iBlock].color = COLOR_BLOCK_DEFAULT;
 
             score->blocks[iBlock].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
             score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
@@ -137,6 +138,8 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
 
 void FileReader_createNewEmptyScore(Score* score) {
     score->tempo = TEMPO_BPM;
+    score->blocks[0].name = BLOCK_NAME_DEFAULT;
+    score->blocks[0].color = COLOR_BLOCK_DEFAULT;
     score->blocks[0].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
     score->blocks[0].midiMessageRoot->type = FLUID_SEQ_NOTE;
     score->blocks[0].midiMessageRoot->time = -1.0f;
