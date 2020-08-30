@@ -82,6 +82,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
+                case 'w':
+                    Application_writeScore();
+                    break;
                 case 'q':
                     Renderer_stop();
                     return;
