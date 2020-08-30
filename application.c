@@ -30,6 +30,7 @@ Application* Application_getInstance() {
 
 void Application_run(const char* const filename) {
     Application* self = Application_getInstance();
+    self->filename = filename;
     self->scoreCurrent = FileReader_read(filename);
     Synth_getInstance();
     while(Renderer_running()) {
@@ -62,5 +63,5 @@ void Application_switchState(void) {
 
 void Application_writeScore(void) {
     Application* self = Application_getInstance();
-    FileWriter_write(self->scoreCurrent, self->scoreCurrent->filename);
+    FileWriter_write(self->scoreCurrent, self->filename);
 }

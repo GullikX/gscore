@@ -82,8 +82,9 @@ struct MidiMessage {
 };
 
 struct Application {
-    State state;
+    const char* filename;
     Score* scoreCurrent;
+    State state;
 };
 
 struct Block {
@@ -161,7 +162,6 @@ struct Track{
 };
 
 struct Score {
-    const char* filename;
     int tempo;
     Block blocks[MAX_BLOCKS];
     Track tracks[N_TRACKS];
@@ -199,10 +199,10 @@ int EditView_yCoordToRowIndex(float y);
 
 /* filereader.c */
 Score* FileReader_read(const char* const filename);
-void FileReader_createScoreFromFile(Score* score, const char* const filename);
+Score* FileReader_createScoreFromFile(const char* const filename);
 void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
 void FileReader_createTracks(Score* score, xmlNode* nodeTracks);
-void FileReader_createNewEmptyScore(Score* score);
+Score* FileReader_createNewEmptyScore(void);
 
 /* filewriter.c */
 void FileWriter_write(const Score* const score, const char* const filename);

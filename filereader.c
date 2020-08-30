@@ -17,23 +17,19 @@
  */
 
 Score* FileReader_read(const char* const filename) {
-    Score* score = ecalloc(1, sizeof(*score));
-    score->filename = filename;
-
     if (fileExists(filename)) {
         printf("Loading file '%s'...\n", filename);
-        FileReader_createScoreFromFile(score, filename);
+        return FileReader_createScoreFromFile(filename);
     }
     else {
         printf("File '%s' does not exist, creating new empty score...\n", filename);
-        FileReader_createNewEmptyScore(score);
+        return FileReader_createNewEmptyScore();
     }
-
-    return score;
 }
 
 
-void FileReader_createScoreFromFile(Score* score, const char* const filename) {
+Score* FileReader_createScoreFromFile(const char* const filename) {
+    Score* score = ecalloc(1, sizeof(*score));
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
     if (!nodeRoot) {
@@ -59,6 +55,7 @@ void FileReader_createScoreFromFile(Score* score, const char* const filename) {
     }
 
     xmlFreeDoc(doc);
+    return score;
 }
 
 
@@ -134,7 +131,8 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
 }
 
 
-void FileReader_createNewEmptyScore(Score* score) {
+Score* FileReader_createNewEmptyScore() {
+    Score* score = ecalloc(1, sizeof(*score));
     score->tempo = TEMPO_BPM;
     score->blocks[0].name = BLOCK_NAME_DEFAULT;
     score->blocks[0].color = COLOR_BLOCK_DEFAULT;
@@ -145,4 +143,5 @@ void FileReader_createNewEmptyScore(Score* score) {
     score->blocks[0].midiMessageRoot->velocity = -1;
     score->blocks[0].midiMessageRoot->next = NULL;
     score->blocks[0].midiMessageRoot->prev = NULL;
+    return score;
 }
