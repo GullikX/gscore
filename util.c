@@ -36,6 +36,11 @@ void* ecalloc(size_t nItems, size_t itemSize) {
 }
 
 
+bool fileExists(const char* const filename) {
+    return access(filename, F_OK) != -1;
+}
+
+
 void spawnSetXProp(int atomId) {
     int bufferLength = strlen(cmdQuery) + strlen(ATOM_PROMPTS[atomId]) + strlen(ATOM_NAMES[atomId]) + 64;
     char* cmd = ecalloc(bufferLength, sizeof(char));

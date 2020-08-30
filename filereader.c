@@ -20,13 +20,12 @@ Score* FileReader_read(const char* const filename) {
     Score* score = ecalloc(1, sizeof(*score));
     score->filename = filename;
 
-    bool fileExists = true; /* TODO */
-
-    if (fileExists) {
+    if (fileExists(filename)) {
         FileReader_createScoreFromFile(score, filename);
     }
     else {
-        /* Create score */
+        /* TODO: Create score */
+        die("File '%s' does not exist", filename);
     }
 
     return score;

@@ -259,6 +259,7 @@ void Synth_noteOffAll(void);
 /* util.c */
 void die(const char* const format, ...);
 void* ecalloc(size_t nItems, size_t itemSize);
+bool fileExists(const char* const filename);
 void spawnSetXProp(int atomId);
 void spawn(const char* const cmd, const char* const pipeData);
 
