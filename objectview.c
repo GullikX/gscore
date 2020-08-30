@@ -50,8 +50,23 @@ ObjectView* ObjectView_getInstance(void) {
 void ObjectView_draw(void) {
     ObjectView* self = ObjectView_getInstance();
 
-    for (int i = 0; i < OCTAVES; i++) {
+    for (int i = 0; i < N_TRACKS; i++) {
         ObjectView_drawItem(&(self->gridlinesHorizontal[i]), 0);
+    }
+
+    Track* tracks = Application_getInstance()->scoreCurrent->tracks;
+    for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
+        for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
+            Block* block = tracks[iTrack].blocks[iBlock];
+            if (!block) continue;
+            GridItem item;
+            item.iRow = iTrack;
+            item.iColumn = iBlock;
+            item.nRows = 1;
+            item.nColumns = 1;
+            item.color = block->color;
+            ObjectView_drawItem(&(item), BLOCK_SIZE_OFFSET);
+        }
     }
 
     ObjectView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);

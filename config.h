@@ -70,6 +70,7 @@ enum {
 
 const float CURSOR_SIZE_OFFSET = -0.005f;
 const float NOTE_SIZE_OFFSET = -0.002f;
+const float BLOCK_SIZE_OFFSET = -0.002f;
 const float PLAYER_CURSOR_WIDTH = 0.005f;
 const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
