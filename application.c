@@ -58,3 +58,9 @@ void Application_switchState(void) {
     self->state = !self->state;
     printf("Switched state to %s\n", self->state ? "edit mode" : "object mode");
 }
+
+
+void Application_writeScore(void) {
+    Application* self = Application_getInstance();
+    FileWriter_write(self->scoreCurrent, self->scoreCurrent->filename);
+}

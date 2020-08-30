@@ -126,6 +126,9 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                 case 't':
                     spawnSetXProp(ATOM_BPM);
                     return;
+                case 'w':
+                    Application_writeScore();
+                    break;
                 case 'q':
                     Renderer_stop();
                     return;
