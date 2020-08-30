@@ -61,14 +61,14 @@ void ScorePlayer_update(void) {
     float progress = time / totalTime;
 
     if (progress < 1.0f) {
-        Player_update();
+        BlockPlayer_update();
         int iBlock = SCORE_LENGTH * progress;
         if (iBlock > self->iBlock) {
-            Player_stop();
+            BlockPlayer_stop();
             Block* block = self->score->tracks[0].blocks[iBlock];
             if (block) {
-                Player_setTempoBpm(self->score->tempo);
-                Player_playBlock(block, 0.0f, false);
+                BlockPlayer_setTempoBpm(self->score->tempo);
+                BlockPlayer_playBlock(block, 0.0f, false);
             }
             self->iBlock = iBlock;
         }

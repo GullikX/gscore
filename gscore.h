@@ -44,7 +44,7 @@ typedef struct Application Application;
 typedef struct Block Block;
 typedef struct GridItem GridItem;
 typedef struct Synth Synth;
-typedef struct Player Player;
+typedef struct BlockPlayer BlockPlayer;
 typedef struct Renderer Renderer;
 typedef struct Score Score;
 typedef struct ScorePlayer ScorePlayer;
@@ -109,7 +109,7 @@ struct Synth {
     char* instrumentListString;
 };
 
-struct Player {
+struct BlockPlayer {
     int channel;
     MidiMessage* midiMessage;
     bool playing;
@@ -122,7 +122,7 @@ struct Player {
 
 
 /* Function declarations needed for config */
-char* Player_getTempoBpmString(void);
+char* BlockPlayer_getTempoBpmString(void);
 char* Synth_getInstrumentListString(void);
 
 
@@ -245,13 +245,13 @@ int ObjectView_xCoordToColumnIndex(float x);
 int ObjectView_yCoordToRowIndex(float y);
 
 /* player.c */
-Player* Player_getInstance(void);
-void Player_setTempoBpm(int tempoBpm);
-bool Player_playing(void);
-void Player_playBlock(Block* block, float startPosition, bool repeat);
-void Player_stop(void);
-void Player_update(void);
-void Player_drawCursor(void);
+BlockPlayer* BlockPlayer_getInstance(void);
+void BlockPlayer_setTempoBpm(int tempoBpm);
+bool BlockPlayer_playing(void);
+void BlockPlayer_playBlock(Block* block, float startPosition, bool repeat);
+void BlockPlayer_stop(void);
+void BlockPlayer_update(void);
+void BlockPlayer_drawCursor(void);
 
 /* renderer.c */
 Renderer* Renderer_getInstance(void);

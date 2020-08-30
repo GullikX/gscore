@@ -172,8 +172,8 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     Application_switchState();
                     break;
                 case GLFW_KEY_SPACE:
-                    if (Player_playing()) {
-                        Player_stop();
+                    if (BlockPlayer_playing()) {
+                        BlockPlayer_stop();
                     }
                     else {
                         bool repeat = modShift;
@@ -185,11 +185,11 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                             glfwGetWindowSize(window, &windowWidth, &windowHeight);
                             startPosition = (float)cursorX / (float)windowWidth;
                         }
-                        Player_playBlock(EditView_getInstance()->blockCurrent, startPosition, repeat);
+                        BlockPlayer_playBlock(EditView_getInstance()->blockCurrent, startPosition, repeat);
                     }
                     return;
                 case GLFW_KEY_ESCAPE:
-                    Player_stop();
+                    BlockPlayer_stop();
                     return;
             }
         }

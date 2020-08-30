@@ -65,7 +65,7 @@ void XEvents_processXEvents(void) {
                     int tempoBpm = atoi((char*)propertyValue);
                     if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
                         printf("Setting BPM to %d\n", tempoBpm);
-                        Player_setTempoBpm(tempoBpm);
+                        BlockPlayer_setTempoBpm(tempoBpm);
                     }
                     else {
                         printf("Invalid BPM value '%s'\n", propertyValue);

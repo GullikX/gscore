@@ -55,20 +55,20 @@ EditView* EditView_getInstance(void) {
 
 void EditView_previewNote(void) {
     EditView* self = EditView_getInstance();
-    if (!Player_playing()) {
+    if (!BlockPlayer_playing()) {
         Synth_noteOn(EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
 
 
 void EditView_addNote(void) {
-    if (Player_playing()) return; /* TODO: allow this */
+    if (BlockPlayer_playing()) return; /* TODO: allow this */
     EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     int velocity = 100;  /* TODO */
 
-    if (!Player_playing()) {
+    if (!BlockPlayer_playing()) {
         Synth_noteOn(pitch);
     }
 
@@ -81,7 +81,7 @@ void EditView_addNote(void) {
 
 
 void EditView_dragNote(void) {
-    if (Player_playing()) return; /* TODO: allow this */
+    if (BlockPlayer_playing()) return; /* TODO: allow this */
     EditView* self = EditView_getInstance();
     if (!self->midiMessageHeld) return;
 
@@ -98,14 +98,14 @@ void EditView_dragNote(void) {
 void EditView_releaseNote(void) {
     EditView* self = EditView_getInstance();
     self->midiMessageHeld = NULL;
-    if (!Player_playing()) {
+    if (!BlockPlayer_playing()) {
         Synth_noteOffAll();
     }
 }
 
 
 void EditView_removeNote(void) {
-    if (Player_playing()) return; /* TODO: allow this */
+    if (BlockPlayer_playing()) return; /* TODO: allow this */
     EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;

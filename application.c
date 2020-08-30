@@ -41,9 +41,9 @@ void Application_run(const char* const filename) {
                 ScorePlayer_drawCursor();
                 break;
             case EDIT_MODE:
-                Player_update();
+                BlockPlayer_update();
                 EditView_draw();
-                Player_drawCursor();
+                BlockPlayer_drawCursor();
                 break;
         }
         Renderer_updateScreen();
