@@ -34,16 +34,18 @@ void Application_run(const char* const filename) {
     self->scoreCurrent = FileReader_read(filename);
     Synth_getInstance();
     while(Renderer_running()) {
-        Player_update();
         switch (Application_getState()) {
             case OBJECT_MODE:
+                ScorePlayer_update();
                 ObjectView_draw();
+                ScorePlayer_drawCursor();
                 break;
             case EDIT_MODE:
+                Player_update();
                 EditView_draw();
+                Player_drawCursor();
                 break;
         }
-        Player_drawCursor();
         Renderer_updateScreen();
     }
 }

@@ -59,7 +59,7 @@ void Player_playBlock(Block* block, float startPosition, bool repeat) {
 
 
 void Player_stop(void) {
-    puts("Stop playing");
+    puts("Player: Stop playing");
     Player* self = Player_getInstance();
     self->playing = false;
     self->repeat = false;

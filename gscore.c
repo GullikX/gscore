@@ -26,6 +26,7 @@
 #include "objectview.c"
 #include "player.c"
 #include "renderer.c"
+#include "scoreplayer.c"
 #include "synth.c"
 #include "util.c"
 #include "xevents.c"

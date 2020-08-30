@@ -87,7 +87,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     break;
                 case 'q':
                     Renderer_stop();
-                    return;
+                    break;
             }
         }
         else {
@@ -95,6 +95,14 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
             switch (key) {
                 case GLFW_KEY_TAB:
                     Application_switchState();
+                    break;
+                case GLFW_KEY_SPACE:
+                    if (ScorePlayer_playing()) {
+                        ScorePlayer_stop();
+                    }
+                    else {
+                        ScorePlayer_playScore(Application_getInstance()->scoreCurrent);
+                    }
                     break;
             }
         }
@@ -163,7 +171,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                 case GLFW_KEY_TAB:
                     Application_switchState();
                     break;
-                case GLFW_KEY_SPACE:;
+                case GLFW_KEY_SPACE:
                     if (Player_playing()) {
                         Player_stop();
                     }

@@ -47,6 +47,7 @@ typedef struct Synth Synth;
 typedef struct Player Player;
 typedef struct Renderer Renderer;
 typedef struct Score Score;
+typedef struct ScorePlayer ScorePlayer;
 typedef struct Track Track;
 typedef struct EditView EditView;
 typedef struct ObjectView ObjectView;
@@ -155,6 +156,13 @@ struct Renderer {
      int viewportHeight;
 };
 
+struct ScorePlayer {
+    Score* score;
+    bool playing;
+    float startTime;
+    int iBlock;
+};
+
 struct Track{
     int program;
     int velocity;
@@ -254,6 +262,14 @@ void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color);
 void Renderer_updateViewportSize(int width, int height);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram(void);
+
+/* scoreplayer.c */
+ScorePlayer* ScorePlayer_getInstance(void);
+bool ScorePlayer_playing(void);
+void ScorePlayer_playScore(Score* score);
+void ScorePlayer_stop(void);
+void ScorePlayer_update(void);
+void ScorePlayer_drawCursor(void);
 
 /* synth.c */
 Synth* Synth_getInstance(void);
