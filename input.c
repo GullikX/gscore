@@ -100,7 +100,19 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
 
 
 void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int action, int mods) {
-    (void)window; (void)button; (void)action; (void)mods;
+    (void)window; (void)mods;
+    if (action == GLFW_PRESS) {
+        switch (button) {
+            case GLFW_MOUSE_BUTTON_LEFT:
+                puts("Left mouse button pressed!");
+                ObjectView_addBlock();
+                break;
+            case GLFW_MOUSE_BUTTON_RIGHT:
+                puts("Right mouse button pressed!");
+                //ObjectView_removeBlock();
+                break;
+        }
+    }
 }
 
 
