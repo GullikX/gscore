@@ -90,7 +90,9 @@ void ObjectView_draw(void) {
         }
     }
 
-    ObjectView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
+    if (self->cursor.iRow < N_TRACKS) {
+        ObjectView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
+    }
 }
 
 
