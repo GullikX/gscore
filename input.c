@@ -81,7 +81,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
-            switch (keyName[0]) {
+            switch (*keyName) {
                 case 'q':
                     Renderer_stop();
                     return;
@@ -119,7 +119,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
-            switch (keyName[0]) {
+            switch (*keyName) {
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     return;
