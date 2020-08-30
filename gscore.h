@@ -155,7 +155,7 @@ struct Renderer {
 };
 
 struct Score {
-    char* filename;
+    const char* filename;
     int tempo;
     Block blocks[MAX_BLOCKS];
     Track* tracks[N_TRACKS];
@@ -198,6 +198,8 @@ int EditView_xCoordToColumnIndex(float x);
 int EditView_yCoordToRowIndex(float y);
 
 /* filereader.c */
+void createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
+void createScore(Score* score, xmlNode* node);
 Score* FileReader_read(const char* const filename);
 
 /* input.c */

@@ -18,6 +18,26 @@ const char* const AUDIO_DRIVER = "alsa";
 const char* const ALSA_DEVICE = "default";
 const char* const SOUNDFONT = "soundfont.sf2";
 
+const char* const XMLATTRIB_COLOR = "color";
+const char* const XMLATTRIB_GAIN = "gain";
+const char* const XMLATTRIB_NAME = "name";
+const char* const XMLATTRIB_PITCH = "pitch";
+const char* const XMLATTRIB_PROGRAM = "program";
+const char* const XMLATTRIB_SOUNDFONT = "soundfont";
+const char* const XMLATTRIB_TEMPO = "tempo";
+const char* const XMLATTRIB_TIME = "time";
+const char* const XMLATTRIB_TYPE = "type";
+const char* const XMLATTRIB_VELOCITY = "velocity";
+const char* const XMLATTRIB_VERSION = "version";
+const char* const XMLNODE_BLOCK = "block";
+const char* const XMLNODE_BLOCKDEF = "blockdef";
+const char* const XMLNODE_BLOCKDEFS = "blockdefs";
+const char* const XMLNODE_BLOCKS = "blocks";
+const char* const XMLNODE_GSCORE = "gscore";
+const char* const XMLNODE_MESSAGE = "message";
+const char* const XMLNODE_TRACK = "track";
+const char* const XMLNODE_TRACKS = "tracks";
+
 enum {
     WINDOW_WIDTH = 640,
     WINDOW_HEIGHT = 640,
