@@ -21,6 +21,7 @@ Player* Player_getInstance(void) {
     if (self) return self;
 
     self = ecalloc(1, sizeof(*self));
+    self->channel = 0;  /* TODO */
     self->playing = false;
     self->repeat = false;
     self->startTime = 0;
@@ -76,7 +77,7 @@ void Player_update(void) {
 
     if (progress < 1.0f) {
         while (self->midiMessage && self->midiMessage->time < progress) {
-            Synth_processMessage(self->midiMessage);
+            Synth_processMessage(self->channel, self->midiMessage);
             self->midiMessage = self->midiMessage->next;
         }
     } else {

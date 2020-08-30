@@ -65,7 +65,6 @@ void EditView_addNote(void) {
     EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
-    int channel = 0;  /* TODO */
     int velocity = 100;  /* TODO */
 
     if (!Player_playing()) {
@@ -73,10 +72,10 @@ void EditView_addNote(void) {
     }
 
     float timeStart = (float)self->cursor.iColumn / (float)nColumns;
-    EditView_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, channel, pitch, velocity);
+    EditView_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, pitch, velocity);
 
     float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
-    self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, channel, pitch, 0);
+    self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, pitch, 0);
 }
 
 
@@ -86,12 +85,11 @@ void EditView_dragNote(void) {
 
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)(self->cursor.iColumn + 1) / (float)nColumns;
-    int channel = self->midiMessageHeld->channel;
     int pitch = self->midiMessageHeld->pitch;
     int velocity = self->midiMessageHeld->velocity;
 
     EditView_removeMidiMessage(self->midiMessageHeld);
-    self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, time, channel, pitch, velocity);
+    self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, time, pitch, velocity);
 }
 
 
@@ -222,12 +220,11 @@ int EditView_pitchToRowIndex(int pitch) {
 }
 
 
-MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitch, int velocity) {
+MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int velocity) {
     EditView* self = EditView_getInstance();
     MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
     midiMessage->type = type;
     midiMessage->time = time;
-    midiMessage->channel = channel;
     midiMessage->pitch = pitch;
     midiMessage->velocity = velocity;
     midiMessage->next = NULL;

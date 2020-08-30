@@ -75,7 +75,6 @@ struct Vertex {
 struct MidiMessage {
     int type;
     float time;
-    int channel;
     int pitch;
     int velocity;
     MidiMessage* next;
@@ -109,6 +108,7 @@ struct Synth {
 };
 
 struct Player {
+    int channel;
     MidiMessage* midiMessage;
     bool playing;
     bool repeat;
@@ -192,7 +192,7 @@ void EditView_drawItem(GridItem* item, float offset);
 bool EditView_updateCursorPosition(float x, float y);
 int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
-MidiMessage* EditView_addMidiMessage(int type, float time, int channel, int pitch, int velocity);
+MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int velocity);
 void EditView_removeMidiMessage(MidiMessage* midiMessage);
 int EditView_xCoordToColumnIndex(float x);
 int EditView_yCoordToRowIndex(float y);
@@ -255,9 +255,9 @@ GLuint createProgram(void);
 
 /* synth.c */
 Synth* Synth_getInstance(void);
-void Synth_setProgramById(int channelId, int programId);
+void Synth_setProgramById(int channel, int programId);
 void Synth_setProgramByName(int channel, const char* const instrumentName);
-void Synth_processMessage(MidiMessage* midiMessage);
+void Synth_processMessage(int channel, MidiMessage* midiMessage);
 void Synth_noteOn(int key);
 void Synth_noteOff(int key);
 void Synth_noteOffAll(void);

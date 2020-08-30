@@ -73,7 +73,6 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
             score->blocks[iBlock].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
             score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
             score->blocks[iBlock].midiMessageRoot->time = -1.0f;
-            score->blocks[iBlock].midiMessageRoot->channel = -1;
             score->blocks[iBlock].midiMessageRoot->pitch = -1;
             score->blocks[iBlock].midiMessageRoot->velocity = -1;
             score->blocks[iBlock].midiMessageRoot->next = NULL;
@@ -86,7 +85,6 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
                     message->next = ecalloc(1, sizeof(MidiMessage));
                     message->next->type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
                     message->next->time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
-                    message->next->channel = 0;
                     message->next->pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
                     message->next->velocity = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
                     message->next->next = NULL;
@@ -143,7 +141,6 @@ void FileReader_createNewEmptyScore(Score* score) {
     score->blocks[0].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
     score->blocks[0].midiMessageRoot->type = FLUID_SEQ_NOTE;
     score->blocks[0].midiMessageRoot->time = -1.0f;
-    score->blocks[0].midiMessageRoot->channel = -1;
     score->blocks[0].midiMessageRoot->pitch = -1;
     score->blocks[0].midiMessageRoot->velocity = -1;
     score->blocks[0].midiMessageRoot->next = NULL;
