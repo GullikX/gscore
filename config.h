@@ -20,6 +20,8 @@ const char* const SOUNDFONT = "soundfont.sf2";
 
 const char* const BLOCK_NAME_DEFAULT = "default";
 
+const char* const XML_ENCODING = "UTF-8";
+const char* const XML_VERSION = "1.0";
 const char* const XMLATTRIB_COLOR = "color";
 const char* const XMLATTRIB_GAIN = "gain";
 const char* const XMLATTRIB_NAME = "name";
@@ -63,6 +65,7 @@ enum {
     SYNTH_PROGRAM=0,
     SYNTH_ENABLE_REVERB=false,
     SYNTH_ENABLE_CHORUS=false,
+    XML_BUFFER_SIZE = 1024,
 };
 
 const float CURSOR_SIZE_OFFSET = -0.005f;

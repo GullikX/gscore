@@ -204,6 +204,11 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs);
 void FileReader_createTracks(Score* score, xmlNode* nodeTracks);
 void FileReader_createNewEmptyScore(Score* score);
 
+/* filewriter.c */
+void FileWriter_write(const Score* const score, const char* const filename);
+void FileWrite_writeBlockDefs(const Score* const score, xmlNode* nodeRoot);
+void FileWrite_writeTracks(const Score* const score, xmlNode* nodeRoot);
+
 /* input.c */
 void Input_setupCallbacks(GLFWwindow* window);
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

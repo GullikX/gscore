@@ -20,6 +20,7 @@
 #include "application.c"
 #include "editview.c"
 #include "filereader.c"
+#include "filewriter.c"
 #include "input.c"
 #include "main.c"
 #include "objectview.c"
