@@ -65,7 +65,7 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
         if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
             if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
             score->blocks[iBlock].name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-            score->blocks[iBlock].color = COLOR_BLOCK_DEFAULT;
+            score->blocks[iBlock].color = BLOCK_COLORS[iBlock];
 
             score->blocks[iBlock].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
             score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
