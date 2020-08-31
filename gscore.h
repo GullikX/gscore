@@ -167,6 +167,7 @@ struct ScorePlayer {
     Score* score;
     bool playing;
     float startTime;
+    MidiMessage* midiMessages[N_TRACKS];
 };
 
 struct Track{
