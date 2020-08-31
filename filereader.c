@@ -134,14 +134,16 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
 Score* FileReader_createNewEmptyScore() {
     Score* score = ecalloc(1, sizeof(*score));
     score->tempo = TEMPO_BPM;
-    score->blocks[0].name = BLOCK_NAME_DEFAULT;
-    score->blocks[0].color = COLOR_BLOCK_DEFAULT;
-    score->blocks[0].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
-    score->blocks[0].midiMessageRoot->type = FLUID_SEQ_NOTE;
-    score->blocks[0].midiMessageRoot->time = -1.0f;
-    score->blocks[0].midiMessageRoot->pitch = -1;
-    score->blocks[0].midiMessageRoot->velocity = -1;
-    score->blocks[0].midiMessageRoot->next = NULL;
-    score->blocks[0].midiMessageRoot->prev = NULL;
+    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+        score->blocks[iBlock].name = BLOCK_NAMES[iBlock];
+        score->blocks[iBlock].color = BLOCK_COLORS[iBlock];
+        score->blocks[iBlock].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
+        score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
+        score->blocks[iBlock].midiMessageRoot->time = -1.0f;
+        score->blocks[iBlock].midiMessageRoot->pitch = -1;
+        score->blocks[iBlock].midiMessageRoot->velocity = -1;
+        score->blocks[iBlock].midiMessageRoot->next = NULL;
+        score->blocks[iBlock].midiMessageRoot->prev = NULL;
+    }
     return score;
 }

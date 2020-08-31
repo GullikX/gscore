@@ -47,7 +47,7 @@ enum {
     WINDOW_HEIGHT = 640,
     RENDERER_MAX_QUADS = 1000,
     RENDERER_MAX_VERTICES = 4*RENDERER_MAX_QUADS,
-    MAX_BLOCKS = 64,
+    MAX_BLOCKS = 4,
     N_TRACKS = 4,
     SCORE_LENGTH = 16,
     BEATS_PER_MEASURE = 4,
@@ -79,6 +79,20 @@ const Vector4 COLOR_BLOCK_DEFAULT = {0.5411f, 0.7765f, 0.9490f, 1.0f};
 const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
 const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
 const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};
+
+const char* BLOCK_NAMES[] = {  /* TODO: do not hard-code these (or the number of blocks) */
+    "block1",
+    "block2",
+    "block3",
+    "block4",
+};
+
+const Vector4 BLOCK_COLORS[] = {
+    COLOR_BLOCK_DEFAULT,
+    {0.6235, 0.6588, 0.8549, 1.0f},
+    {0.7725, 0.8824, 0.6471, 1.0f},
+    {1.0000, 0.8784, 0.5098, 1.0f},
+};
 
 enum {
     ATOM_BPM,
