@@ -72,7 +72,7 @@ void BlockPlayer_update(BlockPlayer* self) {
     if (!BlockPlayer_playing(self)) return;
 
     float time = glfwGetTime() - self->startTime;
-    float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
+    float totalTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempoBpm;
     float progress = self->startPosition + time / totalTime;
 
     if (progress < 1.0f) {
@@ -95,7 +95,7 @@ void BlockPlayer_drawCursor(BlockPlayer* self) {
     if (!BlockPlayer_playing(self)) return;
 
     float time = glfwGetTime() - self->startTime;
-    float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
+    float totalTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempoBpm;
     float progress = self->startPosition + time / totalTime;
     float cursorX = -1.0f + 2.0f * progress;
 
