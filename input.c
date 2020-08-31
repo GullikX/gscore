@@ -87,6 +87,18 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
+                case '1':
+                    Application_switchBlock(application, 0);
+                    break;
+                case '2':
+                    Application_switchBlock(application, 1);
+                    break;
+                case '3':
+                    Application_switchBlock(application, 2);
+                    break;
+                case '4':
+                    Application_switchBlock(application, 3);
+                    break;
                 case 'w':
                     Application_writeScore(application);
                     break;
@@ -163,6 +175,18 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
+                case '1':
+                    Application_switchBlock(application, 0);
+                    break;
+                case '2':
+                    Application_switchBlock(application, 1);
+                    break;
+                case '3':
+                    Application_switchBlock(application, 2);
+                    break;
+                case '4':
+                    Application_switchBlock(application, 3);
+                    break;
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     break;

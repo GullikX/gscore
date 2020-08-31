@@ -196,6 +196,8 @@ Application* Application_getInstance(void);
 void Application_run(Application* self);
 State Application_getState(Application* self);
 void Application_switchState(Application* self);
+void Application_switchBlock(Application* self, int iBlock);
+void Application_writeScore(Application* self);
 
 /* editview.c */
 EditView* EditView_new(void);

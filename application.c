@@ -92,6 +92,11 @@ void Application_switchState(Application* self) {
 }
 
 
+void Application_switchBlock(Application* self, int iBlock) {
+    self->blockCurrent = &self->scoreCurrent->blocks[iBlock];
+}
+
+
 void Application_writeScore(Application* self) {
     FileWriter_write(self->scoreCurrent, self->filename);
 }
