@@ -75,6 +75,7 @@ void ScorePlayer_stop(ScorePlayer* self) {
     self->score = NULL;
     self->playing = false;
     self->startTime = 0.0f;
+    Synth_noteOffAll(Application_getInstance()->synth);
 }
 
 
