@@ -92,6 +92,17 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
             iBlock++;
         }
     }
+    for (int iBlockAdditional = iBlock; iBlockAdditional < MAX_BLOCKS; iBlockAdditional++) {
+        score->blocks[iBlockAdditional].name = BLOCK_NAMES[iBlockAdditional];
+        score->blocks[iBlockAdditional].color = BLOCK_COLORS[iBlockAdditional];
+        score->blocks[iBlockAdditional].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
+        score->blocks[iBlockAdditional].midiMessageRoot->type = FLUID_SEQ_NOTE;
+        score->blocks[iBlockAdditional].midiMessageRoot->time = -1.0f;
+        score->blocks[iBlockAdditional].midiMessageRoot->pitch = -1;
+        score->blocks[iBlockAdditional].midiMessageRoot->velocity = -1;
+        score->blocks[iBlockAdditional].midiMessageRoot->next = NULL;
+        score->blocks[iBlockAdditional].midiMessageRoot->prev = NULL;
+    }
 }
 
 
