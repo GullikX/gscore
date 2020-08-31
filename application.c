@@ -67,9 +67,8 @@ void Application_run(Application* self) {
     while(Renderer_running(self->renderer)) {
         switch (Application_getState(self)) {
             case OBJECT_MODE:
-                ScorePlayer_update();
+                ObjectView_update(self->objectView);
                 ObjectView_draw(self->objectView);
-                ScorePlayer_drawCursor();
                 break;
             case EDIT_MODE:
                 BlockPlayer_update();

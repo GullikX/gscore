@@ -40,6 +40,8 @@ ObjectView* ObjectView_new(void) {
     self->cursor.nColumns = 1;
     self->cursor.color = COLOR_CURSOR;
 
+    self->player = ScorePlayer_new();
+
     return self;
 }
 
@@ -47,6 +49,11 @@ ObjectView* ObjectView_new(void) {
 ObjectView* ObjectView_free(ObjectView* self) {
     free(self);
     return NULL;
+}
+
+
+void ObjectView_update(ObjectView* self) {
+    ScorePlayer_update(self->player);
 }
 
 
@@ -92,6 +99,8 @@ void ObjectView_draw(ObjectView* self) {
     if (self->cursor.iRow < N_TRACKS) {
         ObjectView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
     }
+
+    ScorePlayer_drawCursor(self->player);
 }
 
 

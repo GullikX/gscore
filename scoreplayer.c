@@ -16,72 +16,53 @@
  *
  */
 
-ScorePlayer* ScorePlayer_getInstance(void) {
-    static ScorePlayer* self = NULL;
-    if (self) return self;
+ScorePlayer* ScorePlayer_new(void) {
+    ScorePlayer* self = ecalloc(1, sizeof(*self));
 
-    self = ecalloc(1, sizeof(*self));
+    self->score = NULL;
     self->playing = false;
+    self->startTime = 0.0f;
 
     return self;
 }
 
 
-bool ScorePlayer_playing(void) {
-    return ScorePlayer_getInstance()->playing;
+ScorePlayer* ScorePlayer_free(ScorePlayer* self) {
+    ScorePlayer_stop(self);
+    free(self);
+    return NULL;
 }
 
 
-void ScorePlayer_playScore(Score* score) {
-    ScorePlayer* self = ScorePlayer_getInstance();
+void ScorePlayer_playScore(ScorePlayer* self, Score* score) {
+    /* TODO */
     self->score = score;
     self->playing = true;
     self->startTime = glfwGetTime();
-    self->iBlock = -1;
-
-    printf("Start playing at time: %f\n", self->startTime);
 }
 
 
-void ScorePlayer_stop(void) {
-    puts("ScorePlayer: Stop playing");
-    ScorePlayer* self = ScorePlayer_getInstance();
+void ScorePlayer_stop(ScorePlayer* self) {
+    /* TODO */
+    self->score = NULL;
     self->playing = false;
-    Synth_noteOffAll(Application_getInstance()->synth);
+    self->startTime = 0.0f;
 }
 
 
-void ScorePlayer_update(void) {
-    if (!ScorePlayer_playing()) return;
-    ScorePlayer* self = ScorePlayer_getInstance();
-
-    float time = glfwGetTime() - self->startTime;
-    int tempoBpm = self->score->tempo;
-    float totalTime = SCORE_LENGTH * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / tempoBpm;
-    float progress = time / totalTime;
-
-    if (progress < 1.0f) {
-        BlockPlayer_update();
-        int iBlock = SCORE_LENGTH * progress;
-        if (iBlock > self->iBlock) {
-            BlockPlayer_stop();
-            Block* block = self->score->tracks[0].blocks[iBlock];
-            if (block) {
-                BlockPlayer_setTempoBpm(self->score->tempo);
-                BlockPlayer_playBlock(block, 0.0f, false);
-            }
-            self->iBlock = iBlock;
-        }
-    } else {
-        ScorePlayer_stop();
-    }
+bool ScorePlayer_playing(ScorePlayer* self) {
+    return self->playing;
 }
 
 
-void ScorePlayer_drawCursor(void) {
-    ScorePlayer* self = ScorePlayer_getInstance();
-    if (!self->playing) return;
+void ScorePlayer_update(ScorePlayer* self) {
+    (void)self;
+    /* TODO */
+}
 
+
+void ScorePlayer_drawCursor(ScorePlayer* self) {
+    if (!ScorePlayer_playing(self)) return;
     float time = glfwGetTime() - self->startTime;
     int tempoBpm = self->score->tempo;
     float totalTime = SCORE_LENGTH * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / tempoBpm;

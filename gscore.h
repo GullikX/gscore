@@ -148,6 +148,7 @@ struct ObjectView {
     GridItem gridlinesHorizontal[N_TRACKS];
     GridItem cursor;
     float viewHeight;
+    ScorePlayer* player;
 };
 
 struct Renderer {
@@ -165,7 +166,6 @@ struct ScorePlayer {
     Score* score;
     bool playing;
     float startTime;
-    int iBlock;
 };
 
 struct Track{
@@ -245,6 +245,7 @@ int main(int argc, char* argv[]);
 /* objectview.c */
 ObjectView* ObjectView_new(void);
 ObjectView* ObjectView_free(ObjectView* self);
+void ObjectView_update(ObjectView* self);
 void ObjectView_addBlock(ObjectView* self);
 void ObjectView_removeBlock(ObjectView* self);
 void ObjectView_draw(ObjectView* self);
@@ -274,12 +275,13 @@ GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram(void);
 
 /* scoreplayer.c */
-ScorePlayer* ScorePlayer_getInstance(void);
-bool ScorePlayer_playing(void);
-void ScorePlayer_playScore(Score* score);
-void ScorePlayer_stop(void);
-void ScorePlayer_update(void);
-void ScorePlayer_drawCursor(void);
+ScorePlayer* ScorePlayer_new(void);
+ScorePlayer* ScorePlayer_free(ScorePlayer* self);
+void ScorePlayer_playScore(ScorePlayer*, Score* score);
+void ScorePlayer_stop(ScorePlayer* self);
+bool ScorePlayer_playing(ScorePlayer* self);
+void ScorePlayer_update(ScorePlayer* self);
+void ScorePlayer_drawCursor(ScorePlayer* self);
 
 /* synth.c */
 Synth* Synth_new(void);

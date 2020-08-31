@@ -81,6 +81,7 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
 void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window; (void)mods;
     Application* application = Application_getInstance();
+    ObjectView* objectView = application->objectView;
     if (action == GLFW_PRESS) {
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
@@ -101,11 +102,11 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
-                    if (ScorePlayer_playing()) {
-                        ScorePlayer_stop();
+                    if (ScorePlayer_playing(objectView->player)) {
+                        ScorePlayer_stop(objectView->player);
                     }
                     else {
-                        ScorePlayer_playScore(Application_getInstance()->scoreCurrent);
+                        ScorePlayer_playScore(objectView->player, application->scoreCurrent);
                     }
                     break;
             }
