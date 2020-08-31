@@ -47,7 +47,7 @@ void ScorePlayer_stop(void) {
     puts("ScorePlayer: Stop playing");
     ScorePlayer* self = ScorePlayer_getInstance();
     self->playing = false;
-    Synth_noteOffAll();
+    Synth_noteOffAll(Application_getInstance()->synth);
 }
 
 

@@ -16,11 +16,8 @@
  *
  */
 
-Synth* Synth_getInstance(void) {
-    static Synth* self = NULL;
-    if (self) return self;
-
-    self = ecalloc(1, sizeof(*self));
+Synth* Synth_new(void) {
+    Synth* self = ecalloc(1, sizeof(*self));
 
     self->settings = new_fluid_settings();
     self->fluidSynth = new_fluid_synth(self->settings);
@@ -39,7 +36,7 @@ Synth* Synth_getInstance(void) {
         die("Failed to load soundfont");
     }
 
-    Synth_setProgramById(0, SYNTH_PROGRAM);
+    Synth_setProgramById(self, 0, SYNTH_PROGRAM);
     fluid_synth_set_gain(self->fluidSynth, SYNTH_GAIN);
     fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
     fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
@@ -71,18 +68,21 @@ Synth* Synth_getInstance(void) {
 }
 
 
-void Synth_setProgramById(int channel, int program) {
-    printf("setProgramById %d\n", program);
-    Synth* self = Synth_getInstance();
+Synth* Synth_free(Synth* self) {
+    /* TODO: clean up fluidsynth */
+    free(self);
+    return NULL;
+}
+
+
+void Synth_setProgramById(Synth* self, int channel, int program) {
     if (fluid_synth_program_change(self->fluidSynth, channel, program) == FLUID_FAILED) {
         puts("Error: Failed to set midi program");
     }
 }
 
 
-void Synth_setProgramByName(int channel, const char* const instrumentName) {
-    Synth* self = Synth_getInstance();
-
+void Synth_setProgramByName(Synth* self, int channel, const char* const instrumentName) {
     fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
     if (!soundFont) {
         die("Soundfont pointer is null");
@@ -93,7 +93,7 @@ void Synth_setProgramByName(int channel, const char* const instrumentName) {
         if (!preset) break;
         if (!strcmp(instrumentName, fluid_preset_get_name(preset))) {
             printf("Setting instrument to '%s'\n", instrumentName);
-            Synth_setProgramById(channel, i);
+            Synth_setProgramById(self, channel, i);
             return;
         }
     }
@@ -102,8 +102,7 @@ void Synth_setProgramByName(int channel, const char* const instrumentName) {
 }
 
 
-void Synth_processMessage(int channel, MidiMessage* midiMessage) {
-    Synth* self = Synth_getInstance();
+void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
     switch (midiMessage->type) {
         case FLUID_SEQ_NOTE:
             break;
@@ -120,25 +119,21 @@ void Synth_processMessage(int channel, MidiMessage* midiMessage) {
 }
 
 
-void Synth_noteOn(int key) {
-    Synth* self = Synth_getInstance();
+void Synth_noteOn(Synth* self, int key) {
     fluid_synth_noteon(self->fluidSynth, 0, key, 100);
 }
 
 
-void Synth_noteOff(int key) {
-    Synth* self = Synth_getInstance();
+void Synth_noteOff(Synth* self, int key) {
     fluid_synth_noteoff(self->fluidSynth, 0, key);
 }
 
 
-void Synth_noteOffAll(void) {
-    Synth* self = Synth_getInstance();
+void Synth_noteOffAll(Synth* self) {
     fluid_synth_all_notes_off(self->fluidSynth, 0);
 }
 
 
 char* Synth_getInstrumentListString(void) {
-    Synth* self = Synth_getInstance();
-    return self->instrumentListString;
+    return Application_getInstance()->synth->instrumentListString;
 }

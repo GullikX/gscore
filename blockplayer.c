@@ -63,7 +63,7 @@ void BlockPlayer_stop(void) {
     BlockPlayer* self = BlockPlayer_getInstance();
     self->playing = false;
     self->repeat = false;
-    Synth_noteOffAll();
+    Synth_noteOffAll(Application_getInstance()->synth);
 }
 
 
@@ -77,7 +77,7 @@ void BlockPlayer_update(void) {
 
     if (progress < 1.0f) {
         while (self->midiMessage && self->midiMessage->time < progress) {
-            Synth_processMessage(self->channel, self->midiMessage);
+            Synth_processMessage(Application_getInstance()->synth, self->channel, self->midiMessage);
             self->midiMessage = self->midiMessage->next;
         }
     } else {

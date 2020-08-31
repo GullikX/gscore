@@ -280,13 +280,14 @@ void ScorePlayer_update(void);
 void ScorePlayer_drawCursor(void);
 
 /* synth.c */
-Synth* Synth_getInstance(void);
-void Synth_setProgramById(int channel, int programId);
-void Synth_setProgramByName(int channel, const char* const instrumentName);
-void Synth_processMessage(int channel, MidiMessage* midiMessage);
-void Synth_noteOn(int key);
-void Synth_noteOff(int key);
-void Synth_noteOffAll(void);
+Synth* Synth_new(void);
+Synth* Synth_free(Synth* self);
+void Synth_setProgramById(Synth* self, int channel, int programId);
+void Synth_setProgramByName(Synth* self, int channel, const char* const instrumentName);
+void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage);
+void Synth_noteOn(Synth* self, int key);
+void Synth_noteOff(Synth* self, int key);
+void Synth_noteOffAll(Synth* self);
 
 /* util.c */
 void die(const char* const format, ...);

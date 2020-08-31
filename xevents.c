@@ -72,7 +72,7 @@ void XEvents_processXEvents(void) {
                     }
                     break;
                 case ATOM_SYNTH_PROGRAM:
-                    Synth_setProgramByName(0, (char*)propertyValue);
+                    Synth_setProgramByName(Application_getInstance()->synth, 0, (char*)propertyValue);
             }
         }
         XFree(propertyValue);

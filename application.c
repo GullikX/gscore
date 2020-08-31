@@ -29,7 +29,7 @@ Application* Application_new(const char* const filename) {
 
     self->editView = EditView_new();
     self->objectView = ObjectView_new();
-    //self->synth = Synth_new();
+    self->synth = Synth_new();
     //self->renderer = Renderer_new();
 
     if (!_application) {
@@ -47,6 +47,7 @@ Application* Application_free(Application* self) {
     /* TODO: free all the things */
     self->editView = EditView_free(self->editView);
     self->objectView = ObjectView_free(self->objectView);
+    self->synth = Synth_free(self->synth);
     free(self);
     _application = NULL;
     return NULL;
@@ -60,7 +61,6 @@ Application* Application_getInstance(void) {
 
 
 void Application_run(Application* self) {
-    Synth_getInstance();
     while(Renderer_running()) {
         switch (Application_getState(self)) {
             case OBJECT_MODE:

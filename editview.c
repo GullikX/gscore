@@ -56,7 +56,7 @@ EditView* EditView_free(EditView* self) {
 
 void EditView_previewNote(EditView* self) {
     if (!BlockPlayer_playing()) {
-        Synth_noteOn(EditView_rowIndexToNoteKey(self->cursor.iRow));
+        Synth_noteOn(Application_getInstance()->synth, EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
 
@@ -68,7 +68,7 @@ void EditView_addNote(EditView* self) {
     int velocity = 100;  /* TODO */
 
     if (!BlockPlayer_playing()) {
-        Synth_noteOn(pitch);
+        Synth_noteOn(Application_getInstance()->synth, pitch);
     }
 
     float timeStart = (float)self->cursor.iColumn / (float)nColumns;
@@ -96,7 +96,7 @@ void EditView_dragNote(EditView* self) {
 void EditView_releaseNote(EditView* self) {
     self->midiMessageHeld = NULL;
     if (!BlockPlayer_playing()) {
-        Synth_noteOffAll();
+        Synth_noteOffAll(Application_getInstance()->synth);
     }
 }
 
