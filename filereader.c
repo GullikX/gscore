@@ -104,12 +104,12 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
             score->tracks[iTrack].program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
             for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
                 if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
-                    if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
+                    if (iBlock >= SCORE_LENGTH) die("To many blocks (max is %d)", SCORE_LENGTH);
                     const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
                     printf("node block name='%s'\n", name);
                     if (name) {
                         Block* block = NULL;
-                        for (int i = 0; i < MAX_BLOCKS; i++) {
+                        for (int i = 0; i < SCORE_LENGTH; i++) {
                             if (!score->blocks[i].name) continue;
                             if (!strcmp(score->blocks[i].name, name)) {
                                 block = &score->blocks[i];
