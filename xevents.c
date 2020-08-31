@@ -16,13 +16,9 @@
  *
  */
 
-XEvents* XEvents_getInstance(void) {
-    static XEvents* self = NULL;
-    if (self) return self;
+XEvents* XEvents_new(GLFWwindow* glfwWindow) {
+    XEvents* self = ecalloc(1, sizeof(*self));
 
-    self = ecalloc(1, sizeof(*self));
-
-    GLFWwindow* glfwWindow = Application_getInstance()->renderer->window;
     self->x11Display = glfwGetX11Display();
     self->x11Window = glfwGetX11Window(glfwWindow);
     printf("x11Window id: %lu\n", self->x11Window);
@@ -33,9 +29,14 @@ XEvents* XEvents_getInstance(void) {
     return self;
 }
 
-void XEvents_processXEvents(void) {
-    XEvents* self = XEvents_getInstance();
 
+XEvents* XEvents_free(XEvents* self) {
+    free(self);
+    return NULL;
+}
+
+
+void XEvents_processXEvents(XEvents* self) {
     for (unsigned long i = 0; i < ATOM_COUNT; i++) {
         unsigned char* propertyValue = NULL;
         Atom atomDummy;

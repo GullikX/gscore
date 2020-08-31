@@ -31,6 +31,7 @@ Application* Application_new(const char* const filename) {
     self->objectView = ObjectView_new();
     self->synth = Synth_new();
     self->renderer = Renderer_new();
+    self->xevents = XEvents_new(self->renderer->window);
 
     if (!_application) {
         _application = self;
@@ -48,6 +49,7 @@ Application* Application_free(Application* self) {
     self->editView = EditView_free(self->editView);
     self->objectView = ObjectView_free(self->objectView);
     self->synth = Synth_free(self->synth);
+    self->xevents = XEvents_free(self->xevents);
     self->renderer = Renderer_free(self->renderer);
     free(self);
     _application = NULL;
@@ -76,6 +78,7 @@ void Application_run(Application* self) {
                 break;
         }
         Renderer_updateScreen(self->renderer);
+        XEvents_processXEvents(self->xevents);
     }
 }
 

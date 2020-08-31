@@ -90,6 +90,7 @@ struct Application {
     ObjectView* objectView;
     Renderer* renderer;
     Synth* synth;
+    XEvents* xevents;
     State state;
 };
 
@@ -298,5 +299,6 @@ void spawnSetXProp(int atomId);
 void spawn(const char* const cmd, const char* const pipeData);
 
 /* xevents.c */
-XEvents* XEvents_getInstance(void);
-void XEvents_processXEvents(void);
+XEvents* XEvents_new(GLFWwindow* glfwWindow);
+XEvents* XEvents_free(XEvents* self);
+void XEvents_processXEvents(XEvents* self);
