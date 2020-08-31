@@ -104,7 +104,7 @@ void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
     float y1 = -(-1.0f + item->iRow * rowHeight) + offset;
     float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
 
-    Renderer_drawQuad(x1, x2, y1, y2, item->color);
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, item->color);
 }
 
 
@@ -121,11 +121,11 @@ bool ObjectView_updateCursorPosition(ObjectView* self, float x, float y) {
 
 int ObjectView_xCoordToColumnIndex(float x) {
     int nColumns = SCORE_LENGTH;
-    return (nColumns * x) / Renderer_getInstance()->viewportWidth;
+    return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
 }
 
 
 int ObjectView_yCoordToRowIndex(ObjectView* self, float y) {
     int nRows = N_TRACKS;
-    return (nRows * y) / (Renderer_getInstance()->viewportHeight * self->viewHeight / 2.0f);
+    return (nRows * y) / (Application_getInstance()->renderer->viewportHeight * self->viewHeight / 2.0f);
 }

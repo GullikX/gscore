@@ -73,7 +73,7 @@ void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
     (void)window;
     printf("Window size updated: (%d, %d)\n", width, height);
-    Renderer_updateViewportSize(width, height);
+    Renderer_updateViewportSize(Application_getInstance()->renderer, width, height);
 }
 
 
@@ -90,7 +90,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     Application_writeScore(application);
                     break;
                 case 'q':
-                    Renderer_stop();
+                    Renderer_stop(application->renderer);
                     break;
             }
         }
@@ -170,7 +170,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     Application_writeScore(application);
                     break;
                 case 'q':
-                    Renderer_stop();
+                    Renderer_stop(application->renderer);
                     return;
             }
         }

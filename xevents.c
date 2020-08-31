@@ -22,7 +22,7 @@ XEvents* XEvents_getInstance(void) {
 
     self = ecalloc(1, sizeof(*self));
 
-    GLFWwindow* glfwWindow = Renderer_getInstance()->window;
+    GLFWwindow* glfwWindow = Application_getInstance()->renderer->window;
     self->x11Display = glfwGetX11Display();
     self->x11Window = glfwGetX11Window(glfwWindow);
     printf("x11Window id: %lu\n", self->x11Window);

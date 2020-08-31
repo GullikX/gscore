@@ -16,11 +16,8 @@
  *
  */
 
-Renderer* Renderer_getInstance(void) {
-    static Renderer* self = NULL;
-    if (self) return self;
-
-    self = ecalloc(1, sizeof(*self));
+Renderer* Renderer_new(void) {
+    Renderer* self = ecalloc(1, sizeof(*self));
 
     if (!glfwInit()) {
         die("Failed to initialize GLFW");
@@ -72,21 +69,24 @@ Renderer* Renderer_getInstance(void) {
 }
 
 
-void Renderer_stop(void) {
-    Renderer* self = Renderer_getInstance();
+Renderer* Renderer_free(Renderer* self) {
+    /* TODO: cleanup */
+    free(self);
+    return NULL;
+}
+
+
+void Renderer_stop(Renderer* self) {
     glfwSetWindowShouldClose(self->window, GL_TRUE);
 }
 
 
-int Renderer_running(void) {
-    Renderer* self = Renderer_getInstance();
+int Renderer_running(Renderer* self) {
     return !glfwWindowShouldClose(self->window);
 }
 
 
-void Renderer_updateScreen(void) {
-    Renderer* self = Renderer_getInstance();
-
+void Renderer_updateScreen(Renderer* self) {
     glClearColor(COLOR_BACKGROUND.x, COLOR_BACKGROUND.y, COLOR_BACKGROUND.z, COLOR_BACKGROUND.w);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -102,8 +102,7 @@ void Renderer_updateScreen(void) {
 }
 
 
-void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color) {
-    Renderer* self = Renderer_getInstance();
+void Renderer_drawQuad(Renderer* self, float x1, float x2, float y1, float y2, Vector4 color) {
     if (self->nVerticesEnqueued >= RENDERER_MAX_VERTICES) {
         die("Vertex limit reached");  /* TODO: Handle this better */
     }
@@ -122,8 +121,7 @@ void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color) {
 }
 
 
-void Renderer_updateViewportSize(int width, int height) {
-    Renderer* self = Renderer_getInstance();
+void Renderer_updateViewportSize(Renderer* self, int width, int height) {
     self->viewportWidth = width;
     self->viewportHeight = height;
     glViewport(0, 0, width, height);

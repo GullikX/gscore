@@ -30,7 +30,7 @@ Application* Application_new(const char* const filename) {
     self->editView = EditView_new();
     self->objectView = ObjectView_new();
     self->synth = Synth_new();
-    //self->renderer = Renderer_new();
+    self->renderer = Renderer_new();
 
     if (!_application) {
         _application = self;
@@ -48,6 +48,7 @@ Application* Application_free(Application* self) {
     self->editView = EditView_free(self->editView);
     self->objectView = ObjectView_free(self->objectView);
     self->synth = Synth_free(self->synth);
+    self->renderer = Renderer_free(self->renderer);
     free(self);
     _application = NULL;
     return NULL;
@@ -61,7 +62,7 @@ Application* Application_getInstance(void) {
 
 
 void Application_run(Application* self) {
-    while(Renderer_running()) {
+    while(Renderer_running(self->renderer)) {
         switch (Application_getState(self)) {
             case OBJECT_MODE:
                 ScorePlayer_update();
@@ -74,7 +75,7 @@ void Application_run(Application* self) {
                 BlockPlayer_drawCursor();
                 break;
         }
-        Renderer_updateScreen();
+        Renderer_updateScreen(self->renderer);
     }
 }
 

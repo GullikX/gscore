@@ -93,5 +93,5 @@ void ScorePlayer_drawCursor(void) {
     float y1 = -1.0f;
     float y2 = 1.0f;
 
-    Renderer_drawQuad(x1, x2, y1, y2, COLOR_CURSOR);
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
 }

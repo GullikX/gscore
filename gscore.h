@@ -88,7 +88,7 @@ struct Application {
     Block* blockCurrent;
     EditView* editView;
     ObjectView* objectView;
-    Renderer* Renderer;
+    Renderer* renderer;
     Synth* synth;
     State state;
 };
@@ -262,12 +262,13 @@ void BlockPlayer_update(void);
 void BlockPlayer_drawCursor(void);
 
 /* renderer.c */
-Renderer* Renderer_getInstance(void);
-void Renderer_stop(void);
-int Renderer_running(void);
-void Renderer_updateScreen(void);
-void Renderer_drawQuad(float x1, float x2, float y1, float y2, Vector4 color);
-void Renderer_updateViewportSize(int width, int height);
+Renderer* Renderer_new(void);
+Renderer* Renderer_free(Renderer* self);
+void Renderer_stop(Renderer* self);
+int Renderer_running(Renderer* self);
+void Renderer_updateScreen(Renderer* self);
+void Renderer_drawQuad(Renderer* self, float x1, float x2, float y1, float y2, Vector4 color);
+void Renderer_updateViewportSize(Renderer* self, int width, int height);
 GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram(void);
 
