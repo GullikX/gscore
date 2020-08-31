@@ -184,10 +184,12 @@ struct XEvents {
 
 /* Function declarations */
 /* application.c */
+Application* Application_new(const char* const filename);
+Application* Application_free(Application* self);
 Application* Application_getInstance(void);
-void Application_run(const char* const filename);
-State Application_getState(void);
-void Application_switchState(void);
+void Application_run(Application* self);
+State Application_getState(Application* self);
+void Application_switchState(Application* self);
 
 /* editview.c */
 EditView* EditView_getInstance(void);

@@ -26,7 +26,8 @@ void Input_setupCallbacks(GLFWwindow* window) {
 
 
 void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    switch (Application_getState()) {
+    Application* application = Application_getInstance();
+    switch (Application_getState(application)) {
         case OBJECT_MODE:
             Input_keyCallbackObjectMode(window, key, scancode, action, mods);
             break;
@@ -38,7 +39,8 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 
 void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-    switch (Application_getState()) {
+    Application* application = Application_getInstance();
+    switch (Application_getState(application)) {
         case OBJECT_MODE:
             Input_mouseButtonCallbackObjectMode(window, button, action, mods);
             break;
@@ -50,7 +52,8 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
 
 
 void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
-    switch (Application_getState()) {
+    Application* application = Application_getInstance();
+    switch (Application_getState(application)) {
         case OBJECT_MODE:
             Input_cursorPosCallbackObjectMode(window, xpos, ypos);
             break;
@@ -77,13 +80,14 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
 /* Object mode */
 void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window; (void)mods;
+    Application* application = Application_getInstance();
     if (action == GLFW_PRESS) {
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
                 case 'w':
-                    Application_writeScore();
+                    Application_writeScore(application);
                     break;
                 case 'q':
                     Renderer_stop();
@@ -94,7 +98,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
-                    Application_switchState();
+                    Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
                     if (ScorePlayer_playing()) {
@@ -144,6 +148,7 @@ void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
 /* Edit mode */
 void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window;
+    Application* application = Application_getInstance();
     bool modControl = mods & GLFW_MOD_CONTROL;
     bool modShift = mods & GLFW_MOD_SHIFT;
     if (action == GLFW_PRESS) {
@@ -158,7 +163,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     spawnSetXProp(ATOM_BPM);
                     return;
                 case 'w':
-                    Application_writeScore();
+                    Application_writeScore(application);
                     break;
                 case 'q':
                     Renderer_stop();
@@ -169,7 +174,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
-                    Application_switchState();
+                    Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
                     if (BlockPlayer_playing()) {

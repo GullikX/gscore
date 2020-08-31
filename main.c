@@ -20,5 +20,7 @@ int main(int argc, char* argv[]) {
     if (argc != 2) {
         die("Needs a filename argument");
     }
-    Application_run(argv[1]);
+    Application* application = Application_new(argv[1]);
+    Application_run(application);
+    application = Application_free(application);
 }

@@ -16,25 +16,44 @@
  *
  */
 
-Application* Application_getInstance() {
-    static Application* self = NULL;
-    if (self) return self;
+Application* _application = NULL;  /* Must only be accessed by Application_{new, free, getInstance} */
 
-    self = ecalloc(1, sizeof(*self));
+
+Application* Application_new(const char* const filename) {
+    Application* self = ecalloc(1, sizeof(*self));
     self->state = OBJECT_MODE;
     self->scoreCurrent = NULL;
+    self->filename = filename;
+    self->scoreCurrent = FileReader_read(filename);
+
+    if (!_application) {
+        _application = self;
+    }
+    else {
+        die("There can only be one application instance");
+    }
 
     return self;
 }
 
 
-void Application_run(const char* const filename) {
-    Application* self = Application_getInstance();
-    self->filename = filename;
-    self->scoreCurrent = FileReader_read(filename);
+Application* Application_free(Application* self) {
+    free(self);
+    _application = NULL;
+    return NULL;
+}
+
+
+Application* Application_getInstance(void) {
+    if (!_application) die("Application instance not created yet");
+    return _application;
+}
+
+
+void Application_run(Application* self) {
     Synth_getInstance();
     while(Renderer_running()) {
-        switch (Application_getState()) {
+        switch (Application_getState(self)) {
             case OBJECT_MODE:
                 ScorePlayer_update();
                 ObjectView_draw();
@@ -51,19 +70,17 @@ void Application_run(const char* const filename) {
 }
 
 
-State Application_getState(void) {
-    return Application_getInstance()->state;
+State Application_getState(Application* self) {
+    return self->state;
 }
 
 
-void Application_switchState(void) {
-    Application* self = Application_getInstance();
+void Application_switchState(Application* self) {
     self->state = !self->state;
     printf("Switched state to %s\n", self->state ? "edit mode" : "object mode");
 }
 
 
-void Application_writeScore(void) {
-    Application* self = Application_getInstance();
+void Application_writeScore(Application* self) {
     FileWriter_write(self->scoreCurrent, self->filename);
 }
