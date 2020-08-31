@@ -58,6 +58,7 @@ void ObjectView_update(ObjectView* self) {
 
 
 void ObjectView_addBlock(ObjectView* self) {
+    if (ScorePlayer_playing(self->player)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
@@ -68,6 +69,7 @@ void ObjectView_addBlock(ObjectView* self) {
 
 
 void ObjectView_removeBlock(ObjectView* self) {
+    if (ScorePlayer_playing(self->player)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
