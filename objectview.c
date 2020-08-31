@@ -53,7 +53,7 @@ void ObjectView_addBlock(void) {
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
 
-    Block* block = EditView_getInstance()->blockCurrent; /* TODO: get this somewhere else */
+    Block* block = Application_getInstance()->blockCurrent;
     Application_getInstance()->scoreCurrent->tracks[iTrack].blocks[iBlock] = block;
 }
 

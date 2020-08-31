@@ -25,6 +25,12 @@ Application* Application_new(const char* const filename) {
     self->scoreCurrent = NULL;
     self->filename = filename;
     self->scoreCurrent = FileReader_read(filename);
+    self->blockCurrent = &self->scoreCurrent->blocks[0];
+
+    self->editView = EditView_new();
+    //self->objectView = ObjectView_new();
+    //self->synth = Synth_new();
+    //self->renderer = Renderer_new();
 
     if (!_application) {
         _application = self;
@@ -38,6 +44,8 @@ Application* Application_new(const char* const filename) {
 
 
 Application* Application_free(Application* self) {
+    /* TODO: free all the things */
+    self->editView = EditView_free(self->editView);
     free(self);
     _application = NULL;
     return NULL;
@@ -61,7 +69,7 @@ void Application_run(Application* self) {
                 break;
             case EDIT_MODE:
                 BlockPlayer_update();
-                EditView_draw();
+                EditView_draw(self->editView);
                 BlockPlayer_drawCursor();
                 break;
         }

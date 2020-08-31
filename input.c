@@ -190,7 +190,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                             glfwGetWindowSize(window, &windowWidth, &windowHeight);
                             startPosition = (float)cursorX / (float)windowWidth;
                         }
-                        BlockPlayer_playBlock(EditView_getInstance()->blockCurrent, startPosition, repeat);
+                        BlockPlayer_playBlock(application->blockCurrent, startPosition, repeat);
                     }
                     return;
                 case GLFW_KEY_ESCAPE:
@@ -204,30 +204,32 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
 
 void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int action, int mods) {
     (void)window; (void)mods;
+    Application* application = Application_getInstance();
+    EditView* editView = application->editView;
     if (action == GLFW_PRESS) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 puts("Left mouse button pressed!");
-                EditView_addNote();
+                EditView_addNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 puts("Middle mouse button pressed!");
-                EditView_previewNote();
+                EditView_previewNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button pressed!");
-                EditView_removeNote();
+                EditView_removeNote(editView);
                 break;
         }
     } else if (action == GLFW_RELEASE) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 puts("Left mouse button released!");
-                EditView_releaseNote();
+                EditView_releaseNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 puts("Middle mouse button released!");
-                EditView_releaseNote();
+                EditView_releaseNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button released!");
@@ -239,16 +241,18 @@ void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int actio
 
 void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y) {
     (void)window;
-    bool updated = EditView_updateCursorPosition(x, y);
+    Application* application = Application_getInstance();
+    EditView* editView = application->editView;
+    bool updated = EditView_updateCursorPosition(editView, x, y);
     if (updated) {
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-            EditView_dragNote();
+            EditView_dragNote(editView);
         }
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-            EditView_removeNote();
+            EditView_removeNote(editView);
         }
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
-            EditView_previewNote();
+            EditView_previewNote(editView);
         }
     }
 }

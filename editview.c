@@ -16,11 +16,8 @@
  *
  */
 
-EditView* EditView_getInstance(void) {
-    static EditView* self = NULL;
-    if (self) return self;
-
-    self = ecalloc(1, sizeof(*self));
+EditView* EditView_new(void) {
+    EditView* self = ecalloc(1, sizeof(*self));
 
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -41,8 +38,6 @@ EditView* EditView_getInstance(void) {
         self->gridlinesHorizontal[i].color = COLOR_GRIDLINES;
     }
 
-    self->blockCurrent = &Application_getInstance()->scoreCurrent->blocks[0];
-
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
     self->cursor.nRows = 1;
@@ -53,17 +48,21 @@ EditView* EditView_getInstance(void) {
 }
 
 
-void EditView_previewNote(void) {
-    EditView* self = EditView_getInstance();
+EditView* EditView_free(EditView* self) {
+    free(self);
+    return NULL;
+}
+
+
+void EditView_previewNote(EditView* self) {
     if (!BlockPlayer_playing()) {
         Synth_noteOn(EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
 
 
-void EditView_addNote(void) {
+void EditView_addNote(EditView* self) {
     if (BlockPlayer_playing()) return; /* TODO: allow this */
-    EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     int velocity = 100;  /* TODO */
@@ -80,9 +79,8 @@ void EditView_addNote(void) {
 }
 
 
-void EditView_dragNote(void) {
+void EditView_dragNote(EditView* self) {
     if (BlockPlayer_playing()) return; /* TODO: allow this */
-    EditView* self = EditView_getInstance();
     if (!self->midiMessageHeld) return;
 
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -95,8 +93,7 @@ void EditView_dragNote(void) {
 }
 
 
-void EditView_releaseNote(void) {
-    EditView* self = EditView_getInstance();
+void EditView_releaseNote(EditView* self) {
     self->midiMessageHeld = NULL;
     if (!BlockPlayer_playing()) {
         Synth_noteOffAll();
@@ -104,14 +101,15 @@ void EditView_releaseNote(void) {
 }
 
 
-void EditView_removeNote(void) {
+void EditView_removeNote(EditView* self) {
     if (BlockPlayer_playing()) return; /* TODO: allow this */
-    EditView* self = EditView_getInstance();
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
-    MidiMessage* midiMessage = self->blockCurrent->midiMessageRoot;
+    Application* application = Application_getInstance();
+    MidiMessage* midiMessage = application->blockCurrent->midiMessageRoot;
+
     while (midiMessage) {
         if (midiMessage->type == FLUID_SEQ_NOTEON) {
             MidiMessage* midiMessageOther = midiMessage;
@@ -131,9 +129,7 @@ void EditView_removeNote(void) {
 }
 
 
-void EditView_draw(void) {
-    EditView* self = EditView_getInstance();
-
+void EditView_draw(EditView* self) {
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
         EditView_drawItem(&(self->gridlinesVertical[i]), 0);
@@ -145,7 +141,9 @@ void EditView_draw(void) {
     }
 
     /* Draw notes */
-    MidiMessage* midiMessage = self->blockCurrent->midiMessageRoot;
+    Application* application = Application_getInstance();
+    MidiMessage* midiMessage = application->blockCurrent->midiMessageRoot;
+
     while (midiMessage) {
         if (midiMessage->type == FLUID_SEQ_NOTEON) {
             MidiMessage* midiMessageOther = midiMessage;
@@ -161,7 +159,7 @@ void EditView_draw(void) {
                     item.iColumn = iColumnStart;
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
-                    item.color = self->blockCurrent->color;
+                    item.color = application->blockCurrent->color;
                     EditView_drawItem(&item, NOTE_SIZE_OFFSET);
 
                     break;
@@ -190,9 +188,7 @@ void EditView_drawItem(GridItem* item, float offset) {
 }
 
 
-bool EditView_updateCursorPosition(float x, float y) {
-    EditView* self = EditView_getInstance();
-
+bool EditView_updateCursorPosition(EditView* self, float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
@@ -224,7 +220,6 @@ int EditView_pitchToRowIndex(int pitch) {
 
 
 MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int velocity) {
-    EditView* self = EditView_getInstance();
     MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
     midiMessage->type = type;
     midiMessage->time = time;
@@ -233,7 +228,8 @@ MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int veloci
     midiMessage->next = NULL;
     midiMessage->prev = NULL;
 
-    MidiMessage* midiMessageOther = self->blockCurrent->midiMessageRoot;
+    Application* application = Application_getInstance();
+    MidiMessage* midiMessageOther = application->blockCurrent->midiMessageRoot;
     while (midiMessageOther->next && midiMessageOther->next->time < midiMessage->time) {
         midiMessageOther = midiMessageOther->next;
     }

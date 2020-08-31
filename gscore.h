@@ -85,6 +85,11 @@ struct MidiMessage {
 struct Application {
     const char* filename;
     Score* scoreCurrent;
+    Block* blockCurrent;
+    EditView* editView;
+    ObjectView* objectView;
+    Renderer* Renderer;
+    Synth* synth;
     State state;
 };
 
@@ -135,7 +140,6 @@ struct EditView {
     GridItem gridlinesVertical[BLOCK_MEASURES];
     GridItem gridlinesHorizontal[OCTAVES];
     GridItem cursor;
-    Block* blockCurrent;
     MidiMessage* midiMessageHeld;
 };
 
@@ -192,14 +196,15 @@ State Application_getState(Application* self);
 void Application_switchState(Application* self);
 
 /* editview.c */
-EditView* EditView_getInstance(void);
-void EditView_previewNote(void);
-void EditView_addNote(void);
-void EditView_dragNote(void);
-void EditView_removeNote(void);
-void EditView_draw(void);
+EditView* EditView_new(void);
+EditView* EditView_free(EditView* self);
+void EditView_previewNote(EditView* self);
+void EditView_addNote(EditView* self);
+void EditView_dragNote(EditView* self);
+void EditView_removeNote(EditView* self);
+void EditView_draw(EditView* self);
 void EditView_drawItem(GridItem* item, float offset);
-bool EditView_updateCursorPosition(float x, float y);
+bool EditView_updateCursorPosition(EditView* self, float x, float y);
 int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
 MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int velocity);
