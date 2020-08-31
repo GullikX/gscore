@@ -37,6 +37,7 @@ XEvents* XEvents_free(XEvents* self) {
 
 
 void XEvents_processXEvents(XEvents* self) {
+    Application* application = Application_getInstance();
     for (unsigned long i = 0; i < ATOM_COUNT; i++) {
         unsigned char* propertyValue = NULL;
         Atom atomDummy;
@@ -66,14 +67,14 @@ void XEvents_processXEvents(XEvents* self) {
                     int tempoBpm = atoi((char*)propertyValue);
                     if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
                         printf("Setting BPM to %d\n", tempoBpm);
-                        BlockPlayer_setTempoBpm(tempoBpm);
+                        BlockPlayer_setTempoBpm(application->editView->player, tempoBpm);
                     }
                     else {
                         printf("Invalid BPM value '%s'\n", propertyValue);
                     }
                     break;
                 case ATOM_SYNTH_PROGRAM:
-                    Synth_setProgramByName(Application_getInstance()->synth, 0, (char*)propertyValue);
+                    Synth_setProgramByName(application->synth, 0, (char*)propertyValue);
             }
         }
         XFree(propertyValue);

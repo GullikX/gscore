@@ -44,6 +44,8 @@ EditView* EditView_new(void) {
     self->cursor.nColumns = 1;
     self->cursor.color = COLOR_CURSOR;
 
+    self->player = BlockPlayer_new();
+
     return self;
 }
 
@@ -54,20 +56,25 @@ EditView* EditView_free(EditView* self) {
 }
 
 
+void EditView_update(EditView* self) {
+    BlockPlayer_update(self->player);
+}
+
+
 void EditView_previewNote(EditView* self) {
-    if (!BlockPlayer_playing()) {
+    if (!BlockPlayer_playing(self->player)) {
         Synth_noteOn(Application_getInstance()->synth, EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
 
 
 void EditView_addNote(EditView* self) {
-    if (BlockPlayer_playing()) return; /* TODO: allow this */
+    if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     int velocity = 100;  /* TODO */
 
-    if (!BlockPlayer_playing()) {
+    if (!BlockPlayer_playing(self->player)) {
         Synth_noteOn(Application_getInstance()->synth, pitch);
     }
 
@@ -80,7 +87,7 @@ void EditView_addNote(EditView* self) {
 
 
 void EditView_dragNote(EditView* self) {
-    if (BlockPlayer_playing()) return; /* TODO: allow this */
+    if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
     if (!self->midiMessageHeld) return;
 
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -95,14 +102,14 @@ void EditView_dragNote(EditView* self) {
 
 void EditView_releaseNote(EditView* self) {
     self->midiMessageHeld = NULL;
-    if (!BlockPlayer_playing()) {
+    if (!BlockPlayer_playing(self->player)) {
         Synth_noteOffAll(Application_getInstance()->synth);
     }
 }
 
 
 void EditView_removeNote(EditView* self) {
-    if (BlockPlayer_playing()) return; /* TODO: allow this */
+    if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
@@ -172,6 +179,8 @@ void EditView_draw(EditView* self) {
 
     /* Draw cursor */
     EditView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
+
+    BlockPlayer_drawCursor(self->player);
 }
 
 

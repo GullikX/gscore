@@ -71,9 +71,8 @@ void Application_run(Application* self) {
                 ObjectView_draw(self->objectView);
                 break;
             case EDIT_MODE:
-                BlockPlayer_update();
+                EditView_update(self->editView);
                 EditView_draw(self->editView);
-                BlockPlayer_drawCursor();
                 break;
         }
         Renderer_updateScreen(self->renderer);

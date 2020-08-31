@@ -142,6 +142,7 @@ struct EditView {
     GridItem gridlinesHorizontal[OCTAVES];
     GridItem cursor;
     MidiMessage* midiMessageHeld;
+    BlockPlayer* player;
 };
 
 struct ObjectView {
@@ -199,6 +200,7 @@ void Application_switchState(Application* self);
 /* editview.c */
 EditView* EditView_new(void);
 EditView* EditView_free(EditView* self);
+void EditView_update(EditView* self);
 void EditView_previewNote(EditView* self);
 void EditView_addNote(EditView* self);
 void EditView_dragNote(EditView* self);
@@ -255,13 +257,14 @@ int ObjectView_xCoordToColumnIndex(float x);
 int ObjectView_yCoordToRowIndex(ObjectView*, float y);
 
 /* player.c */
-BlockPlayer* BlockPlayer_getInstance(void);
-void BlockPlayer_setTempoBpm(int tempoBpm);
-bool BlockPlayer_playing(void);
-void BlockPlayer_playBlock(Block* block, float startPosition, bool repeat);
-void BlockPlayer_stop(void);
-void BlockPlayer_update(void);
-void BlockPlayer_drawCursor(void);
+BlockPlayer* BlockPlayer_new(void);
+BlockPlayer* BlockPlayer_free(BlockPlayer* self);
+void BlockPlayer_setTempoBpm(BlockPlayer* self, int tempoBpm);
+bool BlockPlayer_playing(BlockPlayer* self);
+void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition, bool repeat);
+void BlockPlayer_stop(BlockPlayer* self);
+void BlockPlayer_update(BlockPlayer* self);
+void BlockPlayer_drawCursor(BlockPlayer* self);
 
 /* renderer.c */
 Renderer* Renderer_new(void);

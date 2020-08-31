@@ -154,6 +154,7 @@ void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
 void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window;
     Application* application = Application_getInstance();
+    EditView* editView = application->editView;
     bool modControl = mods & GLFW_MOD_CONTROL;
     bool modShift = mods & GLFW_MOD_SHIFT;
     if (action == GLFW_PRESS) {
@@ -182,8 +183,8 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
-                    if (BlockPlayer_playing()) {
-                        BlockPlayer_stop();
+                    if (BlockPlayer_playing(editView->player)) {
+                        BlockPlayer_stop(editView->player);
                     }
                     else {
                         bool repeat = modShift;
@@ -195,11 +196,11 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                             glfwGetWindowSize(window, &windowWidth, &windowHeight);
                             startPosition = (float)cursorX / (float)windowWidth;
                         }
-                        BlockPlayer_playBlock(application->blockCurrent, startPosition, repeat);
+                        BlockPlayer_playBlock(editView->player, application->blockCurrent, startPosition, repeat);
                     }
                     return;
                 case GLFW_KEY_ESCAPE:
-                    BlockPlayer_stop();
+                    BlockPlayer_stop(editView->player);
                     return;
             }
         }

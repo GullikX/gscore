@@ -16,35 +16,37 @@
  *
  */
 
-BlockPlayer* BlockPlayer_getInstance(void) {
-    static BlockPlayer* self = NULL;
-    if (self) return self;
-
-    self = ecalloc(1, sizeof(*self));
+BlockPlayer* BlockPlayer_new(void) {
+    BlockPlayer* self = ecalloc(1, sizeof(*self));
     self->channel = 0;  /* TODO */
     self->playing = false;
     self->repeat = false;
     self->startTime = 0;
-    BlockPlayer_setTempoBpm(TEMPO_BPM);
+    BlockPlayer_setTempoBpm(self, TEMPO_BPM);
 
     return self;
 }
 
 
-void BlockPlayer_setTempoBpm(int tempoBpm) {
-    BlockPlayer* self = BlockPlayer_getInstance();
+BlockPlayer* BlockPlayer_free(BlockPlayer* self) {
+    BlockPlayer_stop(self);
+    free(self);
+    return NULL;
+}
+
+
+void BlockPlayer_setTempoBpm(BlockPlayer* self, int tempoBpm) {
     self->tempoBpm = tempoBpm;
     snprintf(self->tempoBpmString, 64, "%d", tempoBpm);
 }
 
 
-bool BlockPlayer_playing(void) {
-    return BlockPlayer_getInstance()->playing;
+bool BlockPlayer_playing(BlockPlayer* self) {
+    return self->playing;
 }
 
 
-void BlockPlayer_playBlock(Block* block, float startPosition, bool repeat) {
-    BlockPlayer* self = BlockPlayer_getInstance();
+void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition, bool repeat) {
     self->midiMessage = block->midiMessageRoot;
     self->playing = true;
     self->startPosition = startPosition;
@@ -58,18 +60,16 @@ void BlockPlayer_playBlock(Block* block, float startPosition, bool repeat) {
 }
 
 
-void BlockPlayer_stop(void) {
+void BlockPlayer_stop(BlockPlayer* self) {
     puts("Player: Stop playing");
-    BlockPlayer* self = BlockPlayer_getInstance();
     self->playing = false;
     self->repeat = false;
     Synth_noteOffAll(Application_getInstance()->synth);
 }
 
 
-void BlockPlayer_update(void) {
-    if (!BlockPlayer_playing()) return;
-    BlockPlayer* self = BlockPlayer_getInstance();
+void BlockPlayer_update(BlockPlayer* self) {
+    if (!BlockPlayer_playing(self)) return;
 
     float time = glfwGetTime() - self->startTime;
     float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
@@ -85,15 +85,14 @@ void BlockPlayer_update(void) {
             //Player_start(0.0f, true);
         }
         else {
-            BlockPlayer_stop();
+            BlockPlayer_stop(self);
         }
     }
 }
 
 
-void BlockPlayer_drawCursor(void) {
-    BlockPlayer* self = BlockPlayer_getInstance();
-    if (!self->playing) return;
+void BlockPlayer_drawCursor(BlockPlayer* self) {
+    if (!BlockPlayer_playing(self)) return;
 
     float time = glfwGetTime() - self->startTime;
     float totalTime = BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE / self->tempoBpm;
@@ -110,6 +109,6 @@ void BlockPlayer_drawCursor(void) {
 
 
 char* BlockPlayer_getTempoBpmString(void) {
-    BlockPlayer* self = BlockPlayer_getInstance();
+    BlockPlayer* self = Application_getInstance()->editView->player;
     return self->tempoBpmString;
 }
