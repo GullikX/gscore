@@ -242,14 +242,15 @@ void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y);
 int main(int argc, char* argv[]);
 
 /* objectview.c */
-ObjectView* ObjectView_getInstance(void);
-void ObjectView_addBlock(void);
-void ObjectView_removeBlock(void);
-void ObjectView_draw(void);
-void ObjectView_drawItem(GridItem* item, float offset);
-bool ObjectView_updateCursorPosition(float x, float y);
+ObjectView* ObjectView_new(void);
+ObjectView* ObjectView_free(ObjectView* self);
+void ObjectView_addBlock(ObjectView* self);
+void ObjectView_removeBlock(ObjectView* self);
+void ObjectView_draw(ObjectView* self);
+void ObjectView_drawItem(ObjectView*, GridItem* item, float offset);
+bool ObjectView_updateCursorPosition(ObjectView*, float x, float y);
 int ObjectView_xCoordToColumnIndex(float x);
-int ObjectView_yCoordToRowIndex(float y);
+int ObjectView_yCoordToRowIndex(ObjectView*, float y);
 
 /* player.c */
 BlockPlayer* BlockPlayer_getInstance(void);

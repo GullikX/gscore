@@ -28,7 +28,7 @@ Application* Application_new(const char* const filename) {
     self->blockCurrent = &self->scoreCurrent->blocks[0];
 
     self->editView = EditView_new();
-    //self->objectView = ObjectView_new();
+    self->objectView = ObjectView_new();
     //self->synth = Synth_new();
     //self->renderer = Renderer_new();
 
@@ -46,6 +46,7 @@ Application* Application_new(const char* const filename) {
 Application* Application_free(Application* self) {
     /* TODO: free all the things */
     self->editView = EditView_free(self->editView);
+    self->objectView = ObjectView_free(self->objectView);
     free(self);
     _application = NULL;
     return NULL;
@@ -64,7 +65,7 @@ void Application_run(Application* self) {
         switch (Application_getState(self)) {
             case OBJECT_MODE:
                 ScorePlayer_update();
-                ObjectView_draw();
+                ObjectView_draw(self->objectView);
                 ScorePlayer_drawCursor();
                 break;
             case EDIT_MODE:

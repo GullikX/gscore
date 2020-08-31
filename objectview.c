@@ -16,11 +16,8 @@
  *
  */
 
-ObjectView* ObjectView_getInstance(void) {
-    static ObjectView* self = NULL;
-    if (self) return self;
-
-    self = ecalloc(1, sizeof(*self));
+ObjectView* ObjectView_new(void) {
+    ObjectView* self = ecalloc(1, sizeof(*self));
 
     int nColumns = SCORE_LENGTH;
     Vector4 trackColors[] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
@@ -47,8 +44,13 @@ ObjectView* ObjectView_getInstance(void) {
 }
 
 
-void ObjectView_addBlock(void) {
-    ObjectView* self = ObjectView_getInstance();
+ObjectView* ObjectView_free(ObjectView* self) {
+    free(self);
+    return NULL;
+}
+
+
+void ObjectView_addBlock(ObjectView* self) {
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
@@ -58,8 +60,7 @@ void ObjectView_addBlock(void) {
 }
 
 
-void ObjectView_removeBlock(void) {
-    ObjectView* self = ObjectView_getInstance();
+void ObjectView_removeBlock(ObjectView* self) {
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
@@ -68,11 +69,9 @@ void ObjectView_removeBlock(void) {
 }
 
 
-void ObjectView_draw(void) {
-    ObjectView* self = ObjectView_getInstance();
-
+void ObjectView_draw(ObjectView* self) {
     for (int i = 0; i < N_TRACKS; i++) {
-        ObjectView_drawItem(&(self->gridlinesHorizontal[i]), 0);
+        ObjectView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
     }
 
     Track* tracks = Application_getInstance()->scoreCurrent->tracks;
@@ -86,18 +85,17 @@ void ObjectView_draw(void) {
             item.nRows = 1;
             item.nColumns = 1;
             item.color = block->color;
-            ObjectView_drawItem(&(item), BLOCK_SIZE_OFFSET);
+            ObjectView_drawItem(self, &(item), BLOCK_SIZE_OFFSET);
         }
     }
 
     if (self->cursor.iRow < N_TRACKS) {
-        ObjectView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
+        ObjectView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
     }
 }
 
 
-void ObjectView_drawItem(GridItem* item, float offset) {
-    ObjectView* self = ObjectView_getInstance();
+void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
     float columnWidth = 2.0f/SCORE_LENGTH;
     float rowHeight = self->viewHeight / N_TRACKS;
 
@@ -110,14 +108,12 @@ void ObjectView_drawItem(GridItem* item, float offset) {
 }
 
 
-bool ObjectView_updateCursorPosition(float x, float y) {
-    ObjectView* self = ObjectView_getInstance();
-
+bool ObjectView_updateCursorPosition(ObjectView* self, float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
     self->cursor.iColumn = ObjectView_xCoordToColumnIndex(x);
-    self->cursor.iRow = ObjectView_yCoordToRowIndex(y);
+    self->cursor.iRow = ObjectView_yCoordToRowIndex(self, y);
 
     return self->cursor.iColumn == iColumnOld && self->cursor.iRow == iRowOld ? false : true;
 }
@@ -129,8 +125,7 @@ int ObjectView_xCoordToColumnIndex(float x) {
 }
 
 
-int ObjectView_yCoordToRowIndex(float y) {
-    ObjectView* self = ObjectView_getInstance();
+int ObjectView_yCoordToRowIndex(ObjectView* self, float y) {
     int nRows = N_TRACKS;
     return (nRows * y) / (Renderer_getInstance()->viewportHeight * self->viewHeight / 2.0f);
 }

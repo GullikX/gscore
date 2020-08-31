@@ -115,16 +115,18 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
 
 
 void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int action, int mods) {
+    Application* application = Application_getInstance();
+    ObjectView* objectView = application->objectView;
     (void)window; (void)mods;
     if (action == GLFW_PRESS) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 puts("Left mouse button pressed!");
-                ObjectView_addBlock();
+                ObjectView_addBlock(objectView);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 puts("Right mouse button pressed!");
-                ObjectView_removeBlock();
+                ObjectView_removeBlock(objectView);
                 break;
         }
     }
@@ -133,13 +135,15 @@ void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int act
 
 void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
     (void)window;
-    bool updated = ObjectView_updateCursorPosition(x, y);
+    Application* application = Application_getInstance();
+    ObjectView* objectView = application->objectView;
+    bool updated = ObjectView_updateCursorPosition(objectView, x, y);
     if (updated) {
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-            ObjectView_addBlock();
+            ObjectView_addBlock(objectView);
         }
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-            ObjectView_removeBlock();
+            ObjectView_removeBlock(objectView);
         }
     }
 }
