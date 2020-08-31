@@ -124,6 +124,7 @@ struct BlockPlayer {
     float startPosition;
     int tempoBpm;
     char tempoBpmString[64];
+    int program;
 };
 
 
@@ -293,7 +294,7 @@ void ScorePlayer_drawCursor(ScorePlayer* self);
 Synth* Synth_new(void);
 Synth* Synth_free(Synth* self);
 void Synth_setProgramById(Synth* self, int channel, int programId);
-void Synth_setProgramByName(Synth* self, int channel, const char* const instrumentName);
+int Synth_instrumentNameToId(Synth* self, const char* const instrumentName);
 void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage);
 void Synth_noteOn(Synth* self, int key);
 void Synth_noteOff(Synth* self, int key);

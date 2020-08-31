@@ -65,6 +65,7 @@ void ScorePlayer_playScore(ScorePlayer* self, Score* score) {
                 midiMessageSelf = midiMessageSelf->next;
             }
         }
+        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, score->tracks[iTrack].program);
     }
 }
 

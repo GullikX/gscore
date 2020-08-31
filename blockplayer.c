@@ -56,6 +56,9 @@ void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition,
     while (self->midiMessage && self->midiMessage->time < startPosition) {
         self->midiMessage = self->midiMessage->next;
     }
+
+    Synth_setProgramById(Application_getInstance()->synth, 0, self->program);
+
     printf("Start playing at time: %f, position %f, repeat %s\n", self->startTime, startPosition, repeat ? "true" : "false");
 }
 

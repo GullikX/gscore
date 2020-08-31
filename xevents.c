@@ -76,7 +76,8 @@ void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_SYNTH_PROGRAM:;
                         int iTrack = application->objectView->cursor.iRow;
-                        Synth_setProgramByName(application->synth, iTrack + 1, (char*)propertyValue);
+                        int programId = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
+                        application->scoreCurrent->tracks[iTrack].program = programId;
                 }
             }
             else if (state == EDIT_MODE) {
@@ -91,8 +92,9 @@ void XEvents_processXEvents(XEvents* self) {
                             printf("Invalid BPM value '%s'\n", propertyValue);
                         }
                         break;
-                    case ATOM_SYNTH_PROGRAM:
-                        Synth_setProgramByName(application->synth, 0, (char*)propertyValue);
+                    case ATOM_SYNTH_PROGRAM:;
+                        int programId = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
+                        application->editView->player->program = programId;
                 }
                 break;
             }

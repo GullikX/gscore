@@ -83,7 +83,7 @@ void Synth_setProgramById(Synth* self, int channel, int program) {
 }
 
 
-void Synth_setProgramByName(Synth* self, int channel, const char* const instrumentName) {
+int Synth_instrumentNameToId(Synth* self, const char* const instrumentName) {
     fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
     if (!soundFont) {
         die("Soundfont pointer is null");
@@ -93,13 +93,13 @@ void Synth_setProgramByName(Synth* self, int channel, const char* const instrume
         fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
         if (!preset) break;
         if (!strcmp(instrumentName, fluid_preset_get_name(preset))) {
-            printf("Setting instrument to '%s'\n", instrumentName);
-            Synth_setProgramById(self, channel, i);
-            return;
+            return i;
         }
     }
 
     printf("Error: Invalid instrument name '%s'\n", instrumentName);
+    return -1;
+
 }
 
 
