@@ -165,16 +165,16 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
             switch (*keyName) {
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
-                    return;
+                    break;
                 case 't':
                     spawnSetXProp(ATOM_BPM);
-                    return;
+                    break;
                 case 'w':
                     Application_writeScore(application);
                     break;
                 case 'q':
                     Renderer_stop(application->renderer);
-                    return;
+                    break;
             }
         }
         else {
@@ -200,10 +200,10 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                         }
                         BlockPlayer_playBlock(editView->player, application->blockCurrent, startPosition, repeat);
                     }
-                    return;
+                    break;
                 case GLFW_KEY_ESCAPE:
                     BlockPlayer_stop(editView->player);
-                    return;
+                    break;
             }
         }
     }
