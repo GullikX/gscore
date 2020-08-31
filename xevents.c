@@ -61,20 +61,40 @@ void XEvents_processXEvents(XEvents* self) {
 
         if (result == Success && propertyValue) {
             printf("Received: %s=%s\n", ATOM_NAMES[i], propertyValue);
-
-            switch (i) {
-                case ATOM_BPM:;
-                    int tempoBpm = atoi((char*)propertyValue);
-                    if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
-                        printf("Setting BPM to %d\n", tempoBpm);
-                        BlockPlayer_setTempoBpm(application->editView->player, tempoBpm);
-                    }
-                    else {
-                        printf("Invalid BPM value '%s'\n", propertyValue);
-                    }
-                    break;
-                case ATOM_SYNTH_PROGRAM:
-                    Synth_setProgramByName(application->synth, 0, (char*)propertyValue);
+            State state = Application_getState(application);
+            if (state == OBJECT_MODE) {
+                switch (i) {
+                    case ATOM_BPM:;
+                        int tempoBpm = atoi((char*)propertyValue);
+                        if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
+                            printf("Setting BPM to %d\n", tempoBpm);
+                            application->scoreCurrent->tempo = tempoBpm;
+                        }
+                        else {
+                            printf("Invalid BPM value '%s'\n", propertyValue);
+                        }
+                        break;
+                    case ATOM_SYNTH_PROGRAM:;
+                        int iTrack = application->objectView->cursor.iRow;
+                        Synth_setProgramByName(application->synth, iTrack + 1, (char*)propertyValue);
+                }
+            }
+            else if (state == EDIT_MODE) {
+                switch (i) {
+                    case ATOM_BPM:;
+                        int tempoBpm = atoi((char*)propertyValue);
+                        if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
+                            printf("Setting BPM to %d\n", tempoBpm);
+                            BlockPlayer_setTempoBpm(application->editView->player, tempoBpm);
+                        }
+                        else {
+                            printf("Invalid BPM value '%s'\n", propertyValue);
+                        }
+                        break;
+                    case ATOM_SYNTH_PROGRAM:
+                        Synth_setProgramByName(application->synth, 0, (char*)propertyValue);
+                }
+                break;
             }
         }
         XFree(propertyValue);

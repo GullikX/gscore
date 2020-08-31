@@ -76,6 +76,7 @@ Synth* Synth_free(Synth* self) {
 
 
 void Synth_setProgramById(Synth* self, int channel, int program) {
+    printf("Synth_setProgramById channel:%d program:%d\n", channel, program);
     if (fluid_synth_program_change(self->fluidSynth, channel, program) == FLUID_FAILED) {
         puts("Error: Failed to set midi program");
     }

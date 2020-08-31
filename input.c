@@ -99,6 +99,12 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                 case '4':
                     Application_switchBlock(application, 3);
                     break;
+                case 'i':
+                    spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    break;
+                case 't':
+                    spawnSetXProp(ATOM_BPM);
+                    break;
                 case 'w':
                     Application_writeScore(application);
                     break;
