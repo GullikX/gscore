@@ -130,7 +130,9 @@ void Synth_noteOff(Synth* self, int key) {
 
 
 void Synth_noteOffAll(Synth* self) {
-    fluid_synth_all_notes_off(self->fluidSynth, 0);
+    for (int iChannel = 0; iChannel < SYNTH_MIDI_CHANNELS; iChannel++) {
+        fluid_synth_all_notes_off(self->fluidSynth, iChannel);
+    }
 }
 
 
