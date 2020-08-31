@@ -99,6 +99,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
+                    ScorePlayer_stop(objectView->player);
                     Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
@@ -180,6 +181,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
+                    BlockPlayer_stop(editView->player);
                     Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
