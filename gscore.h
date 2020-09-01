@@ -214,7 +214,7 @@ void EditView_drawItem(GridItem* item, float offset);
 bool EditView_updateCursorPosition(EditView* self, float x, float y);
 int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
-MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int velocity);
+MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, float velocity);
 void EditView_removeMidiMessage(MidiMessage* midiMessage);
 int EditView_xCoordToColumnIndex(float x);
 int EditView_yCoordToRowIndex(float y);

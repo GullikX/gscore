@@ -15,7 +15,7 @@ const char* const FRAGMENT_SHADER_SOURCE =
 const char* const WINDOW_TITLE = "GScore";
 
 const char* const AUDIO_DRIVER = "alsa";
-const char* const ALSA_DEVICE = "default";
+const char* const ALSA_DEVICE = "default:CARD=S3";
 const char* const SOUNDFONT = "soundfont.sf2";
 
 const char* const BLOCK_NAME_DEFAULT = "default";
@@ -73,6 +73,7 @@ const float BLOCK_SIZE_OFFSET = -0.002f;
 const float PLAYER_CURSOR_WIDTH = 0.005f;
 const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
+const float DEFAULT_VELOCITY = 0.75f;
 
 const Vector4 COLOR_BLOCK_DEFAULT = {0.5411f, 0.7765f, 0.9490f, 1.0f};
 const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};

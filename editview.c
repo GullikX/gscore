@@ -72,7 +72,7 @@ void EditView_addNote(EditView* self) {
     if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
-    int velocity = 100;  /* TODO */
+    float velocity = DEFAULT_VELOCITY;
 
     if (!BlockPlayer_playing(self->player)) {
         Synth_noteOn(Application_getInstance()->synth, pitch);
@@ -93,7 +93,7 @@ void EditView_dragNote(EditView* self) {
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)(self->cursor.iColumn + 1) / (float)nColumns;
     int pitch = self->midiMessageHeld->pitch;
-    int velocity = self->midiMessageHeld->velocity;
+    float velocity = self->midiMessageHeld->velocity;
 
     EditView_removeMidiMessage(self->midiMessageHeld);
     self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, time, pitch, velocity);
@@ -228,7 +228,7 @@ int EditView_pitchToRowIndex(int pitch) {
 }
 
 
-MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, int velocity) {
+MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, float velocity) {
     MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
     midiMessage->type = type;
     midiMessage->time = time;
