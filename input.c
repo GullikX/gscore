@@ -128,6 +128,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                         ScorePlayer_playScore(objectView->player);
                     }
                     break;
+                case GLFW_KEY_ESCAPE:
+                    ScorePlayer_stop(objectView->player);
+                    break;
             }
         }
     }
