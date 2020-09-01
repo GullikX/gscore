@@ -247,10 +247,9 @@ void EditView_drawItem(GridItem* item, float offset) {
 void EditView_drawPlaybackCursor(EditView* self) {
     if (!EditView_isPlaying(self)) return;
 
-    /* TODO
-    float time = glfwGetTime() - self->startTime;
-    float totalTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempoBpm;
-    float progress = self->startPosition + time / totalTime;
+    float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
+    float totalTime = 1000.0f * (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
+    float progress = time / totalTime;
     float cursorX = -1.0f + 2.0f * progress;
 
     float x1 = cursorX;
@@ -259,7 +258,6 @@ void EditView_drawPlaybackCursor(EditView* self) {
     float y2 = 1.0f;
 
     Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
-    */
 }
 
 
