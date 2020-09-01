@@ -23,7 +23,6 @@ const char* const BLOCK_NAME_DEFAULT = "default";
 const char* const XML_ENCODING = "UTF-8";
 const char* const XML_VERSION = "1.0";
 const char* const XMLATTRIB_COLOR = "color";
-const char* const XMLATTRIB_GAIN = "gain";
 const char* const XMLATTRIB_NAME = "name";
 const char* const XMLATTRIB_PITCH = "pitch";
 const char* const XMLATTRIB_PROGRAM = "program";

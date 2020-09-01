@@ -77,7 +77,7 @@ struct MidiMessage {
     int type;
     float time;
     int pitch;
-    int velocity;
+    float velocity;
     MidiMessage* next;
     MidiMessage* prev;
 };
@@ -173,7 +173,7 @@ struct ScorePlayer {
 
 struct Track{
     int program;
-    int velocity;
+    float velocity;
     Block* blocks[SCORE_LENGTH];
 };
 

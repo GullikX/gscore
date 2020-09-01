@@ -71,7 +71,7 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
             score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
             score->blocks[iBlock].midiMessageRoot->time = -1.0f;
             score->blocks[iBlock].midiMessageRoot->pitch = -1;
-            score->blocks[iBlock].midiMessageRoot->velocity = -1;
+            score->blocks[iBlock].midiMessageRoot->velocity = -1.0f;
             score->blocks[iBlock].midiMessageRoot->next = NULL;
             score->blocks[iBlock].midiMessageRoot->prev = NULL;
 
@@ -83,7 +83,7 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
                     message->next->type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
                     message->next->time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
                     message->next->pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
-                    message->next->velocity = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
+                    message->next->velocity = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
                     message->next->next = NULL;
                     message->next->prev = message;
                     message = message->next;
@@ -99,7 +99,7 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
         score->blocks[iBlockAdditional].midiMessageRoot->type = FLUID_SEQ_NOTE;
         score->blocks[iBlockAdditional].midiMessageRoot->time = -1.0f;
         score->blocks[iBlockAdditional].midiMessageRoot->pitch = -1;
-        score->blocks[iBlockAdditional].midiMessageRoot->velocity = -1;
+        score->blocks[iBlockAdditional].midiMessageRoot->velocity = -1.0f;
         score->blocks[iBlockAdditional].midiMessageRoot->next = NULL;
         score->blocks[iBlockAdditional].midiMessageRoot->prev = NULL;
     }
@@ -113,6 +113,7 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
             int iBlock = 0;
             printf("program %s\n", (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
             score->tracks[iTrack].program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
+            score->tracks[iTrack].velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
             for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
                 if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
                     if (iBlock >= SCORE_LENGTH) die("To many blocks (max is %d)", SCORE_LENGTH);
@@ -152,7 +153,7 @@ Score* FileReader_createNewEmptyScore() {
         score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
         score->blocks[iBlock].midiMessageRoot->time = -1.0f;
         score->blocks[iBlock].midiMessageRoot->pitch = -1;
-        score->blocks[iBlock].midiMessageRoot->velocity = -1;
+        score->blocks[iBlock].midiMessageRoot->velocity = -1.0f;
         score->blocks[iBlock].midiMessageRoot->next = NULL;
         score->blocks[iBlock].midiMessageRoot->prev = NULL;
     }

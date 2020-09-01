@@ -52,7 +52,7 @@ void FileWriter_writeBlockDefs(const Score* const score, xmlNode* nodeScore) {
                 xmlNewProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE, BAD_CAST buffer);
                 snprintf(buffer, XML_BUFFER_SIZE, "%d", message->pitch);
                 xmlNewProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH, BAD_CAST buffer);
-                snprintf(buffer, XML_BUFFER_SIZE, "%d", message->velocity);
+                snprintf(buffer, XML_BUFFER_SIZE, "%f", message->velocity);
                 xmlNewProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY, BAD_CAST buffer);
             }
         }
@@ -65,10 +65,6 @@ void FileWriter_writeTracks(const Score* const score, xmlNode* nodeScore) {
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
         xmlNode* nodeTrack = NULL;
 
-        char buffer[XML_BUFFER_SIZE];
-        snprintf(buffer, XML_BUFFER_SIZE, "%d", score->tracks[iTrack].program);
-        xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM, BAD_CAST buffer);
-
         int nNullBlocks = 0;
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
             if (score->tracks[iTrack].blocks[iBlock]) {
@@ -77,6 +73,8 @@ void FileWriter_writeTracks(const Score* const score, xmlNode* nodeScore) {
                     char buffer[XML_BUFFER_SIZE];
                     snprintf(buffer, XML_BUFFER_SIZE, "%d", score->tracks[iTrack].program);
                     xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM, BAD_CAST buffer);
+                    snprintf(buffer, XML_BUFFER_SIZE, "%f", score->tracks[iTrack].velocity);
+                    xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY, BAD_CAST buffer);
                 }
                 for (int iNullBlock = 0; iNullBlock < nNullBlocks; iNullBlock++) {
                     xmlNewChild(nodeTrack, NULL, BAD_CAST XMLNODE_BLOCK, NULL);

@@ -104,11 +104,12 @@ int Synth_instrumentNameToId(Synth* self, const char* const instrumentName) {
 
 
 void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
+    int velocity = 127.0f * midiMessage->velocity;
     switch (midiMessage->type) {
         case FLUID_SEQ_NOTE:
             break;
         case FLUID_SEQ_NOTEON:
-            fluid_synth_noteon(self->fluidSynth, channel, midiMessage->pitch, midiMessage->velocity);
+            fluid_synth_noteon(self->fluidSynth, channel, midiMessage->pitch, velocity);
             break;
         case FLUID_SEQ_NOTEOFF:
             fluid_synth_noteoff(self->fluidSynth, channel, midiMessage->pitch);

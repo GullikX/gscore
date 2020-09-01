@@ -58,7 +58,7 @@ void ScorePlayer_playScore(ScorePlayer* self) {
                 midiMessageSelf->next->type = midiMessage->type;
                 midiMessageSelf->next->time = midiMessage->time * blockTime + blockTime * iBlock;
                 midiMessageSelf->next->pitch = midiMessage->pitch;
-                midiMessageSelf->next->velocity = midiMessage->velocity;
+                midiMessageSelf->next->velocity = midiMessage->velocity * self->score->tracks[iTrack].velocity;
                 midiMessageSelf->next->next = NULL;
                 midiMessageSelf->next->prev = midiMessageSelf;
                 midiMessageSelf = midiMessageSelf->next;
