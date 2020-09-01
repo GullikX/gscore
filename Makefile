@@ -12,7 +12,9 @@ DEFINES=-DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
 gscore: $(CFILES)
+	@grep -h '^\S.*\s.*(.*).*{' *.c | sed -e 's/{/;/g' > functiondeclarations.h
 	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o gscore gscore.c $(LIBS)
+	@rm -f functiondeclarations.h
 
 clean:
 	rm -f gscore

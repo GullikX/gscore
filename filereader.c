@@ -144,7 +144,7 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
 }
 
 
-Score* FileReader_createNewEmptyScore() {
+Score* FileReader_createNewEmptyScore(void) {
     Score* score = ecalloc(1, sizeof(*score));
     score->tempo = TEMPO_BPM;
     for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
