@@ -41,6 +41,9 @@ Synth* Synth_new(void) {
     fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
     fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
 
+    self->sequencer = new_fluid_sequencer2(0);
+    self->synthSequencerId = fluid_sequencer_register_fluidsynth(self->sequencer, self->fluidSynth);
+
     /* Generate instrument list string */
     fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
     if (!soundFont) {
@@ -69,7 +72,10 @@ Synth* Synth_new(void) {
 
 
 Synth* Synth_free(Synth* self) {
-    /* TODO: clean up fluidsynth */
+    delete_fluid_sequencer(self->sequencer);
+    delete_fluid_audio_driver(self->audioDriver);
+    delete_fluid_synth(self->fluidSynth);
+
     free(self);
     return NULL;
 }
@@ -126,12 +132,39 @@ void Synth_noteOn(Synth* self, int key) {
 }
 
 
+void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity, float time) {
+    int velocityInt = 127.0f * velocity;
+    int timeInt = 1000.0f * time;
+
+    fluid_event_t* event = new_fluid_event();
+    fluid_event_set_source(event, -1);
+    fluid_event_set_dest(event, self->synthSequencerId);
+    fluid_event_noteon(event, channel, pitch, velocityInt);
+
+    fluid_sequencer_send_at(self->sequencer, event, timeInt, 0);
+    delete_fluid_event(event);
+}
+
+
 void Synth_noteOff(Synth* self, int key) {
     fluid_synth_noteoff(self->fluidSynth, 0, key);
 }
 
+void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time) {
+    int timeInt = 1000.0f * time;
+
+    fluid_event_t* event = new_fluid_event();
+    fluid_event_set_source(event, -1);
+    fluid_event_set_dest(event, self->synthSequencerId);
+    fluid_event_noteoff(event, channel, pitch);
+
+    fluid_sequencer_send_at(self->sequencer, event, timeInt, 0);
+    delete_fluid_event(event);
+}
+
 
 void Synth_noteOffAll(Synth* self) {
+    fluid_sequencer_remove_events(self->sequencer, -1, -1, -1);
     for (int iChannel = 0; iChannel < SYNTH_MIDI_CHANNELS; iChannel++) {
         fluid_synth_all_notes_off(self->fluidSynth, iChannel);
     }

@@ -53,11 +53,23 @@ void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition,
     self->repeat = repeat;
     self->startTime = glfwGetTime();
 
-    while (self->midiMessage && self->midiMessage->time < startPosition) {
-        self->midiMessage = self->midiMessage->next;
-    }
+    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempoBpm;
 
-    printf("Start playing at time: %f, position %f, repeat %s\n", self->startTime, startPosition, repeat ? "true" : "false");
+    for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
+        if (midiMessage->time < 0) continue;
+        float channel = 0;
+        float velocity = midiMessage->velocity;
+        float time = midiMessage->time * blockTime;
+
+        switch (midiMessage->type) {
+            case FLUID_SEQ_NOTEON:
+                Synth_sendNoteOn(Application_getInstance()->synth, channel, midiMessage->pitch, velocity, time);
+                break;
+            case FLUID_SEQ_NOTEOFF:
+                Synth_sendNoteOff(Application_getInstance()->synth, channel, midiMessage->pitch, time);
+                break;
+        }
+    }
 }
 
 
@@ -77,10 +89,6 @@ void BlockPlayer_update(BlockPlayer* self) {
     float progress = self->startPosition + time / totalTime;
 
     if (progress < 1.0f) {
-        while (self->midiMessage && self->midiMessage->time < progress) {
-            Synth_processMessage(Application_getInstance()->synth, self->channel, self->midiMessage);
-            self->midiMessage = self->midiMessage->next;
-        }
     } else {
         if (false /*self->repeat*/) {
             //Player_start(0.0f, true);

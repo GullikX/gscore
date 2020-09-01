@@ -112,6 +112,8 @@ struct Synth {
     fluid_settings_t* settings;
     fluid_synth_t* fluidSynth;
     fluid_audio_driver_t* audioDriver;
+    fluid_sequencer_t* sequencer;
+    int synthSequencerId;
     char* instrumentListString;
 };
 
@@ -300,7 +302,9 @@ void Synth_setProgramById(Synth* self, int channel, int programId);
 int Synth_instrumentNameToId(Synth* self, const char* const instrumentName);
 void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage);
 void Synth_noteOn(Synth* self, int key);
+void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity, float time);
 void Synth_noteOff(Synth* self, int key);
+void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time);
 void Synth_noteOffAll(Synth* self);
 
 /* util.c */
