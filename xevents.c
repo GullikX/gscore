@@ -75,9 +75,8 @@ void XEvents_processXEvents(XEvents* self) {
                         }
                         break;
                     case ATOM_SYNTH_PROGRAM:;
-                        int iTrack = application->objectView->cursor.iRow;
-                        int programId = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
-                        application->scoreCurrent->tracks[iTrack].program = programId;
+                        int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
+                        ScorePlayer_setProgram(application->objectView->player, program);
                 }
             }
             else if (state == EDIT_MODE) {
@@ -93,8 +92,8 @@ void XEvents_processXEvents(XEvents* self) {
                         }
                         break;
                     case ATOM_SYNTH_PROGRAM:;
-                        int programId = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
-                        application->editView->player->program = programId;
+                        int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
+                        BlockPlayer_setProgram(program);
                 }
                 break;
             }

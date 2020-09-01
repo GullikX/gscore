@@ -125,7 +125,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                         ScorePlayer_stop(objectView->player);
                     }
                     else {
-                        ScorePlayer_playScore(objectView->player, application->scoreCurrent);
+                        ScorePlayer_playScore(objectView->player);
                     }
                     break;
             }

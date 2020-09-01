@@ -16,10 +16,10 @@
  *
  */
 
-ScorePlayer* ScorePlayer_new(void) {
+ScorePlayer* ScorePlayer_new(Score* score) {
     ScorePlayer* self = ecalloc(1, sizeof(*self));
 
-    self->score = NULL;
+    self->score = score;
     self->playing = false;
     self->startTime = 0.0f;
 
@@ -34,11 +34,10 @@ ScorePlayer* ScorePlayer_free(ScorePlayer* self) {
 }
 
 
-void ScorePlayer_playScore(ScorePlayer* self, Score* score) {
-    self->score = score;
+void ScorePlayer_playScore(ScorePlayer* self) {
     self->playing = true;
     self->startTime = glfwGetTime();
-    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)score->tempo;
+    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
 
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
         self->midiMessages[iTrack] = ecalloc(1, sizeof(MidiMessage));
@@ -51,7 +50,7 @@ void ScorePlayer_playScore(ScorePlayer* self, Score* score) {
         MidiMessage* midiMessageSelf = self->midiMessages[iTrack];
 
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
-            Block* block = score->tracks[iTrack].blocks[iBlock];
+            Block* block = self->score->tracks[iTrack].blocks[iBlock];
             if (!block) continue;
             for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
                 if (midiMessage->time < 0) continue;
@@ -65,14 +64,13 @@ void ScorePlayer_playScore(ScorePlayer* self, Score* score) {
                 midiMessageSelf = midiMessageSelf->next;
             }
         }
-        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, score->tracks[iTrack].program);
+        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack].program);
     }
 }
 
 
 void ScorePlayer_stop(ScorePlayer* self) {
     /* TODO: free memory */
-    self->score = NULL;
     self->playing = false;
     self->startTime = 0.0f;
     Synth_noteOffAll(Application_getInstance()->synth);
@@ -117,4 +115,10 @@ void ScorePlayer_drawCursor(ScorePlayer* self) {
     float y2 = 1.0f;
 
     Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
+}
+
+
+void ScorePlayer_setProgram(ScorePlayer* self, int program) {
+    int iTrack = Application_getInstance()->objectView->cursor.iRow;
+    self->score->tracks[iTrack].program = program;
 }

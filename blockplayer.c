@@ -57,8 +57,6 @@ void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition,
         self->midiMessage = self->midiMessage->next;
     }
 
-    Synth_setProgramById(Application_getInstance()->synth, 0, self->program);
-
     printf("Start playing at time: %f, position %f, repeat %s\n", self->startTime, startPosition, repeat ? "true" : "false");
 }
 
@@ -114,4 +112,9 @@ void BlockPlayer_drawCursor(BlockPlayer* self) {
 char* BlockPlayer_getTempoBpmString(void) {
     BlockPlayer* self = Application_getInstance()->editView->player;
     return self->tempoBpmString;
+}
+
+
+void BlockPlayer_setProgram(int program) {
+    Synth_setProgramById(Application_getInstance()->synth, 0, program);
 }

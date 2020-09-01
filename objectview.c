@@ -16,7 +16,7 @@
  *
  */
 
-ObjectView* ObjectView_new(void) {
+ObjectView* ObjectView_new(Score* score) {
     ObjectView* self = ecalloc(1, sizeof(*self));
 
     int nColumns = SCORE_LENGTH;
@@ -40,7 +40,7 @@ ObjectView* ObjectView_new(void) {
     self->cursor.nColumns = 1;
     self->cursor.color = COLOR_CURSOR;
 
-    self->player = ScorePlayer_new();
+    self->player = ScorePlayer_new(score);
 
     return self;
 }

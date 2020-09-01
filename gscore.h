@@ -249,7 +249,7 @@ void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y);
 int main(int argc, char* argv[]);
 
 /* objectview.c */
-ObjectView* ObjectView_new(void);
+ObjectView* ObjectView_new(Score* score);
 ObjectView* ObjectView_free(ObjectView* self);
 void ObjectView_update(ObjectView* self);
 void ObjectView_addBlock(ObjectView* self);
@@ -269,6 +269,7 @@ void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition,
 void BlockPlayer_stop(BlockPlayer* self);
 void BlockPlayer_update(BlockPlayer* self);
 void BlockPlayer_drawCursor(BlockPlayer* self);
+void BlockPlayer_setProgram(int program);
 
 /* renderer.c */
 Renderer* Renderer_new(void);
@@ -282,13 +283,14 @@ GLuint createShader(const GLenum type, const char* const shaderSource);
 GLuint createProgram(void);
 
 /* scoreplayer.c */
-ScorePlayer* ScorePlayer_new(void);
+ScorePlayer* ScorePlayer_new(Score* score);
 ScorePlayer* ScorePlayer_free(ScorePlayer* self);
-void ScorePlayer_playScore(ScorePlayer*, Score* score);
+void ScorePlayer_playScore(ScorePlayer*);
 void ScorePlayer_stop(ScorePlayer* self);
 bool ScorePlayer_playing(ScorePlayer* self);
 void ScorePlayer_update(ScorePlayer* self);
 void ScorePlayer_drawCursor(ScorePlayer* self);
+void ScorePlayer_setProgram(ScorePlayer* self, int program);
 
 /* synth.c */
 Synth* Synth_new(void);
