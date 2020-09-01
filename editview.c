@@ -44,7 +44,8 @@ EditView* EditView_new(Score* score) {
     self->cursor.nColumns = 1;
     self->cursor.color = COLOR_CURSOR;
 
-    self->player = BlockPlayer_new(score);
+    self->playStartTime = -1;
+    self->tempo = score->tempo;
 
     return self;
 }
@@ -56,27 +57,20 @@ EditView* EditView_free(EditView* self) {
 }
 
 
-void EditView_update(EditView* self) {
-    BlockPlayer_update(self->player);
-}
-
-
 void EditView_previewNote(EditView* self) {
-    if (!BlockPlayer_playing(self->player)) {
+    if (!EditView_isPlaying(self)) {
         Synth_noteOn(Application_getInstance()->synth, EditView_rowIndexToNoteKey(self->cursor.iRow));
     }
 }
 
 
 void EditView_addNote(EditView* self) {
-    if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
+    if (EditView_isPlaying(self)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     float velocity = DEFAULT_VELOCITY;
 
-    if (!BlockPlayer_playing(self->player)) {
-        Synth_noteOn(Application_getInstance()->synth, pitch);
-    }
+    Synth_noteOn(Application_getInstance()->synth, pitch);
 
     float timeStart = (float)self->cursor.iColumn / (float)nColumns;
     EditView_addMidiMessage(FLUID_SEQ_NOTEON, timeStart, pitch, velocity);
@@ -87,7 +81,7 @@ void EditView_addNote(EditView* self) {
 
 
 void EditView_dragNote(EditView* self) {
-    if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
+    if (EditView_isPlaying(self)) return; /* TODO: allow this */
     if (!self->midiMessageHeld) return;
 
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
@@ -102,14 +96,14 @@ void EditView_dragNote(EditView* self) {
 
 void EditView_releaseNote(EditView* self) {
     self->midiMessageHeld = NULL;
-    if (!BlockPlayer_playing(self->player)) {
+    if (!EditView_isPlaying(self)) {
         Synth_noteOffAll(Application_getInstance()->synth);
     }
 }
 
 
 void EditView_removeNote(EditView* self) {
-    if (BlockPlayer_playing(self->player)) return; /* TODO: allow this */
+    if (EditView_isPlaying(self)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
@@ -133,6 +127,58 @@ void EditView_removeNote(EditView* self) {
         }
         midiMessage = midiMessage->next;
     }
+}
+
+
+void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
+    (void)startPosition; (void)repeat; /* TODO */
+    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
+    Application* application = Application_getInstance();
+
+    for (MidiMessage* midiMessage = application->blockCurrent->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
+        if (midiMessage->time < 0) continue;
+        float channel = 0;
+        float velocity = midiMessage->velocity;
+        float time = midiMessage->time * blockTime;
+
+        switch (midiMessage->type) {
+            case FLUID_SEQ_NOTEON:
+                Synth_sendNoteOn(application->synth, channel, midiMessage->pitch, velocity, time);
+                break;
+            case FLUID_SEQ_NOTEOFF:
+                Synth_sendNoteOff(application->synth, channel, midiMessage->pitch, time);
+                break;
+        }
+    }
+    self->playStartTime = Synth_getTime(application->synth);
+}
+
+
+void EditView_stopPlaying(EditView* self) {
+    Synth_noteOffAll(Application_getInstance()->synth);
+    self->playStartTime = -1;
+}
+
+
+bool EditView_isPlaying(EditView* self) {
+    return self->playStartTime > 0;
+}
+
+
+void EditView_setProgram(int program) {
+    Synth_setProgramById(Application_getInstance()->synth, 0, program);
+}
+
+
+void EditView_setTempo(EditView* self, int tempo) {
+    self->tempo = tempo;
+}
+
+
+char* EditView_getTempoString(void) {
+    EditView* self = Application_getInstance()->editView;
+    snprintf(self->tempoString, 64, "%d", self->tempo);
+    return self->tempoString;
 }
 
 
@@ -180,7 +226,8 @@ void EditView_draw(EditView* self) {
     /* Draw cursor */
     EditView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
 
-    BlockPlayer_drawCursor(self->player);
+    /* Draw playback cursor */
+    EditView_drawPlaybackCursor(self);
 }
 
 
@@ -194,6 +241,25 @@ void EditView_drawItem(GridItem* item, float offset) {
     float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
 
     Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, item->color);
+}
+
+
+void EditView_drawPlaybackCursor(EditView* self) {
+    if (!EditView_isPlaying(self)) return;
+
+    /* TODO
+    float time = glfwGetTime() - self->startTime;
+    float totalTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempoBpm;
+    float progress = self->startPosition + time / totalTime;
+    float cursorX = -1.0f + 2.0f * progress;
+
+    float x1 = cursorX;
+    float x2 = cursorX + PLAYER_CURSOR_WIDTH;
+    float y1 = -1.0f;
+    float y2 = 1.0f;
+
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
+    */
 }
 
 

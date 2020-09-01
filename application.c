@@ -71,7 +71,6 @@ void Application_run(Application* self) {
                 ObjectView_draw(self->objectView);
                 break;
             case EDIT_MODE:
-                EditView_update(self->editView);
                 EditView_draw(self->editView);
                 break;
         }

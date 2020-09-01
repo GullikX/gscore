@@ -44,7 +44,6 @@ typedef struct Application Application;
 typedef struct Block Block;
 typedef struct GridItem GridItem;
 typedef struct Synth Synth;
-typedef struct BlockPlayer BlockPlayer;
 typedef struct Renderer Renderer;
 typedef struct Score Score;
 typedef struct ScorePlayer ScorePlayer;
@@ -117,21 +116,9 @@ struct Synth {
     char* instrumentListString;
 };
 
-struct BlockPlayer {
-    int channel;
-    MidiMessage* midiMessage;
-    bool playing;
-    bool repeat;
-    float startTime;
-    float startPosition;
-    int tempoBpm;
-    char tempoBpmString[64];
-    int program;
-};
-
 
 /* Function declarations needed for config */
-char* BlockPlayer_getTempoBpmString(void);
+char* EditView_getTempoString(void);
 char* Synth_getInstrumentListString(void);
 
 
@@ -145,7 +132,9 @@ struct EditView {
     GridItem gridlinesHorizontal[OCTAVES];
     GridItem cursor;
     MidiMessage* midiMessageHeld;
-    BlockPlayer* player;
+    int playStartTime;
+    int tempo;
+    char tempoString[64];
 };
 
 struct ObjectView {
@@ -207,13 +196,17 @@ void Application_writeScore(Application* self);
 /* editview.c */
 EditView* EditView_new(Score* score);
 EditView* EditView_free(EditView* self);
-void EditView_update(EditView* self);
 void EditView_previewNote(EditView* self);
 void EditView_addNote(EditView* self);
 void EditView_dragNote(EditView* self);
 void EditView_removeNote(EditView* self);
+void EditView_playBlock(EditView* self, float startPosition, bool repeat);
+void EditView_stopPlaying(EditView* self);
+bool EditView_isPlaying(EditView* self);
+void EditView_setProgram(int program);
 void EditView_draw(EditView* self);
 void EditView_drawItem(GridItem* item, float offset);
+void EditView_drawPlaybackCursor(EditView* self);
 bool EditView_updateCursorPosition(EditView* self, float x, float y);
 int EditView_rowIndexToNoteKey(int iRow);
 int EditView_pitchToRowIndex(int pitch);
@@ -263,17 +256,6 @@ bool ObjectView_updateCursorPosition(ObjectView*, float x, float y);
 int ObjectView_xCoordToColumnIndex(float x);
 int ObjectView_yCoordToRowIndex(ObjectView*, float y);
 
-/* player.c */
-BlockPlayer* BlockPlayer_new(Score* score);
-BlockPlayer* BlockPlayer_free(BlockPlayer* self);
-void BlockPlayer_setTempoBpm(BlockPlayer* self, int tempoBpm);
-bool BlockPlayer_playing(BlockPlayer* self);
-void BlockPlayer_playBlock(BlockPlayer* self, Block* block, float startPosition, bool repeat);
-void BlockPlayer_stop(BlockPlayer* self);
-void BlockPlayer_update(BlockPlayer* self);
-void BlockPlayer_drawCursor(BlockPlayer* self);
-void BlockPlayer_setProgram(int program);
-
 /* renderer.c */
 Renderer* Renderer_new(void);
 Renderer* Renderer_free(Renderer* self);
@@ -306,6 +288,8 @@ void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity, float
 void Synth_noteOff(Synth* self, int key);
 void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time);
 void Synth_noteOffAll(Synth* self);
+int Synth_getTime(Synth* self);
+char* Synth_getInstrumentListString(void);
 
 /* util.c */
 void die(const char* const format, ...);

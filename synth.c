@@ -171,6 +171,11 @@ void Synth_noteOffAll(Synth* self) {
 }
 
 
+int Synth_getTime(Synth* self) {
+    return fluid_sequencer_get_tick(self->sequencer);
+}
+
+
 char* Synth_getInstrumentListString(void) {
     return Application_getInstance()->synth->instrumentListString;
 }

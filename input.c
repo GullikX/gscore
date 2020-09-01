@@ -214,12 +214,12 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
-                    BlockPlayer_stop(editView->player);
+                    EditView_stopPlaying(editView);
                     Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
-                    if (BlockPlayer_playing(editView->player)) {
-                        BlockPlayer_stop(editView->player);
+                    if (EditView_isPlaying(editView)) {
+                        EditView_stopPlaying(editView);
                     }
                     else {
                         bool repeat = modShift;
@@ -231,11 +231,11 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                             glfwGetWindowSize(window, &windowWidth, &windowHeight);
                             startPosition = (float)cursorX / (float)windowWidth;
                         }
-                        BlockPlayer_playBlock(editView->player, application->blockCurrent, startPosition, repeat);
+                        EditView_playBlock(editView, startPosition, repeat);
                     }
                     break;
                 case GLFW_KEY_ESCAPE:
-                    BlockPlayer_stop(editView->player);
+                    EditView_stopPlaying(editView);
                     break;
             }
         }

@@ -111,7 +111,7 @@ const char* ATOM_PROMPTS[] =  {
 };
 
 char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
-    BlockPlayer_getTempoBpmString,
+    EditView_getTempoString,
     Synth_getInstrumentListString,
 };
 

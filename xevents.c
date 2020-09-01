@@ -85,7 +85,7 @@ void XEvents_processXEvents(XEvents* self) {
                         int tempoBpm = atoi((char*)propertyValue);
                         if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
                             printf("Setting BPM to %d\n", tempoBpm);
-                            BlockPlayer_setTempoBpm(application->editView->player, tempoBpm);
+                            EditView_setTempo(application->editView, tempoBpm);
                         }
                         else {
                             printf("Invalid BPM value '%s'\n", propertyValue);
@@ -93,7 +93,7 @@ void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_SYNTH_PROGRAM:;
                         int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
-                        BlockPlayer_setProgram(program);
+                        EditView_setProgram(program);
                 }
                 break;
             }

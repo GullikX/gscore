@@ -18,7 +18,6 @@
 
 #include "gscore.h"
 #include "application.c"
-#include "blockplayer.c"
 #include "editview.c"
 #include "filereader.c"
 #include "filewriter.c"
