@@ -100,8 +100,8 @@ void ScorePlayer_drawCursor(ScorePlayer* self) {
     float progress = time / totalTime;
     float cursorX = -1.0f + 2.0f * progress;
 
-    float x1 = cursorX;
-    float x2 = cursorX + PLAYER_CURSOR_WIDTH;
+    float x1 = cursorX - PLAYER_CURSOR_WIDTH / 2.0f;
+    float x2 = cursorX + PLAYER_CURSOR_WIDTH / 2.0f;
     float y1 = -1.0f;
     float y2 = 1.0f;
 
