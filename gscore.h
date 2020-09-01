@@ -161,7 +161,7 @@ struct ScorePlayer {
     MidiMessage* midiMessages[N_TRACKS];
 };
 
-struct Track{
+struct Track {
     int program;
     float velocity;
     Block* blocks[SCORE_LENGTH];
