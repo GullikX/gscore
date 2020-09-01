@@ -130,6 +130,7 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
                         }
                         if (!block) die("Did not find blockdef '%s'", name);
                         score->tracks[iTrack].blocks[iBlock] = block;
+                        score->tracks[iTrack].blockVelocities[iBlock] = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
                     }
                     else {
                         score->tracks[iTrack].blocks[iBlock] = NULL;

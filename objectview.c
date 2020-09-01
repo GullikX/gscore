@@ -63,8 +63,9 @@ void ObjectView_addBlock(ObjectView* self) {
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
 
-    Block* block = Application_getInstance()->blockCurrent;
-    Application_getInstance()->scoreCurrent->tracks[iTrack].blocks[iBlock] = block;
+    Application* application = Application_getInstance();
+    application->scoreCurrent->tracks[iTrack].blocks[iBlock] = application->blockCurrent;
+    application->scoreCurrent->tracks[iTrack].blockVelocities[iBlock] = DEFAULT_VELOCITY;
 }
 
 

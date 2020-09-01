@@ -175,6 +175,7 @@ struct Track{
     int program;
     float velocity;
     Block* blocks[SCORE_LENGTH];
+    float blockVelocities[SCORE_LENGTH];
 };
 
 struct Score {
