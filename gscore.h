@@ -35,22 +35,8 @@
 #include <unistd.h>
 
 
-/* Type declarations */
-typedef struct Vector2 Vector2;
-typedef struct Vector4 Vector4;
-typedef struct Vertex Vertex;
-typedef struct MidiMessage MidiMessage;
-typedef struct Application Application;
-typedef struct Block Block;
-typedef struct GridItem GridItem;
-typedef struct Synth Synth;
-typedef struct Renderer Renderer;
-typedef struct Score Score;
-typedef struct ScorePlayer ScorePlayer;
-typedef struct Track Track;
-typedef struct EditView EditView;
-typedef struct ObjectView ObjectView;
-typedef struct XEvents XEvents;
+/* Type declarations (auto-generated at compile-time) */
+#include "typedeclarations.h"
 
 
 /* Type definitions */
