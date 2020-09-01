@@ -202,7 +202,7 @@ void Application_switchBlock(Application* self, int iBlock);
 void Application_writeScore(Application* self);
 
 /* editview.c */
-EditView* EditView_new(void);
+EditView* EditView_new(Score* score);
 EditView* EditView_free(EditView* self);
 void EditView_update(EditView* self);
 void EditView_previewNote(EditView* self);
@@ -261,7 +261,7 @@ int ObjectView_xCoordToColumnIndex(float x);
 int ObjectView_yCoordToRowIndex(ObjectView*, float y);
 
 /* player.c */
-BlockPlayer* BlockPlayer_new(void);
+BlockPlayer* BlockPlayer_new(Score* score);
 BlockPlayer* BlockPlayer_free(BlockPlayer* self);
 void BlockPlayer_setTempoBpm(BlockPlayer* self, int tempoBpm);
 bool BlockPlayer_playing(BlockPlayer* self);

@@ -16,13 +16,13 @@
  *
  */
 
-BlockPlayer* BlockPlayer_new(void) {
+BlockPlayer* BlockPlayer_new(Score* score) {
     BlockPlayer* self = ecalloc(1, sizeof(*self));
     self->channel = 0;  /* TODO */
     self->playing = false;
     self->repeat = false;
     self->startTime = 0;
-    BlockPlayer_setTempoBpm(self, TEMPO_BPM);
+    BlockPlayer_setTempoBpm(self, score->tempo);
 
     return self;
 }

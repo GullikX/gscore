@@ -16,7 +16,7 @@
  *
  */
 
-EditView* EditView_new(void) {
+EditView* EditView_new(Score* score) {
     EditView* self = ecalloc(1, sizeof(*self));
 
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
@@ -44,7 +44,7 @@ EditView* EditView_new(void) {
     self->cursor.nColumns = 1;
     self->cursor.color = COLOR_CURSOR;
 
-    self->player = BlockPlayer_new();
+    self->player = BlockPlayer_new(score);
 
     return self;
 }

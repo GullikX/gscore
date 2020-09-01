@@ -27,7 +27,7 @@ Application* Application_new(const char* const filename) {
     self->scoreCurrent = FileReader_read(filename);
     self->blockCurrent = &self->scoreCurrent->blocks[0];
 
-    self->editView = EditView_new();
+    self->editView = EditView_new(self->scoreCurrent);
     self->objectView = ObjectView_new(self->scoreCurrent);
     self->synth = Synth_new();
     self->renderer = Renderer_new();
