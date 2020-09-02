@@ -88,10 +88,10 @@ const char* BLOCK_NAMES[] = {  /* TODO: do not hard-code these (or the number of
 };
 
 const Vector4 BLOCK_COLORS[] = {
-    COLOR_BLOCK_DEFAULT,
-    {0.6235, 0.6588, 0.8549, 1.0f},
-    {0.7725, 0.8824, 0.6471, 1.0f},
-    {1.0000, 0.8784, 0.5098, 1.0f},
+    {0.5411f, 0.7765f, 0.9490f, 1.0f},
+    {0.6235f, 0.6588f, 0.8549f, 1.0f},
+    {0.7725f, 0.8824f, 0.6471f, 1.0f},
+    {1.0000f, 0.8784f, 0.5098f, 1.0f},
 };
 
 enum {

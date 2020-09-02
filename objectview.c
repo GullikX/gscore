@@ -20,7 +20,7 @@ ObjectView* ObjectView_new(Score* score) {
     ObjectView* self = ecalloc(1, sizeof(*self));
 
     int nColumns = SCORE_LENGTH;
-    Vector4 trackColors[] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
+    Vector4 trackColors[2] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
     int iTrackColor = 0;
 
     for (int i = 0; i < N_TRACKS; i++) {

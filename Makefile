@@ -7,7 +7,7 @@ INCLUDE=$$(xml2-config --cflags)
 LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lX11 $$(xml2-config --libs)
 
 WARNINGS=-Wall -Wextra
-ERRORS=-pedantic-errors -Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes
+ERRORS=-pedantic -Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes
 DEFINES=-DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
