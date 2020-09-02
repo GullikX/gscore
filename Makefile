@@ -1,6 +1,6 @@
-CC=cc
-#CFLAGS=-O3 -march=native
-CFLAGS=-Og -g -march=native
+CC?=cc
+#CFLAGS?=-O3 -march=native
+CFLAGS?=-Og -g -march=native
 
 CFILES=application.c config.h editview.c filereader.c filewriter.c gscore.c gscore.h input.c main.c objectview.c renderer.c scoreplayer.c synth.c util.c xevents.c
 INCLUDE=$$(xml2-config --cflags)
