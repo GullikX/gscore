@@ -22,7 +22,6 @@ Synth* Synth_new(void) {
     self->settings = new_fluid_settings();
     self->fluidSynth = new_fluid_synth(self->settings);
     fluid_settings_setstr(self->settings, "audio.driver", AUDIO_DRIVER);
-    fluid_settings_setstr(self->settings, "audio.alsa.device", ALSA_DEVICE);
     fluid_settings_setint(self->settings, "synth.midi-channels", SYNTH_MIDI_CHANNELS);
     fluid_settings_setint(self->settings, "audio.periods", SYNTH_AUDIO_PERIODS);
     fluid_settings_setint(self->settings, "audio.period-size", SYNTH_AUDIO_PERIOD_SIZE);

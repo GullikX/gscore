@@ -15,7 +15,6 @@ const char* const FRAGMENT_SHADER_SOURCE =
 const char* const WINDOW_TITLE = "GScore";
 
 const char* const AUDIO_DRIVER = "alsa";
-const char* const ALSA_DEVICE = "default";
 const char* const SOUNDFONT = "soundfont.sf2";
 
 const char* const BLOCK_NAME_DEFAULT = "default";
