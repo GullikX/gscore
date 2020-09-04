@@ -41,8 +41,8 @@ const char* const XMLNODE_TRACK = "track";
 const char* const XMLNODE_TRACKS = "tracks";
 
 enum {
-    WINDOW_WIDTH = 640,
-    WINDOW_HEIGHT = 640,
+    WINDOW_WIDTH = 1280,
+    WINDOW_HEIGHT = 720,
     RENDERER_MAX_QUADS = 1000,
     RENDERER_MAX_VERTICES = 4*RENDERER_MAX_QUADS,
     MAX_BLOCKS = 4,
