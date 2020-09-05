@@ -54,7 +54,7 @@ MidiMessage* Block_addMidiMessage(Block* self, int type, float time, int pitch, 
     midiMessage->prev = NULL;
 
     MidiMessage* midiMessageOther = self->midiMessageRoot;
-    while (midiMessageOther->next && midiMessageOther->next->time < midiMessage->time) {
+    while (midiMessageOther->next && !Block_compareMidiMessages(midiMessageOther->next, midiMessage)) {
         midiMessageOther = midiMessageOther->next;
     }
     midiMessage->next = midiMessageOther->next;
@@ -71,4 +71,16 @@ void Block_removeMidiMessage(MidiMessage* midiMessage) {
     if (midiMessage->prev) midiMessage->prev->next = midiMessage->next;
     if (midiMessage->next) midiMessage->next->prev = midiMessage->prev;
     free(midiMessage);
+}
+
+
+bool Block_compareMidiMessages(MidiMessage* midiMessage, MidiMessage* midiMessageOther) {
+    if (midiMessage->time > midiMessageOther->time) return true;
+    else if (midiMessage->time < midiMessageOther->time) return false;
+    else if (midiMessage->type == FLUID_SEQ_NOTEON && midiMessageOther->type == FLUID_SEQ_NOTEOFF) return true;
+    else if (midiMessage->type == FLUID_SEQ_NOTEOFF && midiMessageOther->type == FLUID_SEQ_NOTEON) return false;
+    else if (midiMessage->pitch > midiMessageOther->pitch) return true;
+    else if (midiMessage->pitch < midiMessageOther->pitch) return false;
+    else printf("Overlapping midi messages at time=%f, type=%d, pitch=%d\n", midiMessage->time, midiMessage->type, midiMessage->pitch);
+    return true;
 }
