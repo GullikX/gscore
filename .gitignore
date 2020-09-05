@@ -1,3 +1,5 @@
 gscore
 *.gsx
 *.xml
+functiondeclarations.h
+typedeclarations.h
