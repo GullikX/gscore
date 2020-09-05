@@ -12,10 +12,10 @@ DEFINES=-DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
 gscore: $(CFILES)
-	@grep -h -e '^\S.*\s.*(.*).*{' *.c | sed -e 's/{/;/g' > functiondeclarations.h
-	@grep '^struct\s\S*\s{' gscore.h | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
+	grep -h -e '^\S.*\s.*(.*).*{' *.c | sed -e 's/{/;/g' > functiondeclarations.h
+	grep '^struct\s\S*\s{' gscore.h | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
 	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o gscore gscore.c $(LIBS)
-	@rm -f functiondeclarations.h typedeclarations.h
+	rm -f functiondeclarations.h typedeclarations.h
 
 clean:
 	rm -f gscore
