@@ -76,7 +76,7 @@ void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_SYNTH_PROGRAM:;
                         int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
-                        ScorePlayer_setProgram(application->objectView->player, program);
+                        ObjectView_setProgram(application->objectView, program);
                 }
             }
             else if (state == EDIT_MODE) {

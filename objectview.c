@@ -19,6 +19,8 @@
 ObjectView* ObjectView_new(Score* score) {
     ObjectView* self = ecalloc(1, sizeof(*self));
 
+    self->score = score;
+
     int nColumns = SCORE_LENGTH;
     Vector4 trackColors[2] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
     int iTrackColor = 0;
@@ -40,7 +42,7 @@ ObjectView* ObjectView_new(Score* score) {
     self->cursor.nColumns = 1;
     self->cursor.color = COLOR_CURSOR;
 
-    self->player = ScorePlayer_new(score);
+    self->playStartTime = -1;
 
     return self;
 }
@@ -52,13 +54,8 @@ ObjectView* ObjectView_free(ObjectView* self) {
 }
 
 
-void ObjectView_update(ObjectView* self) {
-    ScorePlayer_update(self->player);
-}
-
-
 void ObjectView_addBlock(ObjectView* self) {
-    if (ScorePlayer_playing(self->player)) return; /* TODO: allow this */
+    if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
@@ -70,12 +67,60 @@ void ObjectView_addBlock(ObjectView* self) {
 
 
 void ObjectView_removeBlock(ObjectView* self) {
-    if (ScorePlayer_playing(self->player)) return; /* TODO: allow this */
+    if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
 
     Application_getInstance()->scoreCurrent->tracks[iTrack].blocks[iBlock] = NULL;
+}
+
+
+void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
+    (void)startPosition; (void)repeat; /* TODO */
+    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
+
+    for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
+        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack].program);
+
+        for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
+            Block* block = self->score->tracks[iTrack].blocks[iBlock];
+            if (!block) continue;
+            for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
+                if (midiMessage->time < 0) continue;
+                int channel = iTrack + 1;
+                float velocity = midiMessage->velocity * self->score->tracks[iTrack].velocity * self->score->tracks[iTrack].blockVelocities[iBlock];
+                float time = midiMessage->time * blockTime + blockTime * iBlock;
+
+                switch (midiMessage->type) {
+                    case FLUID_SEQ_NOTEON:
+                        Synth_sendNoteOn(Application_getInstance()->synth, channel, midiMessage->pitch, velocity, time);
+                        break;
+                    case FLUID_SEQ_NOTEOFF:
+                        Synth_sendNoteOff(Application_getInstance()->synth, channel, midiMessage->pitch, time);
+                        break;
+                }
+            }
+        }
+    }
+    self->playStartTime = Synth_getTime(Application_getInstance()->synth);
+}
+
+
+void ObjectView_stopPlaying(ObjectView* self) {
+    Synth_noteOffAll(Application_getInstance()->synth);
+    self->playStartTime = -1;
+}
+
+
+bool ObjectView_isPlaying(ObjectView* self) {
+    return self->playStartTime > 0;
+}
+
+
+void ObjectView_setProgram(ObjectView* self, int program) {
+    int iTrack = Application_getInstance()->objectView->cursor.iRow;
+    self->score->tracks[iTrack].program = program;
 }
 
 
@@ -103,7 +148,7 @@ void ObjectView_draw(ObjectView* self) {
         ObjectView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
     }
 
-    ScorePlayer_drawCursor(self->player);
+    ObjectView_drawPlaybackCursor(self);
 }
 
 
@@ -117,6 +162,23 @@ void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
     float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
 
     Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, item->color);
+}
+
+
+void ObjectView_drawPlaybackCursor(ObjectView* self) {
+    if (!ObjectView_isPlaying(self)) return;
+
+    float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
+    float totalTime = 1000.0f * (float)(SCORE_LENGTH * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
+    float progress = time / totalTime;
+    float cursorX = -1.0f + 2.0f * progress;
+
+    float x1 = cursorX - PLAYER_CURSOR_WIDTH / 2.0f;
+    float x2 = cursorX + PLAYER_CURSOR_WIDTH / 2.0f;
+    float y1 = -1.0f;
+    float y2 = 1.0f;
+
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
 }
 
 

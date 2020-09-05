@@ -117,19 +117,19 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
-                    ScorePlayer_stop(objectView->player);
+                    ObjectView_stopPlaying(objectView);
                     Application_switchState(application);
                     break;
                 case GLFW_KEY_SPACE:
-                    if (ScorePlayer_playing(objectView->player)) {
-                        ScorePlayer_stop(objectView->player);
+                    if (ObjectView_isPlaying(objectView)) {
+                        ObjectView_stopPlaying(objectView);
                     }
                     else {
-                        ScorePlayer_playScore(objectView->player);
+                        ObjectView_playScore(objectView, 0, false);
                     }
                     break;
                 case GLFW_KEY_ESCAPE:
-                    ScorePlayer_stop(objectView->player);
+                    ObjectView_stopPlaying(objectView);
                     break;
             }
         }

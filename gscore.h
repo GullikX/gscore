@@ -123,10 +123,11 @@ struct EditView {
 };
 
 struct ObjectView {
+    Score* score;
     GridItem gridlinesHorizontal[N_TRACKS];
     GridItem cursor;
     float viewHeight;
-    ScorePlayer* player;
+    int playStartTime;
 };
 
 struct Renderer {
@@ -138,13 +139,6 @@ struct Renderer {
      int nVerticesEnqueued;
      int viewportWidth;
      int viewportHeight;
-};
-
-struct ScorePlayer {
-    Score* score;
-    bool playing;
-    float startTime;
-    MidiMessage* midiMessages[N_TRACKS];
 };
 
 struct Track {

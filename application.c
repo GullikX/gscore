@@ -67,7 +67,6 @@ void Application_run(Application* self) {
     while(Renderer_running(self->renderer)) {
         switch (Application_getState(self)) {
             case OBJECT_MODE:
-                ObjectView_update(self->objectView);
                 ObjectView_draw(self->objectView);
                 break;
             case EDIT_MODE:
