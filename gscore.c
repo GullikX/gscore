@@ -27,5 +27,6 @@
 #include "objectview.c"
 #include "renderer.c"
 #include "synth.c"
+#include "track.c"
 #include "util.c"
 #include "xevents.c"

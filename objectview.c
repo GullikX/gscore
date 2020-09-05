@@ -60,9 +60,11 @@ void ObjectView_addBlock(ObjectView* self) {
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
 
-    Application* application = Application_getInstance();
-    application->scoreCurrent->tracks[iTrack].blocks[iBlock] = application->blockCurrent;
-    application->scoreCurrent->tracks[iTrack].blockVelocities[iBlock] = DEFAULT_VELOCITY;
+    Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
+    Block** block = Application_getInstance()->blockCurrent;
+
+    Track_setBlock(track, iBlock, block);
+    Track_setBlockVelocity(track, iBlock, DEFAULT_VELOCITY);
 }
 
 
@@ -72,7 +74,8 @@ void ObjectView_removeBlock(ObjectView* self) {
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
 
-    Application_getInstance()->scoreCurrent->tracks[iTrack].blocks[iBlock] = NULL;
+    Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
+    Track_setBlock(track, iBlock, NULL);
 }
 
 
@@ -81,15 +84,15 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
 
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
-        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack].program);
+        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack]->program);
 
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
-            if (!self->score->tracks[iTrack].blocks[iBlock]) continue;
-            Block* block = *self->score->tracks[iTrack].blocks[iBlock];
+            if (!self->score->tracks[iTrack]->blocks[iBlock]) continue;
+            Block* block = *self->score->tracks[iTrack]->blocks[iBlock];
             for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
                 if (midiMessage->time < 0) continue;
                 int channel = iTrack + 1;
-                float velocity = midiMessage->velocity * self->score->tracks[iTrack].velocity * self->score->tracks[iTrack].blockVelocities[iBlock];
+                float velocity = midiMessage->velocity * self->score->tracks[iTrack]->velocity * self->score->tracks[iTrack]->blockVelocities[iBlock];
                 float time = midiMessage->time * blockTime + blockTime * iBlock;
 
                 switch (midiMessage->type) {
@@ -120,7 +123,8 @@ bool ObjectView_isPlaying(ObjectView* self) {
 
 void ObjectView_setProgram(ObjectView* self, int program) {
     int iTrack = Application_getInstance()->objectView->cursor.iRow;
-    self->score->tracks[iTrack].program = program;
+    Track* track = self->score->tracks[iTrack];
+    Track_setProgram(track, program);
 }
 
 
@@ -129,11 +133,11 @@ void ObjectView_draw(ObjectView* self) {
         ObjectView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
     }
 
-    Track* tracks = Application_getInstance()->scoreCurrent->tracks;
+    Track** tracks = Application_getInstance()->scoreCurrent->tracks;
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
-            if (!tracks[iTrack].blocks[iBlock]) continue;
-            Block* block = *tracks[iTrack].blocks[iBlock];
+            if (!tracks[iTrack]->blocks[iBlock]) continue;
+            Block* block = *tracks[iTrack]->blocks[iBlock];
             GridItem item;
             item.iRow = iTrack;
             item.iColumn = iBlock;

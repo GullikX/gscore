@@ -35,7 +35,6 @@ Synth* Synth_new(void) {
         die("Failed to load soundfont");
     }
 
-    Synth_setProgramById(self, 0, SYNTH_PROGRAM);
     fluid_synth_set_gain(self->fluidSynth, SYNTH_GAIN);
     fluid_synth_set_reverb_on(self->fluidSynth, SYNTH_ENABLE_REVERB);
     fluid_synth_set_chorus_on(self->fluidSynth, SYNTH_ENABLE_CHORUS);
@@ -65,6 +64,9 @@ Synth* Synth_new(void) {
         if (!preset) break;
         strcat(self->instrumentListString, fluid_preset_get_name(preset));
     }
+
+    /* Synth program for editview */
+    Synth_setProgramById(self, 0, SYNTH_PROGRAM_DEFAULT);
 
     return self;
 }

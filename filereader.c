@@ -91,10 +91,11 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
     int iTrack = 0;
     for (xmlNode* nodeTrack = nodeTracks->children; nodeTrack; nodeTrack = nodeTrack ->next) {
         if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
+            int program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
+            float velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
+            score->tracks[iTrack] = Track_new(program, velocity);
+
             int iBlock = 0;
-            printf("program %s\n", (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
-            score->tracks[iTrack].program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
-            score->tracks[iTrack].velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
             for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
                 if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
                     if (iBlock >= SCORE_LENGTH) die("Too many blocks (max is %d)", SCORE_LENGTH);
@@ -110,17 +111,22 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
                             }
                         }
                         if (!*block) die("Did not find blockdef '%s'", name);
-                        score->tracks[iTrack].blocks[iBlock] = block;
-                        score->tracks[iTrack].blockVelocities[iBlock] = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
+                        float blockVelocity = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
+                        Track_setBlock(score->tracks[iTrack], iBlock, block);
+                        Track_setBlockVelocity(score->tracks[iTrack], iBlock, blockVelocity);
                     }
                     else {
-                        score->tracks[iTrack].blocks[iBlock] = NULL;
+                        Track_setBlock(score->tracks[iTrack], iBlock, NULL);
+                        Track_setBlockVelocity(score->tracks[iTrack], iBlock, DEFAULT_VELOCITY);
                     }
                     iBlock++;
                 }
             }
             iTrack++;
         }
+    }
+    for (int iTrackAdditional = iTrack; iTrackAdditional < N_TRACKS; iTrackAdditional++) {
+        score->tracks[iTrackAdditional] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
     }
 }
 
@@ -130,6 +136,9 @@ Score* FileReader_createNewEmptyScore(void) {
     score->tempo = TEMPO_BPM;
     for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
         score->blocks[iBlock] = Block_new(BLOCK_NAMES[iBlock], &BLOCK_COLORS[iBlock]);
+    }
+    for(int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
+        score->tracks[iTrack] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
     }
     return score;
 }

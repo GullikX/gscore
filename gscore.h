@@ -144,7 +144,7 @@ struct Track {
 struct Score {
     int tempo;
     Block* blocks[MAX_BLOCKS];
-    Track tracks[N_TRACKS];
+    Track* tracks[N_TRACKS];
 };
 
 struct Synth {
