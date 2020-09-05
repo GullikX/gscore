@@ -35,16 +35,22 @@
 #include <unistd.h>
 
 
-/* Type declarations (auto-generated at compile-time) */
-#include "typedeclarations.h"
-
-
-/* Type definitions */
+/* Application states */
 typedef enum {
     OBJECT_MODE,
     EDIT_MODE,
 } State;
 
+
+/* Type declarations (auto-generated at compile-time) */
+#include "typedeclarations.h"
+
+
+/* Function declarations (auto-generated at compile-time) */
+#include "functiondeclarations.h"
+
+
+/* Simple types */
 struct Vector2 {
     float x, y;
 };
@@ -58,15 +64,12 @@ struct Vertex {
     Vector4 color;
 };
 
-struct MidiMessage {
-    int type;
-    float time;
-    int pitch;
-    float velocity;
-    MidiMessage* next;
-    MidiMessage* prev;
-};
 
+/* Configuration */
+#include "config.h"
+
+
+/* Complex types */
 struct Application {
     const char* filename;
     Score* scoreCurrent;
@@ -93,25 +96,6 @@ struct GridItem {
     Vector4 color;
 };
 
-struct Synth {
-    fluid_settings_t* settings;
-    fluid_synth_t* fluidSynth;
-    fluid_audio_driver_t* audioDriver;
-    fluid_sequencer_t* sequencer;
-    int synthSequencerId;
-    char* instrumentListString;
-};
-
-
-/* Function declarations (auto-generated at compile-time) */
-#include "functiondeclarations.h"
-
-
-/* Configuration */
-#include "config.h"
-
-
-/* Type definitions dependent on configuration */
 struct EditView {
     GridItem gridlinesVertical[BLOCK_MEASURES];
     GridItem gridlinesHorizontal[OCTAVES];
@@ -120,6 +104,15 @@ struct EditView {
     int playStartTime;
     int tempo;
     char tempoString[64];
+};
+
+struct MidiMessage {
+    int type;
+    float time;
+    int pitch;
+    float velocity;
+    MidiMessage* next;
+    MidiMessage* prev;
 };
 
 struct ObjectView {
@@ -152,6 +145,15 @@ struct Score {
     int tempo;
     Block blocks[MAX_BLOCKS];
     Track tracks[N_TRACKS];
+};
+
+struct Synth {
+    fluid_settings_t* settings;
+    fluid_synth_t* fluidSynth;
+    fluid_audio_driver_t* audioDriver;
+    fluid_sequencer_t* sequencer;
+    int synthSequencerId;
+    char* instrumentListString;
 };
 
 struct XEvents {
