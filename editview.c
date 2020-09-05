@@ -108,8 +108,8 @@ void EditView_removeNote(EditView* self) {
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
-    Application* application = Application_getInstance();
-    MidiMessage* midiMessage = application->blockCurrent->midiMessageRoot;
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    MidiMessage* midiMessage = blockCurrent->midiMessageRoot;
 
     while (midiMessage) {
         if (midiMessage->type == FLUID_SEQ_NOTEON) {
@@ -133,9 +133,10 @@ void EditView_removeNote(EditView* self) {
 void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     (void)startPosition; (void)repeat; /* TODO */
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
-    Application* application = Application_getInstance();
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    Synth* synth = Application_getInstance()->synth;
 
-    for (MidiMessage* midiMessage = application->blockCurrent->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
+    for (MidiMessage* midiMessage = blockCurrent->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
         if (midiMessage->time < 0) continue;
         float channel = 0;
         float velocity = midiMessage->velocity;
@@ -143,14 +144,14 @@ void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
 
         switch (midiMessage->type) {
             case FLUID_SEQ_NOTEON:
-                Synth_sendNoteOn(application->synth, channel, midiMessage->pitch, velocity, time);
+                Synth_sendNoteOn(synth, channel, midiMessage->pitch, velocity, time);
                 break;
             case FLUID_SEQ_NOTEOFF:
-                Synth_sendNoteOff(application->synth, channel, midiMessage->pitch, time);
+                Synth_sendNoteOff(synth, channel, midiMessage->pitch, time);
                 break;
         }
     }
-    self->playStartTime = Synth_getTime(application->synth);
+    self->playStartTime = Synth_getTime(synth);
 }
 
 
@@ -194,15 +195,16 @@ void EditView_draw(EditView* self) {
     }
 
     /* Draw notes */
-    Application* application = Application_getInstance();
-    MidiMessage* midiMessage = application->blockCurrent->midiMessageRoot;
+    Renderer* renderer = Application_getInstance()->renderer;
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    MidiMessage* midiMessage = blockCurrent->midiMessageRoot;
 
     while (midiMessage) {
         if (midiMessage->type == FLUID_SEQ_NOTEON) {
             MidiMessage* midiMessageOther = midiMessage;
             while (midiMessageOther) {
                 if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
-                    float viewportWidth = application->renderer->viewportWidth;
+                    float viewportWidth = renderer->viewportWidth;
                     int iColumnStart = EditView_xCoordToColumnIndex(midiMessage->time * viewportWidth);
                     int iColumnEnd = EditView_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
                     int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
@@ -212,7 +214,7 @@ void EditView_draw(EditView* self) {
                     item.iColumn = iColumnStart;
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
-                    item.color = application->blockCurrent->color;
+                    item.color = blockCurrent->color;
                     EditView_drawItem(&item, NOTE_SIZE_OFFSET);
 
                     break;
@@ -293,33 +295,14 @@ int EditView_pitchToRowIndex(int pitch) {
 
 
 MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, float velocity) {
-    MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
-    midiMessage->type = type;
-    midiMessage->time = time;
-    midiMessage->pitch = pitch;
-    midiMessage->velocity = velocity;
-    midiMessage->next = NULL;
-    midiMessage->prev = NULL;
-
-    Application* application = Application_getInstance();
-    MidiMessage* midiMessageOther = application->blockCurrent->midiMessageRoot;
-    while (midiMessageOther->next && midiMessageOther->next->time < midiMessage->time) {
-        midiMessageOther = midiMessageOther->next;
-    }
-    midiMessage->next = midiMessageOther->next;
-    midiMessage->prev = midiMessageOther;
-    if (midiMessageOther->next) midiMessageOther->next->prev = midiMessage;
-    midiMessageOther->next = midiMessage;
-
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    MidiMessage* midiMessage = Block_addMidiMessage(blockCurrent, type, time, pitch, velocity);
     return midiMessage;
 }
 
 
 void EditView_removeMidiMessage(MidiMessage* midiMessage) {
-    if (!midiMessage) return;
-    midiMessage->prev->next = midiMessage->next;
-    if (midiMessage->next) midiMessage->next->prev = midiMessage->prev;
-    free(midiMessage);
+    Block_removeMidiMessage(midiMessage);
 }
 
 

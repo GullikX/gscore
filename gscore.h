@@ -73,7 +73,7 @@ struct Vertex {
 struct Application {
     const char* filename;
     Score* scoreCurrent;
-    Block* blockCurrent;
+    Block** blockCurrent;
     EditView* editView;
     ObjectView* objectView;
     Renderer* renderer;
@@ -83,7 +83,7 @@ struct Application {
 };
 
 struct Block {
-    const char* name;
+    char* name;
     Vector4 color;
     MidiMessage* midiMessageRoot;
 };
@@ -137,13 +137,13 @@ struct Renderer {
 struct Track {
     int program;
     float velocity;
-    Block* blocks[SCORE_LENGTH];
+    Block** blocks[SCORE_LENGTH];
     float blockVelocities[SCORE_LENGTH];
 };
 
 struct Score {
     int tempo;
-    Block blocks[MAX_BLOCKS];
+    Block* blocks[MAX_BLOCKS];
     Track tracks[N_TRACKS];
 };
 

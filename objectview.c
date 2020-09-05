@@ -84,8 +84,8 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
         Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack].program);
 
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
-            Block* block = self->score->tracks[iTrack].blocks[iBlock];
-            if (!block) continue;
+            if (!self->score->tracks[iTrack].blocks[iBlock]) continue;
+            Block* block = *self->score->tracks[iTrack].blocks[iBlock];
             for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
                 if (midiMessage->time < 0) continue;
                 int channel = iTrack + 1;
@@ -132,8 +132,8 @@ void ObjectView_draw(ObjectView* self) {
     Track* tracks = Application_getInstance()->scoreCurrent->tracks;
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
-            Block* block = tracks[iTrack].blocks[iBlock];
-            if (!block) continue;
+            if (!tracks[iTrack].blocks[iBlock]) continue;
+            Block* block = *tracks[iTrack].blocks[iBlock];
             GridItem item;
             item.iRow = iTrack;
             item.iColumn = iBlock;

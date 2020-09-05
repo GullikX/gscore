@@ -38,12 +38,12 @@ void FileWriter_write(const Score* const score, const char* const filename) {
 void FileWriter_writeBlockDefs(const Score* const score, xmlNode* nodeScore) {
     xmlNode* nodeBlockDefs = xmlNewChild(nodeScore, NULL, BAD_CAST XMLNODE_BLOCKDEFS, NULL);
     for (int iBlockDef = 0; iBlockDef < MAX_BLOCKS; iBlockDef++) {
-        const char* name = score->blocks[iBlockDef].name;
+        const char* name = score->blocks[iBlockDef]->name;
         if (name) {
             xmlNode* nodeBlockDef = xmlNewChild(nodeBlockDefs, NULL, BAD_CAST XMLNODE_BLOCKDEF, NULL);
             xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME, BAD_CAST name);
-            for (MidiMessage* message = score->blocks[iBlockDef].midiMessageRoot; message; message = message->next) {
-                if (message == score->blocks[iBlockDef].midiMessageRoot) continue;
+            for (MidiMessage* message = score->blocks[iBlockDef]->midiMessageRoot; message; message = message->next) {
+                if (message == score->blocks[iBlockDef]->midiMessageRoot) continue;
                 xmlNode* nodeMessage = xmlNewChild(nodeBlockDef, NULL, BAD_CAST XMLNODE_MESSAGE, NULL);
                 char buffer[XML_BUFFER_SIZE];
                 snprintf(buffer, XML_BUFFER_SIZE, "%f", message->time);
@@ -80,7 +80,8 @@ void FileWriter_writeTracks(const Score* const score, xmlNode* nodeScore) {
                     xmlNewChild(nodeTrack, NULL, BAD_CAST XMLNODE_BLOCK, NULL);
                 }
                 xmlNode* nodeBlock = xmlNewChild(nodeTrack, NULL, BAD_CAST XMLNODE_BLOCK, NULL);
-                xmlNewProp(nodeBlock, BAD_CAST XMLATTRIB_NAME, BAD_CAST score->tracks[iTrack].blocks[iBlock]->name);
+                Block* block = *score->tracks[iTrack].blocks[iBlock];
+                xmlNewProp(nodeBlock, BAD_CAST XMLATTRIB_NAME, BAD_CAST block->name);
                 snprintf(buffer, XML_BUFFER_SIZE, "%f", score->tracks[iTrack].blockVelocities[iBlock]);
                 xmlNewProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY, BAD_CAST buffer);
                 nNullBlocks = 0;

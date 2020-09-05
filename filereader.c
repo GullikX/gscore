@@ -64,44 +64,23 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
     for (xmlNode* nodeBlockDef = nodeBlockDefs->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
         if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
             if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
-            score->blocks[iBlock].name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-            score->blocks[iBlock].color = BLOCK_COLORS[iBlock];
+            score->blocks[iBlock] = Block_new((char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME));
 
-            score->blocks[iBlock].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
-            score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
-            score->blocks[iBlock].midiMessageRoot->time = -1.0f;
-            score->blocks[iBlock].midiMessageRoot->pitch = -1;
-            score->blocks[iBlock].midiMessageRoot->velocity = -1.0f;
-            score->blocks[iBlock].midiMessageRoot->next = NULL;
-            score->blocks[iBlock].midiMessageRoot->prev = NULL;
-
-            MidiMessage* message = score->blocks[iBlock].midiMessageRoot;
             for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
                 if (nodeMessage->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_MESSAGE, (char*)nodeMessage->name)) {
                     /* TODO: error checking */
-                    message->next = ecalloc(1, sizeof(MidiMessage));
-                    message->next->type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
-                    message->next->time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
-                    message->next->pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
-                    message->next->velocity = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
-                    message->next->next = NULL;
-                    message->next->prev = message;
-                    message = message->next;
+                    int type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
+                    float time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
+                    int pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
+                    float velocity = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
+                    Block_addMidiMessage(score->blocks[iBlock], type, time, pitch, velocity);
                 }
             }
             iBlock++;
         }
     }
     for (int iBlockAdditional = iBlock; iBlockAdditional < MAX_BLOCKS; iBlockAdditional++) {
-        score->blocks[iBlockAdditional].name = BLOCK_NAMES[iBlockAdditional];
-        score->blocks[iBlockAdditional].color = BLOCK_COLORS[iBlockAdditional];
-        score->blocks[iBlockAdditional].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
-        score->blocks[iBlockAdditional].midiMessageRoot->type = FLUID_SEQ_NOTE;
-        score->blocks[iBlockAdditional].midiMessageRoot->time = -1.0f;
-        score->blocks[iBlockAdditional].midiMessageRoot->pitch = -1;
-        score->blocks[iBlockAdditional].midiMessageRoot->velocity = -1.0f;
-        score->blocks[iBlockAdditional].midiMessageRoot->next = NULL;
-        score->blocks[iBlockAdditional].midiMessageRoot->prev = NULL;
+        score->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional]);
     }
 }
 
@@ -120,15 +99,15 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
                     const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
                     printf("node block name='%s'\n", name);
                     if (name) {
-                        Block* block = NULL;
+                        Block** block = NULL;
                         for (int i = 0; i < SCORE_LENGTH; i++) {
-                            if (!score->blocks[i].name) continue;
-                            if (!strcmp(score->blocks[i].name, name)) {
+                            if (!score->blocks[i]->name) continue;
+                            if (!strcmp(score->blocks[i]->name, name)) {
                                 block = &score->blocks[i];
                                 break;
                             }
                         }
-                        if (!block) die("Did not find blockdef '%s'", name);
+                        if (!*block) die("Did not find blockdef '%s'", name);
                         score->tracks[iTrack].blocks[iBlock] = block;
                         score->tracks[iTrack].blockVelocities[iBlock] = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
                     }
@@ -148,15 +127,7 @@ Score* FileReader_createNewEmptyScore(void) {
     Score* score = ecalloc(1, sizeof(*score));
     score->tempo = TEMPO_BPM;
     for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
-        score->blocks[iBlock].name = BLOCK_NAMES[iBlock];
-        score->blocks[iBlock].color = BLOCK_COLORS[iBlock];
-        score->blocks[iBlock].midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
-        score->blocks[iBlock].midiMessageRoot->type = FLUID_SEQ_NOTE;
-        score->blocks[iBlock].midiMessageRoot->time = -1.0f;
-        score->blocks[iBlock].midiMessageRoot->pitch = -1;
-        score->blocks[iBlock].midiMessageRoot->velocity = -1.0f;
-        score->blocks[iBlock].midiMessageRoot->next = NULL;
-        score->blocks[iBlock].midiMessageRoot->prev = NULL;
+        score->blocks[iBlock] = Block_new(BLOCK_NAMES[iBlock]);
     }
     return score;
 }
