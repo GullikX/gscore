@@ -1,12 +1,12 @@
 /* Copyright (C) 2020 Martin Gulliksson <martin@gullik.cc>
  *
- * This file is part of GScore.
+ * This file is part of gscore.
  *
- * GScore is free software: you can redistribute it and/or
+ * gscore is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License
  * as published by the Free Software Foundation, version 3.
  *
- * GScore is distributed in the hope that it will be useful,
+ * gscore is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Affero General Public License for more details.

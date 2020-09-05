@@ -12,7 +12,7 @@ const char* const FRAGMENT_SHADER_SOURCE =
     "    gl_FragColor = gl_Color;"
     "}";
 
-const char* const WINDOW_TITLE = "GScore";
+const char* const WINDOW_TITLE = "gscore";
 
 const char* const AUDIO_DRIVER = "alsa";
 const char* const SOUNDFONT = "soundfont.sf2";
