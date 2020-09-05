@@ -16,12 +16,14 @@
  *
  */
 
-Block* Block_new(const char* const name) {
+Block* Block_new(const char* const name, const Vector4* const color) {
     Block* self = ecalloc(1, sizeof(*self));
 
     int nameLength = strlen(name) + 1;
     self->name = ecalloc(nameLength, sizeof(char));
     strcpy(self->name, name);
+
+    memcpy(&self->color, color, sizeof(Vector4));
 
     self->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
     self->midiMessageRoot->type = FLUID_SEQ_NOTE;
@@ -30,8 +32,6 @@ Block* Block_new(const char* const name) {
     self->midiMessageRoot->velocity = -1.0f;
     self->midiMessageRoot->next = NULL;
     self->midiMessageRoot->prev = NULL;
-
-    self->color = BLOCK_COLORS[0]; /* TODO */
 
     return self;
 }

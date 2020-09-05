@@ -64,7 +64,9 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
     for (xmlNode* nodeBlockDef = nodeBlockDefs->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
         if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
             if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
-            score->blocks[iBlock] = Block_new((char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME));
+            const char* const name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
+            const Vector4* const color = &BLOCK_COLORS[iBlock];
+            score->blocks[iBlock] = Block_new(name, color);
 
             for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
                 if (nodeMessage->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_MESSAGE, (char*)nodeMessage->name)) {
@@ -80,7 +82,7 @@ void FileReader_createBlockDefs(Score* score, xmlNode* nodeBlockDefs) {
         }
     }
     for (int iBlockAdditional = iBlock; iBlockAdditional < MAX_BLOCKS; iBlockAdditional++) {
-        score->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional]);
+        score->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional], &BLOCK_COLORS[iBlock]);
     }
 }
 
@@ -127,7 +129,7 @@ Score* FileReader_createNewEmptyScore(void) {
     Score* score = ecalloc(1, sizeof(*score));
     score->tempo = TEMPO_BPM;
     for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
-        score->blocks[iBlock] = Block_new(BLOCK_NAMES[iBlock]);
+        score->blocks[iBlock] = Block_new(BLOCK_NAMES[iBlock], &BLOCK_COLORS[iBlock]);
     }
     return score;
 }
