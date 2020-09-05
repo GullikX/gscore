@@ -97,7 +97,7 @@ void FileReader_createTracks(Score* score, xmlNode* nodeTracks) {
             score->tracks[iTrack].velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
             for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
                 if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
-                    if (iBlock >= SCORE_LENGTH) die("To many blocks (max is %d)", SCORE_LENGTH);
+                    if (iBlock >= SCORE_LENGTH) die("Too many blocks (max is %d)", SCORE_LENGTH);
                     const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
                     printf("node block name='%s'\n", name);
                     if (name) {
