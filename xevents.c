@@ -77,6 +77,10 @@ void XEvents_processXEvents(XEvents* self) {
                     case ATOM_SYNTH_PROGRAM:;
                         int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
                         ObjectView_setProgram(application->objectView, program);
+                        break;
+                    case ATOM_SELECT_BLOCK:
+                        Score_setBlockByName(application->scoreCurrent, (char*)propertyValue);
+                        break;
                 }
             }
             else if (state == EDIT_MODE) {
@@ -94,6 +98,10 @@ void XEvents_processXEvents(XEvents* self) {
                     case ATOM_SYNTH_PROGRAM:;
                         int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
                         EditView_setProgram(program);
+                        break;
+                    case ATOM_SELECT_BLOCK:
+                        Score_setBlockByName(application->scoreCurrent, (char*)propertyValue);
+                        break;
                 }
                 break;
             }

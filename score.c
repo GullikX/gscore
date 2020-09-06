@@ -217,3 +217,17 @@ char* Score_getBlockListString(void) {  /* called from input callback (no instan
     Score_regenerateBlockListString(self);
     return self->blockListString;
 }
+
+
+void Score_setBlockByName(Score* self, const char* const name) {
+    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+        if (!strcmp(name, self->blocks[iBlock]->name)) {
+            printf("Switching to block '%s'\n", name);
+            Application_getInstance()->blockCurrent = &self->blocks[iBlock];
+            return;
+        }
+    }
+
+    printf("Creating new block '%s'\n", name);
+    /* TODO */
+}
