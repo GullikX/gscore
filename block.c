@@ -19,11 +19,8 @@
 Block* Block_new(const char* const name, const Vector4* const color) {
     Block* self = ecalloc(1, sizeof(*self));
 
-    int nameLength = strlen(name) + 1;
-    self->name = ecalloc(nameLength, sizeof(char));
-    strcpy(self->name, name);
-
-    memcpy(&self->color, color, sizeof(Vector4));
+    Block_setName(self, name);
+    Block_setColor(self, color);
 
     self->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
     self->midiMessageRoot->type = FLUID_SEQ_NOTE;
@@ -38,9 +35,19 @@ Block* Block_new(const char* const name, const Vector4* const color) {
 
 
 Block* Block_free(Block* self) {
-    free(self->name);
     free(self);
     return NULL;
+}
+
+
+void Block_setName(Block* self, const char* const name) {
+    strncpy(self->name, name, MAX_BLOCK_NAME_LENGTH);
+    self->name[MAX_BLOCK_NAME_LENGTH - 1] = '\0';
+}
+
+
+void Block_setColor(Block* self, const Vector4* const color) {
+    memcpy(&self->color, color, sizeof(Vector4));
 }
 
 
