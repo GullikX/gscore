@@ -21,7 +21,7 @@ ObjectView* ObjectView_new(Score* score) {
 
     self->score = score;
 
-    int nColumns = score->scoreLength;
+    int nColumns = SCORE_LENGTH_MAX;
     const char* trackColors[2] = {COLOR_GRIDLINES, COLOR_BACKGROUND};
     int iTrackColor = 0;
 

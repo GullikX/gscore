@@ -82,6 +82,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
     (void)window; (void)mods;
     Application* application = Application_getInstance();
     ObjectView* objectView = application->objectView;
+    bool modControl = mods & GLFW_MOD_CONTROL;
     if (action == GLFW_PRESS) {
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
@@ -139,6 +140,16 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     break;
                 case GLFW_KEY_ESCAPE:
                     ObjectView_stopPlaying(objectView);
+                    break;
+                case GLFW_KEY_LEFT:
+                    if (modControl) {
+                        Score_decreaseLength(application->scoreCurrent);
+                    }
+                    break;
+                case GLFW_KEY_RIGHT:
+                    if (modControl) {
+                        Score_increaseLength(application->scoreCurrent);
+                    }
                     break;
             }
         }

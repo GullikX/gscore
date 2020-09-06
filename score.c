@@ -268,3 +268,20 @@ void Score_setBlockColor(const char* const hexColor) {
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     Block_setColor(blockCurrent, hexColor);
 }
+
+
+void Score_increaseLength(Score* self) {
+    if (self->scoreLength == SCORE_LENGTH_MAX) {
+        printf("Already at max score length (%d)\n", SCORE_LENGTH_MAX);
+        return;
+    }
+    self->scoreLength++;
+}
+
+void Score_decreaseLength(Score* self) {
+    if (self->scoreLength == 1) {
+        printf("Already at minimum score length (%d)\n", 1);
+        return;
+    }
+    self->scoreLength--;
+}
