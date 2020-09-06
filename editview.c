@@ -27,7 +27,8 @@ EditView* EditView_new(Score* score) {
         self->gridlinesVertical[i].iColumn = i*MEASURE_RESOLUTION;
         self->gridlinesVertical[i].nRows = nRows;
         self->gridlinesVertical[i].nColumns = 1;
-        self->gridlinesVertical[i].color = COLOR_GRIDLINES;
+        bool success = hexColorToRgb(COLOR_GRIDLINES, &self->gridlinesVertical[i].color);
+        if (!success) die("Invalid gridline color");
     }
 
     for (int i = 0; i < OCTAVES; i++) {
@@ -35,17 +36,21 @@ EditView* EditView_new(Score* score) {
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
         self->gridlinesHorizontal[i].nColumns = nColumns;
-        self->gridlinesHorizontal[i].color = COLOR_GRIDLINES;
+        bool success = hexColorToRgb(COLOR_GRIDLINES, &self->gridlinesHorizontal[i].color);
+        if (!success) die("Invalid gridline color");
     }
 
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
     self->cursor.nRows = 1;
     self->cursor.nColumns = 1;
-    self->cursor.color = COLOR_CURSOR;
+    bool success = hexColorToRgb(COLOR_CURSOR, &self->cursor.color);
+    if (!success) die("Invalid cursor color");
 
     self->playStartTime = -1;
     self->tempo = score->tempo;
+    success = hexColorToRgb(COLOR_CURSOR, &self->playbackCursorColor);
+    if (!success) die("Invalid playback cursor color");
 
     return self;
 }
@@ -259,7 +264,7 @@ void EditView_drawPlaybackCursor(EditView* self) {
     float y1 = -1.0f;
     float y2 = 1.0f;
 
-    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, self->playbackCursorColor);
 }
 
 

@@ -75,9 +75,9 @@ const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
 const float DEFAULT_VELOCITY = 0.75f;
 
-const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
-const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
-const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};
+const char* const COLOR_BACKGROUND = "263238";
+const char* const COLOR_GRIDLINES = "212D32";
+const char* const COLOR_CURSOR = "C5C8C6";
 
 const char* BLOCK_NAMES[] = {  /* TODO: do not hard-code these (or the number of blocks) */
     "block1",

@@ -106,6 +106,7 @@ struct EditView {
     int playStartTime;
     int tempo;
     char tempoString[64];
+    Vector4 playbackCursorColor;
 };
 
 struct MidiMessage {
@@ -123,6 +124,7 @@ struct ObjectView {
     GridItem cursor;
     float viewHeight;
     int playStartTime;
+    Vector4 playbackCursorColor;
 };
 
 struct Renderer {
@@ -134,6 +136,7 @@ struct Renderer {
      int nVerticesEnqueued;
      int viewportWidth;
      int viewportHeight;
+     Vector4 clearColor;
 };
 
 struct Track {

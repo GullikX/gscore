@@ -22,7 +22,7 @@ ObjectView* ObjectView_new(Score* score) {
     self->score = score;
 
     int nColumns = SCORE_LENGTH;
-    Vector4 trackColors[2] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
+    const char* trackColors[2] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
     int iTrackColor = 0;
 
     for (int i = 0; i < N_TRACKS; i++) {
@@ -30,7 +30,7 @@ ObjectView* ObjectView_new(Score* score) {
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
         self->gridlinesHorizontal[i].nColumns = nColumns;
-        self->gridlinesHorizontal[i].color = trackColors[iTrackColor];
+        hexColorToRgb(trackColors[iTrackColor], &self->gridlinesHorizontal[i].color);
         iTrackColor = !iTrackColor;
     }
 
@@ -40,9 +40,12 @@ ObjectView* ObjectView_new(Score* score) {
     self->cursor.iColumn = 0;
     self->cursor.nRows = 1;
     self->cursor.nColumns = 1;
-    self->cursor.color = COLOR_CURSOR;
+    bool success = hexColorToRgb(COLOR_CURSOR, &self->cursor.color);
+    if (!success) die("Invalid cursor color");
 
     self->playStartTime = -1;
+    success = hexColorToRgb(COLOR_CURSOR, &self->playbackCursorColor);
+    if (!success) die("Invalid playback cursor color");
 
     return self;
 }
@@ -182,7 +185,7 @@ void ObjectView_drawPlaybackCursor(ObjectView* self) {
     float y1 = -1.0f;
     float y2 = 1.0f;
 
-    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_CURSOR);
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, self->playbackCursorColor);
 }
 
 
