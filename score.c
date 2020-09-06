@@ -276,6 +276,7 @@ void Score_increaseLength(Score* self) {
         return;
     }
     self->scoreLength++;
+    printf("Score length increased to %d blocks\n", self->scoreLength);
 }
 
 void Score_decreaseLength(Score* self) {
@@ -284,4 +285,5 @@ void Score_decreaseLength(Score* self) {
         return;
     }
     self->scoreLength--;
+    printf("Score length decreased to %d blocks\n", self->scoreLength);
 }
