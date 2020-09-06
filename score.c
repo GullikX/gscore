@@ -203,7 +203,7 @@ void Score_writeToFile(Score* self, const char* const filename) {
 
 void Score_regenerateBlockListString(Score* self) {
     memset(self->blockListString, 0, MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1);
-    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+    for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (iBlock > 0) {
             strcat(self->blockListString, "\n");
         }
@@ -220,7 +220,7 @@ char* Score_getBlockListString(void) {  /* called from input callback (no instan
 
 
 void Score_setBlockByName(Score* self, const char* const name) {
-    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+    for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (!strcmp(name, self->blocks[iBlock]->name)) {
             printf("Switching to block '%s'\n", name);
             Application_getInstance()->blockCurrent = &self->blocks[iBlock];
@@ -228,8 +228,15 @@ void Score_setBlockByName(Score* self, const char* const name) {
         }
     }
 
+    if (self->nBlocks == MAX_BLOCKS) {
+        printf("Already at minimum number of blocks (%d)\n", MAX_BLOCKS);
+        return;
+    }
+
     printf("Creating new block '%s'\n", name);
-    /* TODO */
+    self->blocks[self->nBlocks] = Block_new(name, COLOR_BLOCK_DEFAULT);
+    Application_getInstance()->blockCurrent = &self->blocks[self->nBlocks];
+    self->nBlocks++;
 }
 
 
@@ -240,7 +247,7 @@ char* Score_getCurrentBlockName(void) {  /* called from input callback (no insta
 
 
 void Score_renameBlock(Score* self, const char* const name) {
-    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+    for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (!strcmp(name, self->blocks[iBlock]->name)) {
             if (self->blocks[iBlock] == *Application_getInstance()->blockCurrent) {
                 printf("Block name '%s' unchanged\n", name);
