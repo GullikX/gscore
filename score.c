@@ -279,6 +279,7 @@ void Score_increaseLength(Score* self) {
     printf("Score length increased to %d blocks\n", self->scoreLength);
 }
 
+
 void Score_decreaseLength(Score* self) {
     if (self->scoreLength == 1) {
         printf("Already at minimum score length (%d)\n", 1);
@@ -286,4 +287,27 @@ void Score_decreaseLength(Score* self) {
     }
     self->scoreLength--;
     printf("Score length decreased to %d blocks\n", self->scoreLength);
+}
+
+
+void Score_addTrack(Score* self) {
+    if (self->nTracks == N_TRACKS_MAX) {
+        printf("Already at maximum number of tracks (%d)\n", N_TRACKS_MAX);
+        return;
+    }
+    if (!self->tracks[self->nTracks]) {
+        self->tracks[self->nTracks] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
+    }
+    self->nTracks++;
+    printf("Number of tracks increased to %d\n", self->nTracks);
+}
+
+
+void Score_removeTrack(Score* self) {
+    if (self->nTracks == 1) {
+        printf("Already at minimum number of tracks (%d)\n", 1);
+        return;
+    }
+    self->nTracks--;
+    printf("Number of tracks decreased to %d\n", self->nTracks);
 }

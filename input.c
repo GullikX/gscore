@@ -141,6 +141,16 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                 case GLFW_KEY_ESCAPE:
                     ObjectView_stopPlaying(objectView);
                     break;
+                case GLFW_KEY_UP:
+                    if (modControl) {
+                        Score_removeTrack(application->scoreCurrent);
+                    }
+                    break;
+                case GLFW_KEY_DOWN:
+                    if (modControl) {
+                        Score_addTrack(application->scoreCurrent);
+                    }
+                    break;
                 case GLFW_KEY_LEFT:
                     if (modControl) {
                         Score_decreaseLength(application->scoreCurrent);
