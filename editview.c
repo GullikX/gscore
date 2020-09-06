@@ -176,7 +176,7 @@ void EditView_setTempo(EditView* self, int tempo) {
 }
 
 
-char* EditView_getTempoString(void) {
+char* EditView_getTempoString(void) {  /* called from input callback (no instance reference) */
     EditView* self = Application_getInstance()->editView;
     snprintf(self->tempoString, 64, "%d", self->tempo);
     return self->tempoString;

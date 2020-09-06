@@ -177,6 +177,6 @@ int Synth_getTime(Synth* self) {
 }
 
 
-char* Synth_getInstrumentListString(void) {
+char* Synth_getInstrumentListString(void) {  /* called from input callback (no instance reference) */
     return Application_getInstance()->synth->instrumentListString;
 }
