@@ -105,6 +105,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     break;
+                case 'r':
+                    spawnSetXProp(ATOM_RENAME_BLOCK);
+                    break;
                 case 't':
                     spawnSetXProp(ATOM_BPM);
                     break;
@@ -204,6 +207,9 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     break;
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    break;
+                case 'r':
+                    spawnSetXProp(ATOM_RENAME_BLOCK);
                     break;
                 case 't':
                     spawnSetXProp(ATOM_BPM);

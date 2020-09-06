@@ -98,6 +98,7 @@ enum {
     ATOM_BPM,
     ATOM_SYNTH_PROGRAM,
     ATOM_SELECT_BLOCK,
+    ATOM_RENAME_BLOCK,
     ATOM_COUNT,
 };
 
@@ -105,18 +106,21 @@ const char* ATOM_NAMES[] =  {
     "_GSCORE_BPM",
     "_GSCORE_SYNTH_PROGRAM",
     "_GSCORE_SELECT_BLOCK",
+    "_GSCORE_RENAME_BLOCK",
 };
 
 const char* ATOM_PROMPTS[] =  {
     "Set tempo (BPM):",
     "Set instrument:",
     "Select block:",
+    "Rename block:",
 };
 
 char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
     EditView_getTempoString,
     Synth_getInstrumentListString,
     Score_getBlockListString,
+    Score_getCurrentBlockName,
 };
 
 const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */

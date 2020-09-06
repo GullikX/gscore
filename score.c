@@ -231,3 +231,28 @@ void Score_setBlockByName(Score* self, const char* const name) {
     printf("Creating new block '%s'\n", name);
     /* TODO */
 }
+
+
+char* Score_getCurrentBlockName(void) {  /* called from input callback (no instance reference) */
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    return blockCurrent->name;
+}
+
+
+void Score_renameBlock(Score* self, const char* const name) {
+    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+        if (!strcmp(name, self->blocks[iBlock]->name)) {
+            if (self->blocks[iBlock] == *Application_getInstance()->blockCurrent) {
+                printf("Block name '%s' unchanged\n", name);
+            }
+            else {
+                printf("Block with name '%s' already exists\n", name);
+            }
+            return;
+        }
+    }
+
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    printf("Renaming block from '%s' to '%s'\n", blockCurrent->name, name);
+    Block_setName(blockCurrent, name);
+}
