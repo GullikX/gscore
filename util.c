@@ -59,3 +59,34 @@ void spawn(const char* const cmd, const char* const pipeData) {
     fprintf(pipe, "%s", pipeData);
     pclose(pipe);
 }
+
+
+bool hexColorToRgb(const char* const hexColor, Vector4* rgbOut) {
+    int stringLength = strlen(hexColor);
+    if (stringLength != 6) {
+        printf("The color string must contain exactly 6 hexadecimal digits (%d given)\n", stringLength);
+        return false;
+    }
+    for (int iChar = 0; iChar < stringLength; iChar++) {
+        if (!isxdigit(hexColor[iChar])) {
+            printf("Character '%c' is not a hex digit\n", hexColor[iChar]);
+            return false;
+        }
+    }
+
+    long rgbColors[3];
+    char buffer[3];
+    buffer[2] = '\0';
+
+    for (int iColorChannel = 0; iColorChannel < 3; iColorChannel++) {
+        strncpy(buffer, hexColor + 2*iColorChannel, 2);
+        rgbColors[iColorChannel] = strtol(buffer, NULL, 16);
+    }
+
+    rgbOut->x = (float)rgbColors[0] / 255.0f;
+    rgbOut->y = (float)rgbColors[1] / 255.0f;
+    rgbOut->z = (float)rgbColors[2] / 255.0f;
+    rgbOut->w = 1.0f;
+
+    return true;
+}

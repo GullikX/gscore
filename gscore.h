@@ -27,6 +27,7 @@
 
 #include <X11/Xatom.h>
 
+#include "ctype.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
