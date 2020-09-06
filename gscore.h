@@ -128,15 +128,15 @@ struct ObjectView {
 };
 
 struct Renderer {
-     GLFWwindow* window;
-     GLuint programId;
-     GLuint vertexBufferId;
-     Vertex* vertexBufferTarget;
-     Vertex vertices[RENDERER_MAX_VERTICES];
-     int nVerticesEnqueued;
-     int viewportWidth;
-     int viewportHeight;
-     Vector4 clearColor;
+    GLFWwindow* window;
+    GLuint programId;
+    GLuint vertexBufferId;
+    Vertex* vertexBufferTarget;
+    Vertex vertices[RENDERER_MAX_VERTICES];
+    int nVerticesEnqueued;
+    int viewportWidth;
+    int viewportHeight;
+    Vector4 clearColor;
 };
 
 struct Track {
