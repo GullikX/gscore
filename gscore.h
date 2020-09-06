@@ -145,6 +145,7 @@ struct Score {
     int tempo;
     Block* blocks[MAX_BLOCKS];
     Track* tracks[N_TRACKS];
+    char blockListString[MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1];
 };
 
 struct Synth {

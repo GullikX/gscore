@@ -99,6 +99,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                 case '4':
                     Application_switchBlock(application, 3);
                     break;
+                case 'b':
+                    spawnSetXProp(ATOM_SELECT_BLOCK);
+                    break;
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     break;
@@ -195,6 +198,9 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     break;
                 case '4':
                     Application_switchBlock(application, 3);
+                    break;
+                case 'b':
+                    spawnSetXProp(ATOM_SELECT_BLOCK);
                     break;
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);

@@ -199,3 +199,21 @@ void Score_writeToFile(Score* self, const char* const filename) {
     xmlCleanupParser();
     printf("Wrote score to '%s'\n", filename);
 }
+
+
+void Score_regenerateBlockListString(Score* self) {
+    memset(self->blockListString, 0, MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1);
+    for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
+        if (iBlock > 0) {
+            strcat(self->blockListString, "\n");
+        }
+        strcat(self->blockListString, self->blocks[iBlock]->name);
+    }
+}
+
+
+char* Score_getBlockListString(void) {  /* called from input callback (no instance reference) */
+    Score* self = Application_getInstance()->scoreCurrent;
+    Score_regenerateBlockListString(self);
+    return self->blockListString;
+}
