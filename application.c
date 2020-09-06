@@ -24,7 +24,16 @@ Application* Application_new(const char* const filename) {
     self->state = OBJECT_MODE;
     self->scoreCurrent = NULL;
     self->filename = filename;
-    self->scoreCurrent = FileReader_read(filename);
+
+    if (fileExists(filename)) {
+        printf("Loading file '%s'...\n", filename);
+        self->scoreCurrent = Score_readFromFile(filename);
+    }
+    else {
+        printf("File '%s' does not exist, creating new empty score...\n", filename);
+        self->scoreCurrent = Score_new();
+    }
+
     self->blockCurrent = &self->scoreCurrent->blocks[0];
 
     self->editView = EditView_new(self->scoreCurrent);
@@ -96,5 +105,5 @@ void Application_switchBlock(Application* self, int iBlock) {
 
 
 void Application_writeScore(Application* self) {
-    FileWriter_write(self->scoreCurrent, self->filename);
+    Score_writeToFile(self->scoreCurrent, self->filename);
 }
