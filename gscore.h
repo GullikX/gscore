@@ -86,6 +86,7 @@ struct Application {
 struct Block {
     char name[MAX_BLOCK_NAME_LENGTH];
     Vector4 color;
+    char hexColor[7];
     MidiMessage* midiMessageRoot;
 };
 

@@ -102,6 +102,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                 case 'b':
                     spawnSetXProp(ATOM_SELECT_BLOCK);
                     break;
+                case 'c':
+                    spawnSetXProp(ATOM_SET_BLOCK_COLOR);
+                    break;
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     break;
@@ -204,6 +207,9 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     break;
                 case 'b':
                     spawnSetXProp(ATOM_SELECT_BLOCK);
+                    break;
+                case 'c':
+                    spawnSetXProp(ATOM_SET_BLOCK_COLOR);
                     break;
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);

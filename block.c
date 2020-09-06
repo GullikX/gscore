@@ -16,11 +16,11 @@
  *
  */
 
-Block* Block_new(const char* const name, const Vector4* const color) {
+Block* Block_new(const char* const name, const char* const hexColor) {
     Block* self = ecalloc(1, sizeof(*self));
 
     Block_setName(self, name);
-    Block_setColor(self, color);
+    Block_setColor(self, hexColor);
 
     self->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
     self->midiMessageRoot->type = FLUID_SEQ_NOTE;
@@ -46,8 +46,15 @@ void Block_setName(Block* self, const char* const name) {
 }
 
 
-void Block_setColor(Block* self, const Vector4* const color) {
-    memcpy(&self->color, color, sizeof(Vector4));
+void Block_setColor(Block* self, const char* const hexColor) {
+    bool success = hexColorToRgb(hexColor, &self->color);
+    if (success) {
+        strncpy(self->hexColor, hexColor, 6);
+        printf("Set block color of '%s' to '%s'\n", self->name, hexColor);
+    }
+    else {
+        printf("Failed to set block color '%s'\n", hexColor);
+    }
 }
 
 

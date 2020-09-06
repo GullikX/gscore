@@ -75,7 +75,6 @@ const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
 const float DEFAULT_VELOCITY = 0.75f;
 
-const Vector4 COLOR_BLOCK_DEFAULT = {0.5411f, 0.7765f, 0.9490f, 1.0f};
 const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1961f, 0.2196f, 1.0f};
 const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764, 0.1960, 1.0f};
 const Vector4 COLOR_CURSOR = {0.72f, 0.72f, 0.72f, 1.0f};
@@ -87,11 +86,11 @@ const char* BLOCK_NAMES[] = {  /* TODO: do not hard-code these (or the number of
     "block4",
 };
 
-const Vector4 BLOCK_COLORS[] = {
-    {0.5411f, 0.7765f, 0.9490f, 1.0f},
-    {0.6235f, 0.6588f, 0.8549f, 1.0f},
-    {0.7725f, 0.8824f, 0.6471f, 1.0f},
-    {1.0000f, 0.8784f, 0.5098f, 1.0f},
+const char* BLOCK_COLORS[] = {
+    "81A2BE",
+    "B294BB",
+    "B5BD68",
+    "f0C674",
 };
 
 enum {
@@ -99,6 +98,7 @@ enum {
     ATOM_SYNTH_PROGRAM,
     ATOM_SELECT_BLOCK,
     ATOM_RENAME_BLOCK,
+    ATOM_SET_BLOCK_COLOR,
     ATOM_COUNT,
 };
 
@@ -107,6 +107,7 @@ const char* ATOM_NAMES[] =  {
     "_GSCORE_SYNTH_PROGRAM",
     "_GSCORE_SELECT_BLOCK",
     "_GSCORE_RENAME_BLOCK",
+    "_GSCORE_SET_BLOCK_COLOR",
 };
 
 const char* ATOM_PROMPTS[] =  {
@@ -114,6 +115,7 @@ const char* ATOM_PROMPTS[] =  {
     "Set instrument:",
     "Select block:",
     "Rename block:",
+    "Set block color:",
 };
 
 char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
@@ -121,6 +123,7 @@ char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
     Synth_getInstrumentListString,
     Score_getBlockListString,
     Score_getCurrentBlockName,
+    Score_getCurrentBlockColor,
 };
 
 const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */

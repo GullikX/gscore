@@ -84,6 +84,9 @@ void XEvents_processXEvents(XEvents* self) {
                     case ATOM_RENAME_BLOCK:
                         Score_renameBlock(application->scoreCurrent, (char*)propertyValue);
                         break;
+                    case ATOM_SET_BLOCK_COLOR:
+                        Score_setBlockColor((char*)propertyValue);
+                        break;
                 }
             }
             else if (state == EDIT_MODE) {
@@ -107,6 +110,9 @@ void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_RENAME_BLOCK:
                         Score_renameBlock(application->scoreCurrent, (char*)propertyValue);
+                        break;
+                    case ATOM_SET_BLOCK_COLOR:
+                        Score_setBlockColor((char*)propertyValue);
                         break;
                 }
                 break;

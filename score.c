@@ -20,7 +20,7 @@ Score* Score_new(void) {
     Score* self = ecalloc(1, sizeof(*self));
     self->tempo = TEMPO_BPM;
     for (int iBlock = 0; iBlock < MAX_BLOCKS; iBlock++) {
-        self->blocks[iBlock] = Block_new(BLOCK_NAMES[iBlock], &BLOCK_COLORS[iBlock]);
+        self->blocks[iBlock] = Block_new(BLOCK_NAMES[iBlock], BLOCK_COLORS[iBlock]);
     }
     for(int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
         self->tracks[iTrack] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
@@ -57,8 +57,8 @@ Score* Score_readFromFile(const char* const filename) {
                 if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
                     if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
                     const char* const name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-                    const Vector4* const color = &BLOCK_COLORS[iBlock];
-                    self->blocks[iBlock] = Block_new(name, color);
+                    const char* const hexColor = BLOCK_COLORS[iBlock];
+                    self->blocks[iBlock] = Block_new(name, hexColor);
 
                     for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
                         if (nodeMessage->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_MESSAGE, (char*)nodeMessage->name)) {
@@ -74,7 +74,7 @@ Score* Score_readFromFile(const char* const filename) {
                 }
             }
             for (int iBlockAdditional = iBlock; iBlockAdditional < MAX_BLOCKS; iBlockAdditional++) {
-                self->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional], &BLOCK_COLORS[iBlock]);
+                self->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional], BLOCK_COLORS[iBlock]);
             }
         }
     }
@@ -255,4 +255,16 @@ void Score_renameBlock(Score* self, const char* const name) {
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     printf("Renaming block from '%s' to '%s'\n", blockCurrent->name, name);
     Block_setName(blockCurrent, name);
+}
+
+
+char* Score_getCurrentBlockColor(void) {  /* called from input callback (no instance reference) */
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    return blockCurrent->hexColor;
+}
+
+
+void Score_setBlockColor(const char* const hexColor) {
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    Block_setColor(blockCurrent, hexColor);
 }
