@@ -22,7 +22,7 @@ Track* Track_new(int program, float velocity) {
     self->program = program;
     self->velocity = velocity;
 
-    for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
+    for (int iBlock = 0; iBlock < SCORE_LENGTH_MAX; iBlock++) {
         self->blocks[iBlock] = NULL;
         self->blockVelocities[iBlock] = 0.75f;
     }

@@ -21,11 +21,11 @@ ObjectView* ObjectView_new(Score* score) {
 
     self->score = score;
 
-    int nColumns = SCORE_LENGTH;
-    const char* trackColors[2] = {COLOR_BACKGROUND, COLOR_GRIDLINES};
+    int nColumns = score->scoreLength;
+    const char* trackColors[2] = {COLOR_GRIDLINES, COLOR_BACKGROUND};
     int iTrackColor = 0;
 
-    for (int i = 0; i < N_TRACKS; i++) {
+    for (int i = 0; i < N_TRACKS_MAX; i++) {
         self->gridlinesHorizontal[i].iRow = i;
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
@@ -33,8 +33,6 @@ ObjectView* ObjectView_new(Score* score) {
         hexColorToRgb(trackColors[iTrackColor], &self->gridlinesHorizontal[i].color);
         iTrackColor = !iTrackColor;
     }
-
-    self->viewHeight = N_TRACKS * MAX_TRACK_HEIGHT;
 
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
@@ -61,7 +59,7 @@ void ObjectView_addBlock(ObjectView* self) {
     if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
-    if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
 
     Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
     Block** block = Application_getInstance()->blockCurrent;
@@ -75,7 +73,7 @@ void ObjectView_removeBlock(ObjectView* self) {
     if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
-    if (iTrack < 0 || iTrack >= N_TRACKS || iBlock < 0 || iBlock >= SCORE_LENGTH) return;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
 
     Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
     Track_setBlock(track, iBlock, NULL);
@@ -86,10 +84,10 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
     (void)startPosition; (void)repeat; /* TODO */
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
 
-    for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
+    for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
         Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack]->program);
 
-        for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
+        for (int iBlock = 0; iBlock < self->score->scoreLength; iBlock++) {
             if (!self->score->tracks[iTrack]->blocks[iBlock]) continue;
             Block* block = *self->score->tracks[iTrack]->blocks[iBlock];
             for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
@@ -132,13 +130,15 @@ void ObjectView_setProgram(ObjectView* self, int program) {
 
 
 void ObjectView_draw(ObjectView* self) {
-    for (int i = 0; i < N_TRACKS; i++) {
+    self->viewHeight = self->score->nTracks * MAX_TRACK_HEIGHT;
+
+    for (int i = 0; i < self->score->nTracks; i++) {
         ObjectView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
     }
 
     Track** tracks = Application_getInstance()->scoreCurrent->tracks;
-    for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
-        for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
+    for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
+        for (int iBlock = 0; iBlock < self->score->scoreLength; iBlock++) {
             if (!tracks[iTrack]->blocks[iBlock]) continue;
             Block* block = *tracks[iTrack]->blocks[iBlock];
             GridItem item;
@@ -151,7 +151,7 @@ void ObjectView_draw(ObjectView* self) {
         }
     }
 
-    if (self->cursor.iRow < N_TRACKS) {
+    if (self->cursor.iRow < self->score->nTracks) {
         ObjectView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
     }
 
@@ -160,8 +160,8 @@ void ObjectView_draw(ObjectView* self) {
 
 
 void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
-    float columnWidth = 2.0f/SCORE_LENGTH;
-    float rowHeight = self->viewHeight / N_TRACKS;
+    float columnWidth = 2.0f/(float)self->score->scoreLength;
+    float rowHeight = self->viewHeight / self->score->nTracks;
 
     float x1 = -1.0f + item->iColumn * columnWidth - offset;
     float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth + offset;
@@ -176,7 +176,7 @@ void ObjectView_drawPlaybackCursor(ObjectView* self) {
     if (!ObjectView_isPlaying(self)) return;
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
-    float totalTime = 1000.0f * (float)(SCORE_LENGTH * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
+    float totalTime = 1000.0f * (float)(self->score->scoreLength * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     float progress = time / totalTime;
     float cursorX = -1.0f + 2.0f * progress;
 
@@ -193,20 +193,20 @@ bool ObjectView_updateCursorPosition(ObjectView* self, float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
-    self->cursor.iColumn = ObjectView_xCoordToColumnIndex(x);
+    self->cursor.iColumn = ObjectView_xCoordToColumnIndex(self, x);
     self->cursor.iRow = ObjectView_yCoordToRowIndex(self, y);
 
     return self->cursor.iColumn == iColumnOld && self->cursor.iRow == iRowOld ? false : true;
 }
 
 
-int ObjectView_xCoordToColumnIndex(float x) {
-    int nColumns = SCORE_LENGTH;
+int ObjectView_xCoordToColumnIndex(ObjectView* self, float x) {
+    int nColumns = self->score->scoreLength;
     return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
 }
 
 
 int ObjectView_yCoordToRowIndex(ObjectView* self, float y) {
-    int nRows = N_TRACKS;
+    int nRows = self->score->nTracks;
     return (nRows * y) / (Application_getInstance()->renderer->viewportHeight * self->viewHeight / 2.0f);
 }

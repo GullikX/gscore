@@ -47,8 +47,9 @@ enum {
     RENDERER_MAX_VERTICES = 4*RENDERER_MAX_QUADS,
     MAX_BLOCKS = 4,
     MAX_BLOCK_NAME_LENGTH = 64,
-    N_TRACKS = 4,
-    SCORE_LENGTH = 16,
+    N_TRACKS_MAX = 64,
+    SCORE_LENGTH_DEFAULT = 16,
+    SCORE_LENGTH_MAX = 1024,
     BEATS_PER_MEASURE = 4,
     SECONDS_PER_MINUTE = 60,
     TEMPO_BPM = 100,
@@ -60,7 +61,7 @@ enum {
     MOUSE_POINTER_HIDDEN = false,
     SYNTH_AUDIO_PERIODS = 2,
     SYNTH_AUDIO_PERIOD_SIZE = 64,
-    SYNTH_MIDI_CHANNELS = N_TRACKS + 1,
+    SYNTH_MIDI_CHANNELS = N_TRACKS_MAX + 1,
     SYNTH_PROGRAM_DEFAULT = 0,
     SYNTH_ENABLE_REVERB = false,
     SYNTH_ENABLE_CHORUS = false,
@@ -78,20 +79,7 @@ const float DEFAULT_VELOCITY = 0.75f;
 const char* const COLOR_BACKGROUND = "263238";
 const char* const COLOR_GRIDLINES = "212D32";
 const char* const COLOR_CURSOR = "C5C8C6";
-
-const char* BLOCK_NAMES[] = {  /* TODO: do not hard-code these (or the number of blocks) */
-    "block1",
-    "block2",
-    "block3",
-    "block4",
-};
-
-const char* BLOCK_COLORS[] = {
-    "81A2BE",
-    "B294BB",
-    "B5BD68",
-    "f0C674",
-};
+const char* const COLOR_BLOCK_DEFAULT = "81A2BE";
 
 enum {
     ATOM_BPM,

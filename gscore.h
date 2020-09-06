@@ -118,7 +118,7 @@ struct MidiMessage {
 
 struct ObjectView {
     Score* score;
-    GridItem gridlinesHorizontal[N_TRACKS];
+    GridItem gridlinesHorizontal[N_TRACKS_MAX];
     GridItem cursor;
     float viewHeight;
     int playStartTime;
@@ -140,14 +140,17 @@ struct Renderer {
 struct Track {
     int program;
     float velocity;
-    Block** blocks[SCORE_LENGTH];
-    float blockVelocities[SCORE_LENGTH];
+    Block** blocks[SCORE_LENGTH_MAX];
+    float blockVelocities[SCORE_LENGTH_MAX];
 };
 
 struct Score {
     int tempo;
     Block* blocks[MAX_BLOCKS];
-    Track* tracks[N_TRACKS];
+    Track* tracks[N_TRACKS_MAX];
+    int nBlocks;
+    int nTracks;
+    int scoreLength;
     char blockListString[MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1];
 };
 
