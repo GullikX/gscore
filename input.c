@@ -109,6 +109,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     break;
+                case 'n':
+                    ObjectView_toggleIgnoreNoteOff(objectView);
+                    break;
                 case 'r':
                     spawnSetXProp(ATOM_RENAME_BLOCK);
                     break;

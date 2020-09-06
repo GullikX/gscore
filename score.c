@@ -23,7 +23,7 @@ Score* Score_new(void) {
     self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
     self->nBlocks = 1;
 
-    self->tracks[0] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
+    self->tracks[0] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY, false);
     self->nTracks = 1;
 
     self->scoreLength = SCORE_LENGTH_DEFAULT;
@@ -85,9 +85,25 @@ Score* Score_readFromFile(const char* const filename) {
             self->nTracks = 0;
             for (xmlNode* nodeTrack = node->children; nodeTrack; nodeTrack = nodeTrack ->next) {
                 if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
-                    int program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
-                    float velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
-                    self->tracks[self->nTracks] = Track_new(program, velocity);
+                    int program = SYNTH_PROGRAM_DEFAULT;
+                    const char* programProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM);
+                    if (programProp) {
+                        program = atoi(programProp);
+                    }
+
+                    float velocity = DEFAULT_VELOCITY;
+                    const char* velocityProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY);
+                    if (velocityProp) {
+                        velocity = atof(velocityProp);
+                    }
+
+                    bool ignoreNoteOff = IGNORE_NOTE_OFF_DEFAULT;
+                    const char* ignoreNoteOffProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_IGNORENOTEOFF);
+                    if (ignoreNoteOffProp) {
+                        ignoreNoteOff = atoi(ignoreNoteOffProp);
+                    }
+
+                    self->tracks[self->nTracks] = Track_new(program, velocity, ignoreNoteOff);
 
                     int iBlock = 0;
                     for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
@@ -177,6 +193,8 @@ void Score_writeToFile(Score* self, const char* const filename) {
                     xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM, BAD_CAST buffer);
                     snprintf(buffer, XML_BUFFER_SIZE, "%f", self->tracks[iTrack]->velocity);
                     xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY, BAD_CAST buffer);
+                    snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tracks[iTrack]->ignoreNoteOff);
+                    xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_IGNORENOTEOFF, BAD_CAST buffer);
                 }
                 for (int iNullBlock = 0; iNullBlock < nNullBlocks; iNullBlock++) {
                     xmlNewChild(nodeTrack, NULL, BAD_CAST XMLNODE_BLOCK, NULL);
@@ -303,7 +321,7 @@ void Score_addTrack(Score* self) {
         return;
     }
     if (!self->tracks[self->nTracks]) {
-        self->tracks[self->nTracks] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
+        self->tracks[self->nTracks] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY, 0);
     }
     self->nTracks++;
     printf("Number of tracks increased to %d\n", self->nTracks);

@@ -16,11 +16,12 @@
  *
  */
 
-Track* Track_new(int program, float velocity) {
+Track* Track_new(int program, float velocity, bool ignoreNoteOff) {
     Track* self = ecalloc(1, sizeof(*self));
 
     self->program = program;
     self->velocity = velocity;
+    self->ignoreNoteOff = ignoreNoteOff;
 
     for (int iBlock = 0; iBlock < SCORE_LENGTH_MAX; iBlock++) {
         self->blocks[iBlock] = NULL;
@@ -54,4 +55,10 @@ void Track_setBlock(Track* self, int iBlock, Block** block) {
 
 void Track_setBlockVelocity(Track* self, int iBlock, float blockVelocity) {
     self->blockVelocities[iBlock] = blockVelocity;
+}
+
+
+void Track_toggleIgnoreNoteOff(Track* self) {
+    self->ignoreNoteOff = !self->ignoreNoteOff;
+    printf("%s note off events for track\n", self->ignoreNoteOff ? "Disabled" : "Enabled");
 }

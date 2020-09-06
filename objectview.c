@@ -101,7 +101,9 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
                         Synth_sendNoteOn(Application_getInstance()->synth, channel, midiMessage->pitch, velocity, time);
                         break;
                     case FLUID_SEQ_NOTEOFF:
-                        Synth_sendNoteOff(Application_getInstance()->synth, channel, midiMessage->pitch, time);
+                        if (!self->score->tracks[iTrack]->ignoreNoteOff) {
+                            Synth_sendNoteOff(Application_getInstance()->synth, channel, midiMessage->pitch, time);
+                        }
                         break;
                 }
             }
@@ -126,6 +128,13 @@ void ObjectView_setProgram(ObjectView* self, int program) {
     int iTrack = Application_getInstance()->objectView->cursor.iRow;
     Track* track = self->score->tracks[iTrack];
     Track_setProgram(track, program);
+}
+
+
+void ObjectView_toggleIgnoreNoteOff(ObjectView* self) {
+    int iTrack = Application_getInstance()->objectView->cursor.iRow;
+    Track* track = self->score->tracks[iTrack];
+    Track_toggleIgnoreNoteOff(track);
 }
 
 

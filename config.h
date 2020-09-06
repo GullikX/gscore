@@ -22,6 +22,7 @@ const char* const BLOCK_NAME_DEFAULT = "default";
 const char* const XML_ENCODING = "UTF-8";
 const char* const XML_VERSION = "1.0";
 const char* const XMLATTRIB_COLOR = "color";
+const char* const XMLATTRIB_IGNORENOTEOFF = "ignorenoteoff";
 const char* const XMLATTRIB_NAME = "name";
 const char* const XMLATTRIB_PITCH = "pitch";
 const char* const XMLATTRIB_PROGRAM = "program";
@@ -58,6 +59,7 @@ enum {
     MEASURE_RESOLUTION = 16,
     OCTAVES = 5,
     NOTES_IN_OCTAVE = 12,
+    IGNORE_NOTE_OFF_DEFAULT = false,
     MOUSE_POINTER_HIDDEN = false,
     SYNTH_AUDIO_PERIODS = 2,
     SYNTH_AUDIO_PERIOD_SIZE = 64,

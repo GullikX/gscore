@@ -142,6 +142,7 @@ struct Track {
     float velocity;
     Block** blocks[SCORE_LENGTH_MAX];
     float blockVelocities[SCORE_LENGTH_MAX];
+    bool ignoreNoteOff;
 };
 
 struct Score {
