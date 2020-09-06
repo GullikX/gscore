@@ -51,7 +51,11 @@ typedef enum {
 #include "functiondeclarations.h"
 
 
-/* Simple types */
+/* Configuration */
+#include "config.h"
+
+
+/* Type definitions */
 struct Vector2 {
     float x, y;
 };
@@ -65,12 +69,6 @@ struct Vertex {
     Vector4 color;
 };
 
-
-/* Configuration */
-#include "config.h"
-
-
-/* Complex types */
 struct Application {
     const char* filename;
     Score* scoreCurrent;
