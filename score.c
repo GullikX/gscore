@@ -57,7 +57,7 @@ Score* Score_readFromFile(const char* const filename) {
                 if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
                     if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
                     const char* const name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-                    const char* const hexColor = BLOCK_COLORS[iBlock];
+                    const char* const hexColor = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR);
                     self->blocks[iBlock] = Block_new(name, hexColor);
 
                     for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
@@ -146,6 +146,7 @@ void Score_writeToFile(Score* self, const char* const filename) {
         if (name) {
             xmlNode* nodeBlockDef = xmlNewChild(nodeBlockDefs, NULL, BAD_CAST XMLNODE_BLOCKDEF, NULL);
             xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME, BAD_CAST name);
+            xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR, BAD_CAST self->blocks[iBlockDef]->hexColor);
             for (MidiMessage* message = self->blocks[iBlockDef]->midiMessageRoot; message; message = message->next) {
                 if (message == self->blocks[iBlockDef]->midiMessageRoot) continue;
                 xmlNode* nodeMessage = xmlNewChild(nodeBlockDef, NULL, BAD_CAST XMLNODE_MESSAGE, NULL);
