@@ -49,92 +49,84 @@ Score* Score_readFromFile(const char* const filename) {
     self->tempo = atoi((char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO));
     if (!self->tempo) die("Invalid tempo value");
 
+    /* Read block definitions */
     for (xmlNode* node = nodeRoot->children; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEFS, (char*)node->name)) {
-            Score_readBlockDefs(self, node);
+            int iBlock = 0;
+            for (xmlNode* nodeBlockDef = node->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
+                if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
+                    if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
+                    const char* const name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
+                    const Vector4* const color = &BLOCK_COLORS[iBlock];
+                    self->blocks[iBlock] = Block_new(name, color);
+
+                    for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
+                        if (nodeMessage->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_MESSAGE, (char*)nodeMessage->name)) {
+                            /* TODO: error checking */
+                            int type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
+                            float time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
+                            int pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
+                            float velocity = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
+                            Block_addMidiMessage(self->blocks[iBlock], type, time, pitch, velocity);
+                        }
+                    }
+                    iBlock++;
+                }
+            }
+            for (int iBlockAdditional = iBlock; iBlockAdditional < MAX_BLOCKS; iBlockAdditional++) {
+                self->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional], &BLOCK_COLORS[iBlock]);
+            }
         }
     }
 
+    /* Read tracks */
     for (xmlNode* node = nodeRoot->children; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACKS, (char*)node->name)) {
-            Score_readTracks(self, node);
+            int iTrack = 0;
+            for (xmlNode* nodeTrack = node->children; nodeTrack; nodeTrack = nodeTrack ->next) {
+                if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
+                    int program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
+                    float velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
+                    self->tracks[iTrack] = Track_new(program, velocity);
+
+                    int iBlock = 0;
+                    for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
+                        if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
+                            if (iBlock >= SCORE_LENGTH) die("Too many blocks (max is %d)", SCORE_LENGTH);
+                            const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
+                            printf("node block name='%s'\n", name);
+                            if (name) {
+                                Block** block = NULL;
+                                for (int i = 0; i < SCORE_LENGTH; i++) {
+                                    if (!self->blocks[i]->name) continue;
+                                    if (!strcmp(self->blocks[i]->name, name)) {
+                                        block = &self->blocks[i];
+                                        break;
+                                    }
+                                }
+                                if (!*block) die("Did not find blockdef '%s'", name);
+                                float blockVelocity = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
+                                Track_setBlock(self->tracks[iTrack], iBlock, block);
+                                Track_setBlockVelocity(self->tracks[iTrack], iBlock, blockVelocity);
+                            }
+                            else {
+                                Track_setBlock(self->tracks[iTrack], iBlock, NULL);
+                                Track_setBlockVelocity(self->tracks[iTrack], iBlock, DEFAULT_VELOCITY);
+                            }
+                            iBlock++;
+                        }
+                    }
+                    iTrack++;
+                }
+            }
+            for (int iTrackAdditional = iTrack; iTrackAdditional < N_TRACKS; iTrackAdditional++) {
+                self->tracks[iTrackAdditional] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
+            }
         }
     }
 
     xmlFreeDoc(doc);
     return self;
-}
-
-
-void Score_readBlockDefs(Score* self, xmlNode* nodeBlockDefs) {
-    int iBlock = 0;
-    for (xmlNode* nodeBlockDef = nodeBlockDefs->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
-        if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
-            if (iBlock >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
-            const char* const name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-            const Vector4* const color = &BLOCK_COLORS[iBlock];
-            self->blocks[iBlock] = Block_new(name, color);
-
-            for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
-                if (nodeMessage->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_MESSAGE, (char*)nodeMessage->name)) {
-                    /* TODO: error checking */
-                    int type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
-                    float time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
-                    int pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
-                    float velocity = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
-                    Block_addMidiMessage(self->blocks[iBlock], type, time, pitch, velocity);
-                }
-            }
-            iBlock++;
-        }
-    }
-    for (int iBlockAdditional = iBlock; iBlockAdditional < MAX_BLOCKS; iBlockAdditional++) {
-        self->blocks[iBlockAdditional] = Block_new(BLOCK_NAMES[iBlockAdditional], &BLOCK_COLORS[iBlock]);
-    }
-}
-
-
-void Score_readTracks(Score* self, xmlNode* nodeTracks) {
-    int iTrack = 0;
-    for (xmlNode* nodeTrack = nodeTracks->children; nodeTrack; nodeTrack = nodeTrack ->next) {
-        if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
-            int program = atoi((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM));
-            float velocity = atof((char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY));
-            self->tracks[iTrack] = Track_new(program, velocity);
-
-            int iBlock = 0;
-            for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
-                if (nodeBlock->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCK, (char*)nodeBlock->name)) {
-                    if (iBlock >= SCORE_LENGTH) die("Too many blocks (max is %d)", SCORE_LENGTH);
-                    const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
-                    printf("node block name='%s'\n", name);
-                    if (name) {
-                        Block** block = NULL;
-                        for (int i = 0; i < SCORE_LENGTH; i++) {
-                            if (!self->blocks[i]->name) continue;
-                            if (!strcmp(self->blocks[i]->name, name)) {
-                                block = &self->blocks[i];
-                                break;
-                            }
-                        }
-                        if (!*block) die("Did not find blockdef '%s'", name);
-                        float blockVelocity = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
-                        Track_setBlock(self->tracks[iTrack], iBlock, block);
-                        Track_setBlockVelocity(self->tracks[iTrack], iBlock, blockVelocity);
-                    }
-                    else {
-                        Track_setBlock(self->tracks[iTrack], iBlock, NULL);
-                        Track_setBlockVelocity(self->tracks[iTrack], iBlock, DEFAULT_VELOCITY);
-                    }
-                    iBlock++;
-                }
-            }
-            iTrack++;
-        }
-    }
-    for (int iTrackAdditional = iTrack; iTrackAdditional < N_TRACKS; iTrackAdditional++) {
-        self->tracks[iTrackAdditional] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY);
-    }
 }
 
 
@@ -147,17 +139,7 @@ void Score_writeToFile(Score* self, const char* const filename) {
     snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tempo);
     xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO, BAD_CAST buffer);
 
-    Score_writeBlockDefs(self, nodeScore);
-    Score_writeTracks(self, nodeScore);
-
-    xmlSaveFormatFileEnc(filename, doc, XML_ENCODING, 1);
-    xmlFreeDoc(doc);
-    xmlCleanupParser();
-    printf("Wrote score to '%s'\n", filename);
-}
-
-
-void Score_writeBlockDefs(Score* self, xmlNode* nodeScore) {
+    /* Creat xml nodes for block definitions */
     xmlNode* nodeBlockDefs = xmlNewChild(nodeScore, NULL, BAD_CAST XMLNODE_BLOCKDEFS, NULL);
     for (int iBlockDef = 0; iBlockDef < MAX_BLOCKS; iBlockDef++) {
         const char* name = self->blocks[iBlockDef]->name;
@@ -179,13 +161,11 @@ void Score_writeBlockDefs(Score* self, xmlNode* nodeScore) {
             }
         }
     }
-}
 
-
-void Score_writeTracks(Score* self, xmlNode* nodeScore) {
+    /* Create xml nodes for tracks */
     xmlNode* nodeTracks = xmlNewChild(nodeScore, NULL, BAD_CAST XMLNODE_TRACKS, NULL);
     for (int iTrack = 0; iTrack < N_TRACKS; iTrack++) {
-        xmlNode* nodeTrack = NULL;
+        xmlNode* nodeTrack = NULL; /* Lazy initialization */
 
         int nNullBlocks = 0;
         for (int iBlock = 0; iBlock < SCORE_LENGTH; iBlock++) {
@@ -213,4 +193,9 @@ void Score_writeTracks(Score* self, xmlNode* nodeScore) {
             }
         }
     }
+
+    xmlSaveFormatFileEnc(filename, doc, XML_ENCODING, 1);
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+    printf("Wrote score to '%s'\n", filename);
 }
