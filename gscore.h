@@ -73,6 +73,7 @@ struct Application {
     const char* filename;
     Score* scoreCurrent;
     Block** blockCurrent;
+    Block** blockPrevious;
     EditView* editView;
     ObjectView* objectView;
     Renderer* renderer;

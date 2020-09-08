@@ -240,8 +240,7 @@ char* Score_getBlockListString(void) {  /* called from input callback (no instan
 void Score_setBlockByName(Score* self, const char* const name) {
     for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (!strcmp(name, self->blocks[iBlock]->name)) {
-            printf("Switching to block '%s'\n", name);
-            Application_getInstance()->blockCurrent = &self->blocks[iBlock];
+            Application_switchBlock(Application_getInstance(), &self->blocks[iBlock]);
             return;
         }
     }

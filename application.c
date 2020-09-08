@@ -35,6 +35,7 @@ Application* Application_new(const char* const filename) {
     }
 
     self->blockCurrent = &self->scoreCurrent->blocks[0];
+    self->blockPrevious = NULL;
 
     self->editView = EditView_new(self->scoreCurrent);
     self->objectView = ObjectView_new(self->scoreCurrent);
@@ -99,8 +100,16 @@ void Application_switchState(Application* self) {
 }
 
 
-void Application_switchBlock(Application* self, int iBlock) {
-    self->blockCurrent = &self->scoreCurrent->blocks[iBlock];
+void Application_switchBlock(Application* self, Block** block) {
+    printf("Switching to block '%s'\n", (*block)->name);
+    self->blockPrevious = self->blockCurrent;
+    self->blockCurrent = block;
+}
+
+
+void Application_toggleBlock(Application* self) {
+    if (!self->blockPrevious) return;
+    Application_switchBlock(self, self->blockPrevious);
 }
 
 

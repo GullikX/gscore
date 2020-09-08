@@ -88,18 +88,6 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
-                case '1':
-                    Application_switchBlock(application, 0);
-                    break;
-                case '2':
-                    Application_switchBlock(application, 1);
-                    break;
-                case '3':
-                    Application_switchBlock(application, 2);
-                    break;
-                case '4':
-                    Application_switchBlock(application, 3);
-                    break;
                 case 'b':
                     spawnSetXProp(ATOM_SELECT_BLOCK);
                     break;
@@ -217,18 +205,6 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
         if (keyName) {
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
-                case '1':
-                    Application_switchBlock(application, 0);
-                    break;
-                case '2':
-                    Application_switchBlock(application, 1);
-                    break;
-                case '3':
-                    Application_switchBlock(application, 2);
-                    break;
-                case '4':
-                    Application_switchBlock(application, 3);
-                    break;
                 case 'b':
                     spawnSetXProp(ATOM_SELECT_BLOCK);
                     break;
@@ -257,7 +233,12 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
             switch (key) {
                 case GLFW_KEY_TAB:
                     EditView_stopPlaying(editView);
-                    Application_switchState(application);
+                    if (modControl) {
+                        Application_toggleBlock(application);
+                    }
+                    else {
+                        Application_switchState(application);
+                    }
                     break;
                 case GLFW_KEY_SPACE:
                     if (EditView_isPlaying(editView)) {
