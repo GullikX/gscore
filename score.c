@@ -78,6 +78,11 @@ Score* Score_readFromFile(const char* const filename) {
             }
         }
     }
+    if (self->nBlocks == 0) {
+        puts("The loaded file does not contain any blocks, creating one");
+        self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
+        self->nBlocks = 1;
+    }
 
     /* Read tracks */
     for (xmlNode* node = nodeRoot->children; node; node = node->next) {
@@ -138,6 +143,12 @@ Score* Score_readFromFile(const char* const filename) {
                 }
             }
         }
+    }
+    if (self->nTracks == 0) {
+        puts("The loaded file does not contain any tracks, creating one");
+        self->tracks[0] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY, false);
+        self->nTracks = 1;
+        self->scoreLength = SCORE_LENGTH_DEFAULT;
     }
 
     xmlFreeDoc(doc);
