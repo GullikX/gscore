@@ -128,14 +128,18 @@ bool ObjectView_isPlaying(ObjectView* self) {
 
 
 void ObjectView_setProgram(ObjectView* self, int program) {
-    int iTrack = Application_getInstance()->objectView->cursor.iRow;
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
     Track* track = self->score->tracks[iTrack];
     Track_setProgram(track, program);
 }
 
 
 void ObjectView_toggleIgnoreNoteOff(ObjectView* self) {
-    int iTrack = Application_getInstance()->objectView->cursor.iRow;
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
     Track* track = self->score->tracks[iTrack];
     Track_toggleIgnoreNoteOff(track);
 }
