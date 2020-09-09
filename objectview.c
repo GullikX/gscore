@@ -83,6 +83,7 @@ void ObjectView_removeBlock(ObjectView* self) {
 void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
     (void)startPosition; (void)repeat; /* TODO */
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
+    float stopTime = -1.0f;
 
     for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
         Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack]->program);
@@ -95,6 +96,7 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
                 int channel = iTrack + 1;
                 float velocity = midiMessage->velocity * self->score->tracks[iTrack]->velocity * self->score->tracks[iTrack]->blockVelocities[iBlock];
                 float time = midiMessage->time * blockTime + blockTime * iBlock;
+                if (stopTime < time) stopTime = time;
 
                 switch (midiMessage->type) {
                     case FLUID_SEQ_NOTEON:
@@ -109,6 +111,7 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
             }
         }
     }
+    Synth_scheduleCallback(Application_getInstance()->synth, stopTime);
     self->playStartTime = Synth_getTime(Application_getInstance()->synth);
 }
 

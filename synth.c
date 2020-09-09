@@ -41,6 +41,7 @@ Synth* Synth_new(void) {
 
     self->sequencer = new_fluid_sequencer2(0);
     self->synthSequencerId = fluid_sequencer_register_fluidsynth(self->sequencer, self->fluidSynth);
+    self->callbackId = fluid_sequencer_register_client(self->sequencer, "me", Synth_sequencerCallback, NULL);
 
     /* Generate instrument list string */
     fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
@@ -73,6 +74,7 @@ Synth* Synth_new(void) {
 
 
 Synth* Synth_free(Synth* self) {
+    fluid_sequencer_unregister_client(self->sequencer, self->callbackId);
     delete_fluid_sequencer(self->sequencer);
     delete_fluid_audio_driver(self->audioDriver);
     delete_fluid_synth(self->fluidSynth);
@@ -173,8 +175,36 @@ void Synth_noteOffAll(Synth* self) {
 }
 
 
+void Synth_scheduleCallback(Synth* self, float time) {
+    int timeInt = 1000.0f * time;
+
+    fluid_event_t* event = new_fluid_event();
+    fluid_event_set_source(event, -1);
+    fluid_event_set_dest(event, self->callbackId);
+    fluid_event_timer(event, NULL);
+
+    fluid_sequencer_send_at(self->sequencer, event, timeInt, 0);
+    delete_fluid_event(event);
+}
+
+
 int Synth_getTime(Synth* self) {
     return fluid_sequencer_get_tick(self->sequencer);
+}
+
+
+void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequencer_t* sequencer, void* data) {
+    if (fluid_event_get_type(event) != FLUID_SEQ_TIMER) return;
+
+    Application* application = Application_getInstance();
+    switch (application->state) {
+        case OBJECT_MODE:
+            ObjectView_stopPlaying(application->objectView);
+            break;
+        case EDIT_MODE:
+            EditView_stopPlaying(application->editView);
+            break;
+    }
 }
 
 
