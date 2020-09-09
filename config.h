@@ -77,6 +77,7 @@ const float PLAYER_CURSOR_WIDTH = 0.005f;
 const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
 const float DEFAULT_VELOCITY = 0.75f;
+const float EDIT_MODE_PLAYBACK_VELOCITY = DEFAULT_VELOCITY * DEFAULT_VELOCITY;
 
 const char* const COLOR_BACKGROUND = "263238";
 const char* const COLOR_GRIDLINES = "212D32";

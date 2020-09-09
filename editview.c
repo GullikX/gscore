@@ -146,7 +146,7 @@ void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     for (MidiMessage* midiMessage = blockCurrent->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
         if (midiMessage->time < 0) continue;
         float channel = 0;
-        float velocity = midiMessage->velocity;
+        float velocity = midiMessage->velocity * EDIT_MODE_PLAYBACK_VELOCITY;
         float time = midiMessage->time * blockTime;
 
         switch (midiMessage->type) {
