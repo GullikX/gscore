@@ -106,6 +106,7 @@ struct EditView {
     int tempo;
     char tempoString[64];
     Vector4 playbackCursorColor;
+    bool ignoreNoteOff;
 };
 
 struct MidiMessage {

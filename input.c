@@ -214,6 +214,9 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                 case 'i':
                     spawnSetXProp(ATOM_SYNTH_PROGRAM);
                     break;
+                case 'n':
+                    EditView_toggleIgnoreNoteOff(editView);
+                    break;
                 case 'r':
                     spawnSetXProp(ATOM_RENAME_BLOCK);
                     break;

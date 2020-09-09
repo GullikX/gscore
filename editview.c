@@ -52,6 +52,8 @@ EditView* EditView_new(Score* score) {
     success = hexColorToRgb(COLOR_CURSOR, &self->playbackCursorColor);
     if (!success) die("Invalid playback cursor color");
 
+    self->ignoreNoteOff = IGNORE_NOTE_OFF_DEFAULT;
+
     return self;
 }
 
@@ -152,7 +154,9 @@ void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
                 Synth_sendNoteOn(synth, channel, midiMessage->pitch, velocity, time);
                 break;
             case FLUID_SEQ_NOTEOFF:
-                Synth_sendNoteOff(synth, channel, midiMessage->pitch, time);
+                if (!self->ignoreNoteOff) {
+                    Synth_sendNoteOff(synth, channel, midiMessage->pitch, time);
+                }
                 break;
         }
     }
@@ -320,4 +324,10 @@ int EditView_xCoordToColumnIndex(float x) {
 int EditView_yCoordToRowIndex(float y) {
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     return (nRows * y) / Application_getInstance()->renderer->viewportHeight;
+}
+
+
+void EditView_toggleIgnoreNoteOff(EditView* self) {
+    self->ignoreNoteOff = !self->ignoreNoteOff;
+    printf("%s note off events for edit mode\n", self->ignoreNoteOff ? "Disabled" : "Enabled");
 }
