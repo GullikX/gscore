@@ -194,6 +194,7 @@ int Synth_getTime(Synth* self) {
 
 
 void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequencer_t* sequencer, void* data) {
+    (void)time; (void)sequencer; (void)data;
     if (fluid_event_get_type(event) != FLUID_SEQ_TIMER) return;
 
     Application* application = Application_getInstance();
