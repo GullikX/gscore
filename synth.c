@@ -129,7 +129,7 @@ void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
 
 
 void Synth_noteOn(Synth* self, int key) {
-    fluid_synth_noteon(self->fluidSynth, 0, key, 100);
+    fluid_synth_noteon(self->fluidSynth, 0, key, EDIT_MODE_PREVIEW_VELOCITY);
 }
 
 
