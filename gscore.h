@@ -162,7 +162,7 @@ struct Synth {
     fluid_synth_t* fluidSynth;
     fluid_audio_driver_t* audioDriver;
     fluid_sequencer_t* sequencer;
-    int synthSequencerId;
+    fluid_seq_id_t synthSequencerId;
     fluid_seq_id_t callbackId;
     char* instrumentListString;
 };
