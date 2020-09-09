@@ -151,6 +151,7 @@ void Synth_noteOff(Synth* self, int key) {
     fluid_synth_noteoff(self->fluidSynth, 0, key);
 }
 
+
 void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time) {
     int timeInt = 1000.0f * time;
 
