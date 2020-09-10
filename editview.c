@@ -235,7 +235,18 @@ void EditView_draw(EditView* self) {
                     int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
                     Vector4 color = blockCurrent->color;
 
-                    bool highlight = iRow == self->cursor.iRow && iColumnStart <= self->cursor.iColumn && iColumnEnd > self->cursor.iColumn;
+                    bool highlight;
+                    if (EditView_isPlaying(self)) {
+                        float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
+                        float totalTime = 1000.0f * (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
+                        float progress = time / totalTime;
+                        float cursorX = Application_getInstance()->renderer->viewportWidth * progress;
+                        int iCursorColumn = EditView_xCoordToColumnIndex(cursorX);
+                        highlight = iColumnStart <= iCursorColumn && iColumnEnd > iCursorColumn;
+                    }
+                    else {
+                        highlight = iRow == self->cursor.iRow && iColumnStart <= self->cursor.iColumn && iColumnEnd > self->cursor.iColumn;
+                    }
                     if (highlight) {
                         color.x = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.x;
                         color.y = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.y;
