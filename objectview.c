@@ -42,7 +42,7 @@ ObjectView* ObjectView_new(Score* score) {
     if (!success) die("Invalid cursor color");
 
     self->playStartTime = -1;
-    success = hexColorToRgb(COLOR_CURSOR, &self->playbackCursorColor);
+    success = hexColorToRgb(COLOR_PLAYBACK_CURSOR, &self->playbackCursorColor);
     if (!success) die("Invalid playback cursor color");
 
     return self;
@@ -151,23 +151,32 @@ void ObjectView_draw(ObjectView* self) {
         ObjectView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
     }
 
+    if (self->cursor.iRow < self->score->nTracks) {
+        ObjectView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
+    }
+
     Track** tracks = Application_getInstance()->scoreCurrent->tracks;
     for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
         for (int iBlock = 0; iBlock < self->score->scoreLength; iBlock++) {
             if (!tracks[iTrack]->blocks[iBlock]) continue;
             Block* block = *tracks[iTrack]->blocks[iBlock];
+            Vector4 color = block->color;
+
+            bool highlight = iTrack == self->cursor.iRow && iBlock == self->cursor.iColumn;
+            if (highlight) {
+                color.x = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.x;
+                color.y = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.y;
+                color.z = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.z;
+            }
+
             GridItem item;
             item.iRow = iTrack;
             item.iColumn = iBlock;
             item.nRows = 1;
             item.nColumns = 1;
-            item.color = block->color;
+            item.color = color;
             ObjectView_drawItem(self, &(item), BLOCK_SIZE_OFFSET);
         }
-    }
-
-    if (self->cursor.iRow < self->score->nTracks) {
-        ObjectView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
     }
 
     ObjectView_drawPlaybackCursor(self);
