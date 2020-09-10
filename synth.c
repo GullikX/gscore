@@ -31,7 +31,9 @@ Synth* Synth_new(void) {
         die("Failed to initialize FluidSynth");
     }
 
-    if (fluid_synth_sfload(self->fluidSynth, SOUNDFONT, true) == FLUID_FAILED) {
+    self->soundFontId = fluid_synth_sfload(self->fluidSynth, SOUNDFONT, true);
+    self->soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
+    if (self->soundFontId == FLUID_FAILED || !self->soundFont) {
         die("Failed to load soundfont");
     }
 
@@ -44,30 +46,27 @@ Synth* Synth_new(void) {
     self->callbackId = fluid_sequencer_register_client(self->sequencer, "me", Synth_sequencerCallback, NULL);
 
     /* Generate instrument list string */
-    fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
-    if (!soundFont) {
-        die("Soundfont pointer is null");
-    }
     int instrumentListStringSize = 1;
-    int nInstruments = 0;
-    for (int i = 0;; i++) {
-        fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
-        if (!preset) break;
-        nInstruments = i + 1;
-        instrumentListStringSize += strlen(fluid_preset_get_name(preset)) + 1;
+    for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
+        for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
+            fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
+            if (!preset) continue;
+            instrumentListStringSize += strlen(fluid_preset_get_name(preset)) + 1;
+        }
     }
     self->instrumentListString = ecalloc(instrumentListStringSize, sizeof(char));
-    for (int i = 0; i < nInstruments; i++) {
-        if (i > 0) {
+
+    for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
+        for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
+            fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
+            if (!preset) continue;
+            strcat(self->instrumentListString, fluid_preset_get_name(preset));
             strcat(self->instrumentListString, "\n");
         }
-        fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
-        if (!preset) break;
-        strcat(self->instrumentListString, fluid_preset_get_name(preset));
     }
 
     /* Synth program for editview */
-    Synth_setProgramById(self, 0, SYNTH_PROGRAM_DEFAULT);
+    Synth_setProgramByName(self, 0, Synth_getDefaultProgramName(self));
 
     return self;
 }
@@ -84,31 +83,26 @@ Synth* Synth_free(Synth* self) {
 }
 
 
-void Synth_setProgramById(Synth* self, int channel, int program) {
-    printf("Synth_setProgramById channel:%d program:%d\n", channel, program);
-    if (fluid_synth_program_change(self->fluidSynth, channel, program) == FLUID_FAILED) {
+void Synth_setProgramById(Synth* self, int channel, int iBank, int iProgram) {
+    printf("Synth_setProgramById channel:%d program:(%d, %d)\n", channel, iBank, iProgram);
+    if (fluid_synth_program_select(self->fluidSynth, channel, self->soundFontId, iBank, iProgram) == FLUID_FAILED) {
         puts("Error: Failed to set midi program");
     }
 }
 
 
-int Synth_instrumentNameToId(Synth* self, const char* const instrumentName) {
-    fluid_sfont_t *soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
-    if (!soundFont) {
-        die("Soundfont pointer is null");
-    }
-
-    for (int i = 0;; i++) {
-        fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, 0, i);
-        if (!preset) break;
-        if (!strcmp(instrumentName, fluid_preset_get_name(preset))) {
-            return i;
+void Synth_setProgramByName(Synth* self, int channel, const char* const programName) {
+    for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
+        for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
+            fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
+            if (!preset) continue;
+            if (!strcmp(programName, fluid_preset_get_name(preset))) {
+                fluid_synth_program_select(self->fluidSynth, channel, self->soundFontId, iBank, iProgram);
+                return;
+            }
         }
     }
-
-    printf("Error: Invalid instrument name '%s'\n", instrumentName);
-    return -1;
-
+    printf("Error: Invalid instrument name '%s'\n", programName);
 }
 
 
@@ -206,6 +200,16 @@ void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequ
             EditView_stopPlaying(application->editView);
             break;
     }
+}
+
+
+const char* Synth_getDefaultProgramName(Synth* self) {
+    fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, SYNTH_BANK_DEFAULT, SYNTH_PROGRAM_DEFAULT);
+    if (!preset) die("Could not determine default program name");
+    const char* name = fluid_preset_get_name(preset);
+    if (!name) die("Could not determine default program name");
+
+    return name;
 }
 
 

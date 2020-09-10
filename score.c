@@ -16,14 +16,14 @@
  *
  */
 
-Score* Score_new(void) {
+Score* Score_new(Synth* synth) {
     Score* self = ecalloc(1, sizeof(*self));
     self->tempo = TEMPO_BPM;
 
     self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
     self->nBlocks = 1;
 
-    self->tracks[0] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY, false);
+    self->tracks[0] = Track_new(Synth_getDefaultProgramName(synth), DEFAULT_VELOCITY, false);
     self->nTracks = 1;
 
     self->scoreLength = SCORE_LENGTH_DEFAULT;
@@ -38,7 +38,7 @@ Score* Score_free(Score* self) {
 }
 
 
-Score* Score_readFromFile(const char* const filename) {
+Score* Score_readFromFile(const char* const filename, Synth* synth) {
     Score* self = ecalloc(1, sizeof(*self));
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
@@ -90,10 +90,10 @@ Score* Score_readFromFile(const char* const filename) {
             self->nTracks = 0;
             for (xmlNode* nodeTrack = node->children; nodeTrack; nodeTrack = nodeTrack ->next) {
                 if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
-                    int program = SYNTH_PROGRAM_DEFAULT;
+                    const char* programName = Synth_getDefaultProgramName(synth);
                     const char* programProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM);
                     if (programProp) {
-                        program = atoi(programProp);
+                        programName = programProp;
                     }
 
                     float velocity = DEFAULT_VELOCITY;
@@ -108,7 +108,7 @@ Score* Score_readFromFile(const char* const filename) {
                         ignoreNoteOff = atoi(ignoreNoteOffProp);
                     }
 
-                    self->tracks[self->nTracks] = Track_new(program, velocity, ignoreNoteOff);
+                    self->tracks[self->nTracks] = Track_new(programName, velocity, ignoreNoteOff);
 
                     int iBlock = 0;
                     for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
@@ -146,12 +146,17 @@ Score* Score_readFromFile(const char* const filename) {
     }
     if (self->nTracks == 0) {
         puts("The loaded file does not contain any tracks, creating one");
-        self->tracks[0] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY, false);
+        self->tracks[0] = Track_new(Synth_getDefaultProgramName(synth), DEFAULT_VELOCITY, false);
         self->nTracks = 1;
         self->scoreLength = SCORE_LENGTH_DEFAULT;
     }
 
     xmlFreeDoc(doc);
+
+    for (int iTrack = 0; iTrack < self->nTracks; iTrack++) {
+        Synth_setProgramByName(synth, iTrack + 1, self->tracks[iTrack]->programName);
+    }
+
     return self;
 }
 
@@ -200,8 +205,7 @@ void Score_writeToFile(Score* self, const char* const filename) {
                 char buffer[XML_BUFFER_SIZE];
                 if (!nodeTrack) {
                     nodeTrack = xmlNewChild(nodeTracks, NULL, BAD_CAST XMLNODE_TRACK, NULL);
-                    snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tracks[iTrack]->program);
-                    xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM, BAD_CAST buffer);
+                    xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM, BAD_CAST self->tracks[iTrack]->programName);
                     snprintf(buffer, XML_BUFFER_SIZE, "%f", self->tracks[iTrack]->velocity);
                     xmlNewProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY, BAD_CAST buffer);
                     snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tracks[iTrack]->ignoreNoteOff);
@@ -331,7 +335,8 @@ void Score_addTrack(Score* self) {
         return;
     }
     if (!self->tracks[self->nTracks]) {
-        self->tracks[self->nTracks] = Track_new(SYNTH_PROGRAM_DEFAULT, DEFAULT_VELOCITY, 0);
+        const char* const programName = Synth_getDefaultProgramName(Application_getInstance()->synth);
+        self->tracks[self->nTracks] = Track_new(programName, DEFAULT_VELOCITY, false);
     }
     self->nTracks++;
     printf("Number of tracks increased to %d\n", self->nTracks);

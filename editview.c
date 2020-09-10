@@ -178,8 +178,8 @@ bool EditView_isPlaying(EditView* self) {
 }
 
 
-void EditView_setProgram(int program) {
-    Synth_setProgramById(Application_getInstance()->synth, 0, program);
+void EditView_setProgram(const char* const programName) {
+    Synth_setProgramByName(Application_getInstance()->synth, 0, programName);
 }
 
 

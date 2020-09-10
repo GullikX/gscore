@@ -74,9 +74,8 @@ void XEvents_processXEvents(XEvents* self) {
                             printf("Invalid BPM value '%s'\n", propertyValue);
                         }
                         break;
-                    case ATOM_SYNTH_PROGRAM:;
-                        int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
-                        ObjectView_setProgram(application->objectView, program);
+                    case ATOM_SYNTH_PROGRAM:
+                        ObjectView_setProgram(application->objectView, (char*)propertyValue);
                         break;
                     case ATOM_SELECT_BLOCK:
                         Score_setBlockByName(application->scoreCurrent, (char*)propertyValue);
@@ -101,9 +100,8 @@ void XEvents_processXEvents(XEvents* self) {
                             printf("Invalid BPM value '%s'\n", propertyValue);
                         }
                         break;
-                    case ATOM_SYNTH_PROGRAM:;
-                        int program = Synth_instrumentNameToId(application->synth, (char*)propertyValue);
-                        EditView_setProgram(program);
+                    case ATOM_SYNTH_PROGRAM:
+                        EditView_setProgram((char*)propertyValue);
                         break;
                     case ATOM_SELECT_BLOCK:
                         Score_setBlockByName(application->scoreCurrent, (char*)propertyValue);

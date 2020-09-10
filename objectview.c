@@ -86,8 +86,6 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
     float stopTime = -1.0f;
 
     for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
-        Synth_setProgramById(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack]->program);
-
         for (int iBlock = 0; iBlock < self->score->scoreLength; iBlock++) {
             if (!self->score->tracks[iTrack]->blocks[iBlock]) continue;
             Block* block = *self->score->tracks[iTrack]->blocks[iBlock];
@@ -127,12 +125,13 @@ bool ObjectView_isPlaying(ObjectView* self) {
 }
 
 
-void ObjectView_setProgram(ObjectView* self, int program) {
+void ObjectView_setProgram(ObjectView* self, const char* const programName) {
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
     Track* track = self->score->tracks[iTrack];
-    Track_setProgram(track, program);
+    Track_setProgram(track, programName);
+    Synth_setProgramByName(Application_getInstance()->synth, iTrack + 1, self->score->tracks[iTrack]->programName);
 }
 
 

@@ -24,14 +24,15 @@ Application* Application_new(const char* const filename) {
     self->state = OBJECT_MODE;
     self->scoreCurrent = NULL;
     self->filename = filename;
+    self->synth = Synth_new();
 
     if (fileExists(filename)) {
         printf("Loading file '%s'...\n", filename);
-        self->scoreCurrent = Score_readFromFile(filename);
+        self->scoreCurrent = Score_readFromFile(filename, self->synth);
     }
     else {
         printf("File '%s' does not exist, creating new empty score...\n", filename);
-        self->scoreCurrent = Score_new();
+        self->scoreCurrent = Score_new(self->synth);
     }
 
     self->blockCurrent = &self->scoreCurrent->blocks[0];
@@ -39,7 +40,6 @@ Application* Application_new(const char* const filename) {
 
     self->editView = EditView_new(self->scoreCurrent);
     self->objectView = ObjectView_new(self->scoreCurrent);
-    self->synth = Synth_new();
     self->renderer = Renderer_new();
     self->xevents = XEvents_new(self->renderer->window);
 

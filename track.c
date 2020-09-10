@@ -16,10 +16,11 @@
  *
  */
 
-Track* Track_new(int program, float velocity, bool ignoreNoteOff) {
+Track* Track_new(const char* const programName, float velocity, bool ignoreNoteOff) {
     Track* self = ecalloc(1, sizeof(*self));
 
-    self->program = program;
+    Track_setProgram(self, programName);
+
     self->velocity = velocity;
     self->ignoreNoteOff = ignoreNoteOff;
 
@@ -38,8 +39,9 @@ Track* Track_free(Track* self) {
 }
 
 
-void Track_setProgram(Track* self, int program) {
-    self->program = program;
+void Track_setProgram(Track* self, const char* const programName) {
+    strncpy(self->programName, programName, SYNTH_PROGRAM_NAME_LENGTH_MAX);
+    self->programName[SYNTH_PROGRAM_NAME_LENGTH_MAX - 1] = '\0';
 }
 
 

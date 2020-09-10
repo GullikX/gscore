@@ -140,7 +140,7 @@ struct Renderer {
 };
 
 struct Track {
-    int program;
+    char programName[SYNTH_PROGRAM_NAME_LENGTH_MAX];
     float velocity;
     Block** blocks[SCORE_LENGTH_MAX];
     float blockVelocities[SCORE_LENGTH_MAX];
@@ -161,6 +161,8 @@ struct Synth {
     fluid_settings_t* settings;
     fluid_synth_t* fluidSynth;
     fluid_audio_driver_t* audioDriver;
+    fluid_sfont_t* soundFont;
+    int soundFontId;
     fluid_sequencer_t* sequencer;
     fluid_seq_id_t synthSequencerId;
     fluid_seq_id_t callbackId;
