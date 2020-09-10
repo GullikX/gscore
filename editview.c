@@ -52,7 +52,7 @@ EditView* EditView_new(Score* score) {
 
     self->playStartTime = -1;
     self->tempo = score->tempo;
-    success = hexColorToRgb(COLOR_CURSOR, &self->playbackCursorColor);
+    success = hexColorToRgb(COLOR_PLAYBACK_CURSOR, &self->playbackCursorColor);
     if (!success) die("Invalid playback cursor color");
 
     self->ctrlPressed = false;
@@ -216,6 +216,9 @@ void EditView_draw(EditView* self) {
         EditView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
     }
 
+    /* Draw cursor */
+    EditView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
+
     /* Draw notes */
     Renderer* renderer = Application_getInstance()->renderer;
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
@@ -230,13 +233,21 @@ void EditView_draw(EditView* self) {
                     int iColumnStart = EditView_xCoordToColumnIndex(midiMessage->time * viewportWidth);
                     int iColumnEnd = EditView_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
                     int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
+                    Vector4 color = blockCurrent->color;
+
+                    bool highlight = iRow == self->cursor.iRow && iColumnStart <= self->cursor.iColumn && iColumnEnd > self->cursor.iColumn;
+                    if (highlight) {
+                        color.x = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.x;
+                        color.y = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.y;
+                        color.z = HIGHLIGHT_STRENGTH * 1.0f + (1.0f - HIGHLIGHT_STRENGTH) * color.z;
+                    }
 
                     GridItem item;
                     item.iRow = iRow;
                     item.iColumn = iColumnStart;
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
-                    item.color = blockCurrent->color;
+                    item.color = color;
                     item.indicatorValue = midiMessage->velocity;
                     EditView_drawItem(self, &item, NOTE_SIZE_OFFSET);
 
@@ -247,9 +258,6 @@ void EditView_draw(EditView* self) {
         }
         midiMessage = midiMessage->next;
     }
-
-    /* Draw cursor */
-    EditView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
 
     /* Draw playback cursor */
     EditView_drawPlaybackCursor(self);

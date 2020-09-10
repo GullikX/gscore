@@ -78,6 +78,7 @@ enum {
 const float CURSOR_SIZE_OFFSET = -0.005f;
 const float NOTE_SIZE_OFFSET = -0.002f;
 const float BLOCK_SIZE_OFFSET = -0.002f;
+const float HIGHLIGHT_STRENGTH = 0.4f;
 const float PLAYER_CURSOR_WIDTH = 0.005f;
 const float MAX_TRACK_HEIGHT = 0.1f;
 const float SYNTH_GAIN = 1.0f;
@@ -86,7 +87,8 @@ const float EDIT_MODE_PLAYBACK_VELOCITY = DEFAULT_VELOCITY * DEFAULT_VELOCITY;
 
 const char* const COLOR_BACKGROUND = "263238";
 const char* const COLOR_GRIDLINES = "212D32";
-const char* const COLOR_CURSOR = "C5C8C6";
+const char* const COLOR_CURSOR = "38434A";
+const char* const COLOR_PLAYBACK_CURSOR = "C5C8C6";
 const char* const COLOR_BLOCK_DEFAULT = "81A2BE";
 
 enum {
