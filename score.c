@@ -253,9 +253,11 @@ char* Score_getBlockListString(void) {  /* called from input callback (no instan
 
 
 void Score_setBlockByName(Score* self, const char* const name) {
+    Application* application = Application_getInstance();
+
     for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (!strcmp(name, self->blocks[iBlock]->name)) {
-            Application_switchBlock(Application_getInstance(), &self->blocks[iBlock]);
+            Application_switchBlock(application, &self->blocks[iBlock]);
             return;
         }
     }
@@ -267,7 +269,7 @@ void Score_setBlockByName(Score* self, const char* const name) {
 
     printf("Creating new block '%s'\n", name);
     self->blocks[self->nBlocks] = Block_new(name, COLOR_BLOCK_DEFAULT);
-    Application_getInstance()->blockCurrent = &self->blocks[self->nBlocks];
+    Application_switchBlock(application, &self->blocks[self->nBlocks]);
     self->nBlocks++;
 }
 
