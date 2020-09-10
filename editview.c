@@ -29,6 +29,7 @@ EditView* EditView_new(Score* score) {
         self->gridlinesVertical[i].nColumns = 1;
         bool success = hexColorToRgb(COLOR_GRIDLINES, &self->gridlinesVertical[i].color);
         if (!success) die("Invalid gridline color");
+        self->gridlinesVertical[i].indicatorValue = -1.0f;
     }
 
     for (int i = 0; i < OCTAVES; i++) {
@@ -38,6 +39,7 @@ EditView* EditView_new(Score* score) {
         self->gridlinesHorizontal[i].nColumns = nColumns;
         bool success = hexColorToRgb(COLOR_GRIDLINES, &self->gridlinesHorizontal[i].color);
         if (!success) die("Invalid gridline color");
+        self->gridlinesHorizontal[i].indicatorValue = -1.0f;
     }
 
     self->cursor.iRow = 0;
@@ -46,11 +48,14 @@ EditView* EditView_new(Score* score) {
     self->cursor.nColumns = 1;
     bool success = hexColorToRgb(COLOR_CURSOR, &self->cursor.color);
     if (!success) die("Invalid cursor color");
+    self->cursor.indicatorValue = -1.0f;
 
     self->playStartTime = -1;
     self->tempo = score->tempo;
     success = hexColorToRgb(COLOR_CURSOR, &self->playbackCursorColor);
     if (!success) die("Invalid playback cursor color");
+
+    self->ctrlPressed = false;
 
     self->ignoreNoteOff = IGNORE_NOTE_OFF_DEFAULT;
 
@@ -137,6 +142,11 @@ void EditView_removeNote(EditView* self) {
 }
 
 
+void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
+    self->ctrlPressed = ctrlPressed;
+}
+
+
 void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     (void)startPosition; (void)repeat; /* TODO */
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
@@ -198,12 +208,12 @@ char* EditView_getTempoString(void) {  /* called from input callback (no instanc
 void EditView_draw(EditView* self) {
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
-        EditView_drawItem(&(self->gridlinesVertical[i]), 0);
+        EditView_drawItem(self, &(self->gridlinesVertical[i]), 0);
     }
 
     /* Horizontal gridlines marking start of octaves */
     for (int i = 0; i < OCTAVES; i++) {
-        EditView_drawItem(&(self->gridlinesHorizontal[i]), 0);
+        EditView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
     }
 
     /* Draw notes */
@@ -227,7 +237,8 @@ void EditView_draw(EditView* self) {
                     item.nRows = 1;
                     item.nColumns = iColumnEnd - iColumnStart;
                     item.color = blockCurrent->color;
-                    EditView_drawItem(&item, NOTE_SIZE_OFFSET);
+                    item.indicatorValue = midiMessage->velocity;
+                    EditView_drawItem(self, &item, NOTE_SIZE_OFFSET);
 
                     break;
                 }
@@ -238,14 +249,14 @@ void EditView_draw(EditView* self) {
     }
 
     /* Draw cursor */
-    EditView_drawItem(&(self->cursor), CURSOR_SIZE_OFFSET);
+    EditView_drawItem(self, &(self->cursor), CURSOR_SIZE_OFFSET);
 
     /* Draw playback cursor */
     EditView_drawPlaybackCursor(self);
 }
 
 
-void EditView_drawItem(GridItem* item, float offset) {
+void EditView_drawItem(EditView* self, GridItem* item, float offset) {
     float columnWidth = 2.0f/(BLOCK_MEASURES * MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
@@ -253,8 +264,16 @@ void EditView_drawItem(GridItem* item, float offset) {
     float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth + offset;
     float y1 = -(-1.0f + item->iRow * rowHeight) + offset;
     float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
-
     Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, item->color);
+
+    if (self->ctrlPressed && item->indicatorValue > 0.0f) {
+        Vector4 indicatorColor = {1.0f - item->color.x, 1.0f - item->color.y, 1.0f - item->color.z, 1.0f};
+        x1 = -1.0f + item->iColumn * columnWidth - offset;
+        x2 = -1.0f + item->iColumn * columnWidth + columnWidth * 0.5f + offset;
+        y1 = -(-1.0f + (item->iRow + 1.0f - item->indicatorValue) * rowHeight) + offset;
+        y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
+        Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, indicatorColor);
+    }
 }
 
 

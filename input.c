@@ -243,6 +243,9 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                         Application_switchState(application);
                     }
                     break;
+                case GLFW_KEY_LEFT_CONTROL:
+                        EditView_setCtrlPressed(editView, true);
+                        break;
                 case GLFW_KEY_SPACE:
                     if (EditView_isPlaying(editView)) {
                         EditView_stopPlaying(editView);
@@ -264,6 +267,13 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     EditView_stopPlaying(editView);
                     break;
             }
+        }
+    }
+    else if (action == GLFW_RELEASE) {
+        switch (key) {
+            case GLFW_KEY_LEFT_CONTROL:
+                    EditView_setCtrlPressed(editView, false);
+                    break;
         }
     }
 }

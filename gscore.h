@@ -95,6 +95,7 @@ struct GridItem {
     int nRows;
     int nColumns;
     Vector4 color;
+    float indicatorValue;
 };
 
 struct EditView {
@@ -106,6 +107,7 @@ struct EditView {
     int tempo;
     char tempoString[64];
     Vector4 playbackCursorColor;
+    bool ctrlPressed;
     bool ignoreNoteOff;
 };
 
