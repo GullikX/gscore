@@ -85,6 +85,71 @@ const float SYNTH_GAIN = 1.0f;
 const float DEFAULT_VELOCITY = 0.75f;
 const float EDIT_MODE_PLAYBACK_VELOCITY = DEFAULT_VELOCITY * DEFAULT_VELOCITY;
 
+typedef enum {
+    C_MAJOR,
+
+    G_MAJOR,
+    D_MAJOR,
+    A_MAJOR,
+    E_MAJOR,
+    B_MAJOR,
+    F_SHARP_MAJOR,
+    C_SHARP_MAJOR,
+
+    F_MAJOR,
+    B_FLAT_MAJOR,
+    E_FLAT_MAJOR,
+    A_FLAT_MAJOR,
+    D_FLAT_MAJOR,
+    G_FLAT_MAJOR,
+    C_FLAT_MAJOR,
+
+    KEY_SIGNATURE_COUNT,
+} KeySignature;
+
+const int KEY_SIGNATURES[KEY_SIGNATURE_COUNT][NOTES_IN_OCTAVE] = {
+    // C   C#  D   D#  E   F   F#  G   G#  A   A#  B
+    {  1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  0,  1},
+
+    {  1,  0,  1,  0,  1,  0,  1,  1,  0,  1,  0,  1},
+    {  0,  1,  1,  0,  1,  0,  1,  1,  0,  1,  0,  1},
+    {  0,  1,  1,  0,  1,  0,  1,  0,  1,  1,  0,  1},
+    {  0,  1,  0,  1,  1,  0,  1,  0,  1,  1,  0,  1},
+    {  0,  1,  0,  1,  1,  0,  1,  0,  1,  0,  1,  1},
+    {  0,  1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  1},
+    {  1,  1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  0},
+
+    {  1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  1,  0},
+    {  1,  0,  1,  1,  0,  1,  0,  1,  0,  1,  1,  0},
+    {  1,  0,  1,  1,  0,  1,  0,  1,  1,  0,  1,  0},
+    {  1,  1,  0,  1,  0,  1,  0,  1,  1,  0,  1,  0},
+    {  1,  1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  0},
+    {  0,  1,  0,  1,  0,  1,  1,  0,  1,  0,  1,  1},
+    {  0,  1,  0,  1,  1,  0,  1,  0,  1,  0,  1,  1},
+};
+
+const char* KEY_SIGNATURE_NAMES[] =  {
+    "C major / A minor",
+
+    "G major / E minor",
+    "D major / B minor",
+    "A major / F-sharp minor",
+    "E major / C-sharp minor",
+    "B major / G-sharp minor",
+    "F-sharp major / D-sharp minor",
+    "C-sharp major / A-sharp minor",
+
+    "F major / D minor",
+    "B-flat major / G minor",
+    "E-flat major / C minor",
+    "A-flat major / F minor",
+    "D-flat major / B-flat minor",
+    "G-flat major / E-flat minor",
+    "C-flat major / A-flat minor",
+};
+
+KeySignature KEY_SIGNATURE_DEFAULT = C_MAJOR;
+
 const char* const COLOR_BACKGROUND = "263238";
 const char* const COLOR_GRIDLINES = "212D32";
 const char* const COLOR_CURSOR = "38434A";
