@@ -60,7 +60,7 @@ void XEvents_processXEvents(XEvents* self) {
         );
 
         if (result == Success && propertyValue) {
-            printf("Received: %s=%s\n", ATOM_NAMES[i], propertyValue);
+            printf("Received: %s='%s'\n", ATOM_NAMES[i], propertyValue);
             State state = Application_getState(application);
             if (state == OBJECT_MODE) {
                 switch (i) {
@@ -111,6 +111,9 @@ void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_SET_BLOCK_COLOR:
                         Score_setBlockColor((char*)propertyValue);
+                        break;
+                    case ATOM_SET_KEY_SIGNATURE:
+                        Score_setKeySignatureByName(application->scoreCurrent, (char*)propertyValue);
                         break;
                 }
                 break;

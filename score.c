@@ -248,7 +248,7 @@ void Score_regenerateBlockListString(Score* self) {
 }
 
 
-char* Score_getBlockListString(void) {  /* called from input callback (no instance reference) */
+const char* Score_getBlockListString(void) {  /* called from input callback (no instance reference) */
     Score* self = Application_getInstance()->scoreCurrent;
     Score_regenerateBlockListString(self);
     return self->blockListString;
@@ -277,7 +277,7 @@ void Score_setBlockByName(Score* self, const char* const name) {
 }
 
 
-char* Score_getCurrentBlockName(void) {  /* called from input callback (no instance reference) */
+const char* Score_getCurrentBlockName(void) {  /* called from input callback (no instance reference) */
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     return blockCurrent->name;
 }
@@ -302,7 +302,7 @@ void Score_renameBlock(Score* self, const char* const name) {
 }
 
 
-char* Score_getCurrentBlockColor(void) {  /* called from input callback (no instance reference) */
+const char* Score_getCurrentBlockColor(void) {  /* called from input callback (no instance reference) */
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     return blockCurrent->hexColor;
 }
@@ -355,4 +355,20 @@ void Score_removeTrack(Score* self) {
     }
     self->nTracks--;
     printf("Number of tracks decreased to %d\n", self->nTracks);
+}
+
+
+const char* Score_getKeySignatureName(void) {
+    return KEY_SIGNATURE_LIST_STRING;
+}
+
+
+void Score_setKeySignatureByName(Score* self, const char* const name) {
+    for (int iKey = 0; iKey < KEY_SIGNATURE_COUNT; iKey++) {
+        if (!strcmp(name, KEY_SIGNATURE_NAMES[iKey])) {
+            self->keySignature = iKey;
+            return;
+        }
+    }
+    printf("Error: Invalid key signature '%s'\n", name);
 }

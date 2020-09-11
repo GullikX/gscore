@@ -148,6 +148,25 @@ const char* KEY_SIGNATURE_NAMES[] =  {
     "C-flat major / A-flat minor",
 };
 
+const char* const KEY_SIGNATURE_LIST_STRING =
+    "C major / A minor\n"
+
+    "G major / E minor\n"
+    "D major / B minor\n"
+    "A major / F-sharp minor\n"
+    "E major / C-sharp minor\n"
+    "B major / G-sharp minor\n"
+    "F-sharp major / D-sharp minor\n"
+    "C-sharp major / A-sharp minor\n"
+
+    "F major / D minor\n"
+    "B-flat major / G minor\n"
+    "E-flat major / C minor\n"
+    "A-flat major / F minor\n"
+    "D-flat major / B-flat minor\n"
+    "G-flat major / E-flat minor\n"
+    "C-flat major / A-flat minor";
+
 KeySignature KEY_SIGNATURE_DEFAULT = C_MAJOR;
 
 const char* const COLOR_BACKGROUND = "263238";
@@ -162,6 +181,7 @@ enum {
     ATOM_SELECT_BLOCK,
     ATOM_RENAME_BLOCK,
     ATOM_SET_BLOCK_COLOR,
+    ATOM_SET_KEY_SIGNATURE,
     ATOM_COUNT,
 };
 
@@ -171,6 +191,7 @@ const char* ATOM_NAMES[] =  {
     "_GSCORE_SELECT_BLOCK",
     "_GSCORE_RENAME_BLOCK",
     "_GSCORE_SET_BLOCK_COLOR",
+    "_GSCORE_SET_KEY_SIGNATURE",
 };
 
 const char* ATOM_PROMPTS[] =  {
@@ -179,14 +200,16 @@ const char* ATOM_PROMPTS[] =  {
     "Select block:",
     "Rename block:",
     "Set block color:",
+    "Set key signature:",
 };
 
-char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
+const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
     EditView_getTempoString,
     Synth_getInstrumentListString,
     Score_getBlockListString,
     Score_getCurrentBlockName,
     Score_getCurrentBlockColor,
+    Score_getKeySignatureName,
 };
 
 const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */
