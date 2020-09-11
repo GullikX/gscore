@@ -20,11 +20,11 @@ EditView* EditView_new(Score* score) {
     EditView* self = ecalloc(1, sizeof(*self));
 
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
 
     for (int i = 0; i < BLOCK_MEASURES; i++) {
         self->gridlinesVertical[i].iRow = 0;
-        self->gridlinesVertical[i].iColumn = i*MEASURE_RESOLUTION;
+        self->gridlinesVertical[i].iColumn = i*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
         self->gridlinesVertical[i].nRows = nRows;
         self->gridlinesVertical[i].nColumns = 1;
         bool success = hexColorToRgb(COLOR_GRIDLINES, &self->gridlinesVertical[i].color);
@@ -78,7 +78,7 @@ void EditView_previewNote(EditView* self) {
 
 void EditView_addNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     float velocity = DEFAULT_VELOCITY;
 
@@ -96,7 +96,7 @@ void EditView_dragNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     if (!self->midiMessageHeld) return;
 
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     float time = (float)(self->cursor.iColumn + 1) / (float)nColumns;
     int pitch = self->midiMessageHeld->pitch;
     float velocity = self->midiMessageHeld->velocity;
@@ -116,7 +116,7 @@ void EditView_releaseNote(EditView* self) {
 
 void EditView_removeNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
@@ -276,7 +276,7 @@ void EditView_draw(EditView* self) {
 
 
 void EditView_drawItem(EditView* self, GridItem* item, float offset) {
-    float columnWidth = 2.0f/(BLOCK_MEASURES * MEASURE_RESOLUTION);
+    float columnWidth = 2.0f/(BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
     float x1 = -1.0f + item->iColumn * columnWidth - offset;
@@ -322,7 +322,7 @@ bool EditView_updateCursorPosition(EditView* self, float x, float y) {
         self->cursor.iRow = EditView_yCoordToRowIndex(y);
     }
 
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
 
     if (self->cursor.iColumn < 0) self->cursor.iColumn = 0;
@@ -357,7 +357,7 @@ void EditView_removeMidiMessage(MidiMessage* midiMessage) {
 
 
 int EditView_xCoordToColumnIndex(float x) {
-    int nColumns = BLOCK_MEASURES*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
 }
 
