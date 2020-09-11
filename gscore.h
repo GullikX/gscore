@@ -99,8 +99,9 @@ struct GridItem {
 };
 
 struct EditView {
+    Score* score;
     GridItem gridlinesVertical[BLOCK_MEASURES];
-    GridItem gridlinesHorizontal[OCTAVES];
+    GridItem gridlinesHorizontal[OCTAVES * NOTES_IN_OCTAVE];
     GridItem cursor;
     MidiMessage* midiMessageHeld;
     int playStartTime;
@@ -157,6 +158,7 @@ struct Score {
     int nTracks;
     int scoreLength;
     char blockListString[MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1];
+    KeySignature keySignature;
 };
 
 struct Synth {

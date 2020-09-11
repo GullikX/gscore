@@ -27,6 +27,7 @@ Score* Score_new(Synth* synth) {
     self->nTracks = 1;
 
     self->scoreLength = SCORE_LENGTH_DEFAULT;
+    self->keySignature = KEY_SIGNATURE_DEFAULT;
 
     return self;
 }
@@ -156,6 +157,8 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
     for (int iTrack = 0; iTrack < self->nTracks; iTrack++) {
         Synth_setProgramByName(synth, iTrack + 1, self->tracks[iTrack]->programName);
     }
+
+    self->keySignature = KEY_SIGNATURE_DEFAULT;  // TODO: read from file
 
     return self;
 }

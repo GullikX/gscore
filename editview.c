@@ -19,6 +19,8 @@
 EditView* EditView_new(Score* score) {
     EditView* self = ecalloc(1, sizeof(*self));
 
+    self->score = score;
+
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
 
@@ -32,8 +34,8 @@ EditView* EditView_new(Score* score) {
         self->gridlinesVertical[i].indicatorValue = -1.0f;
     }
 
-    for (int i = 0; i < OCTAVES; i++) {
-        self->gridlinesHorizontal[i].iRow = (i+1)*NOTES_IN_OCTAVE - 1;
+    for (int i = 0; i < OCTAVES*NOTES_IN_OCTAVE; i++) {
+        self->gridlinesHorizontal[i].iRow = i;
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
         self->gridlinesHorizontal[i].nColumns = nColumns;
@@ -209,9 +211,13 @@ void EditView_draw(EditView* self) {
         EditView_drawItem(self, &(self->gridlinesVertical[i]), 0);
     }
 
-    /* Horizontal gridlines marking start of octaves */
-    for (int i = 0; i < OCTAVES; i++) {
-        EditView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
+    /* Horizontal gridlines for current key signature */
+    for (int i = 0; i < OCTAVES*NOTES_IN_OCTAVE; i++) {
+        int note = NOTES_IN_OCTAVE - i % NOTES_IN_OCTAVE - 1;
+        KeySignature keySignature = self->score->keySignature;
+        if (KEY_SIGNATURES[keySignature][note]) {
+            EditView_drawItem(self, &(self->gridlinesHorizontal[i]), 0);
+        }
     }
 
     /* Draw cursor */
