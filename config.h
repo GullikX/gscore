@@ -23,6 +23,7 @@ const char* const XML_ENCODING = "UTF-8";
 const char* const XML_VERSION = "1.0";
 const char* const XMLATTRIB_COLOR = "color";
 const char* const XMLATTRIB_IGNORENOTEOFF = "ignorenoteoff";
+const char* const XMLATTRIB_KEYSIGNATURE = "keysignature";
 const char* const XMLATTRIB_NAME = "name";
 const char* const XMLATTRIB_PITCH = "pitch";
 const char* const XMLATTRIB_PROGRAM = "program";

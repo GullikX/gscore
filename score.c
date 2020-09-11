@@ -50,8 +50,17 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
         die("Unexpected node name '%s', expected '%s'", (char*)nodeRoot->name, XMLNODE_SCORE);
     }
 
-    self->tempo = atoi((char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO));
-    if (!self->tempo) die("Invalid tempo value");
+    self->tempo = TEMPO_BPM;
+    const char* tempoProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO);
+    if (tempoProp) {
+        self->tempo = atoi(tempoProp);
+    }
+
+    self->keySignature = KEY_SIGNATURE_DEFAULT;
+    const char* keySignatureProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_KEYSIGNATURE);
+    if (keySignatureProp) {
+        Score_setKeySignatureByName(self, keySignatureProp);
+    }
 
     /* Read block definitions */
     for (xmlNode* node = nodeRoot->children; node; node = node->next) {
@@ -158,8 +167,6 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
         Synth_setProgramByName(synth, iTrack + 1, self->tracks[iTrack]->programName);
     }
 
-    self->keySignature = KEY_SIGNATURE_DEFAULT;  // TODO: read from file
-
     return self;
 }
 
@@ -172,6 +179,8 @@ void Score_writeToFile(Score* self, const char* const filename) {
     char buffer[XML_BUFFER_SIZE];
     snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tempo);
     xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO, BAD_CAST buffer);
+
+    xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_KEYSIGNATURE, BAD_CAST KEY_SIGNATURE_NAMES[self->keySignature]);
 
     /* Creat xml nodes for block definitions */
     xmlNode* nodeBlockDefs = xmlNewChild(nodeScore, NULL, BAD_CAST XMLNODE_BLOCKDEFS, NULL);
