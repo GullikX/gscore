@@ -35,6 +35,15 @@ Block* Block_new(const char* const name, const char* const hexColor) {
 
 
 Block* Block_free(Block* self) {
+    MidiMessage* midiMessage = self->midiMessageRoot;
+    self->midiMessageRoot = NULL;
+
+    while(midiMessage) {
+        MidiMessage* midiMessageTemp = midiMessage;
+        midiMessage = midiMessage->next;
+        free(midiMessageTemp);
+    }
+
     free(self);
     return NULL;
 }

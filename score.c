@@ -34,6 +34,12 @@ Score* Score_new(Synth* synth) {
 
 
 Score* Score_free(Score* self) {
+    for (int iTrack = 0; iTrack < self->nTracks; iTrack++) {
+        self->tracks[iTrack] = Track_free(self->tracks[iTrack]);
+    }
+    for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
+        self->blocks[iBlock] = Block_free(self->blocks[iBlock]);
+    }
     free(self);
     return NULL;
 }
