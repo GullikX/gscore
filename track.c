@@ -60,6 +60,15 @@ void Track_setBlockVelocity(Track* self, int iBlock, float blockVelocity) {
 }
 
 
+void Track_adjustBlockVelocity(Track* self, int iBlock, float amount) {
+    if (!self->blocks[iBlock]) return;
+    self->blockVelocities[iBlock] += amount;
+    if (self->blockVelocities[iBlock] > 1.0f) self->blockVelocities[iBlock] = 1.0f;
+    if (self->blockVelocities[iBlock] < 0.0f) self->blockVelocities[iBlock] = 0.0f;
+    printf("Block velocity: %f\n", self->blockVelocities[iBlock]);
+}
+
+
 void Track_toggleIgnoreNoteOff(Track* self) {
     self->ignoreNoteOff = !self->ignoreNoteOff;
     printf("%s note off events for track\n", self->ignoreNoteOff ? "Disabled" : "Enabled");

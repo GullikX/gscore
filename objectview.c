@@ -85,6 +85,17 @@ void ObjectView_removeBlock(ObjectView* self) {
 }
 
 
+void ObjectView_adjustBlockVelocity(ObjectView* self, float amount) {
+    if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
+
+    Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
+    Track_adjustBlockVelocity(track, iBlock, amount);
+}
+
+
 void ObjectView_setCtrlPressed(ObjectView* self, bool ctrlPressed) {
     self->ctrlPressed = ctrlPressed;
 }

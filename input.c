@@ -219,7 +219,12 @@ void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
 
 
 void Input_scrollCallbackObjectMode(GLFWwindow* window, double xoffset, double yoffset) {
-    (void)window; (void)xoffset; (void)yoffset;
+    (void)xoffset;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        Application* application = Application_getInstance();
+        ObjectView* objectView = application->objectView;
+        ObjectView_adjustBlockVelocity(objectView, yoffset * VELOCITY_ADJUSTMENT_AMOUNT);
+    }
 }
 
 
