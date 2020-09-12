@@ -148,6 +148,36 @@ void EditView_removeNote(EditView* self) {
 }
 
 
+void EditView_adjustNoteVelocity(EditView* self, float amount) {
+    if (EditView_isPlaying(self)) return; /* TODO: allow this */
+    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    float time = (float)self->cursor.iColumn / (float)nColumns;
+    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
+
+    Block* blockCurrent = *Application_getInstance()->blockCurrent;
+    MidiMessage* midiMessage = blockCurrent->midiMessageRoot;
+
+    while (midiMessage) {
+        if (midiMessage->type == FLUID_SEQ_NOTEON) {
+            MidiMessage* midiMessageOther = midiMessage;
+            while (midiMessageOther) {
+                if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
+                    if (midiMessage->pitch == pitch && midiMessage->time <= time && midiMessageOther->time > time) {
+                        midiMessage->velocity += amount;
+                        if (midiMessage->velocity > 1.0f) midiMessage->velocity = 1.0f;
+                        if (midiMessage->velocity < 0.0f) midiMessage->velocity = 0.0f;
+                        printf("Note velocity: %f\n", midiMessage->velocity);
+                    }
+                    break;
+                }
+                midiMessageOther = midiMessageOther->next;
+            }
+        }
+        midiMessage = midiMessage->next;
+    }
+}
+
+
 void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
     self->ctrlPressed = ctrlPressed;
 }

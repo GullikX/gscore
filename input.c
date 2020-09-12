@@ -65,8 +65,15 @@ void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
 
 
 void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-    (void)window;
-    printf("Mouse scroll: (%f, %f)\n", xoffset, yoffset);
+    Application* application = Application_getInstance();
+    switch (Application_getState(application)) {
+        case OBJECT_MODE:
+            Input_scrollCallbackObjectMode(window, xoffset, yoffset);
+            break;
+        case EDIT_MODE:
+            Input_scrollCallbackEditMode(window, xoffset, yoffset);
+            break;
+    }
 }
 
 
@@ -198,6 +205,11 @@ void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
             ObjectView_removeBlock(objectView);
         }
     }
+}
+
+
+void Input_scrollCallbackObjectMode(GLFWwindow* window, double xoffset, double yoffset) {
+    (void)window; (void)xoffset; (void)yoffset;
 }
 
 
@@ -336,5 +348,15 @@ void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y) {
         if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
             EditView_previewNote(editView);
         }
+    }
+}
+
+
+void Input_scrollCallbackEditMode(GLFWwindow* window, double xoffset, double yoffset) {
+    (void)xoffset;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+        Application* application = Application_getInstance();
+        EditView* editView = application->editView;
+        EditView_adjustNoteVelocity(editView, yoffset * VELOCITY_ADJUSTMENT_AMOUNT);
     }
 }
