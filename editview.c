@@ -74,6 +74,7 @@ EditView* EditView_free(EditView* self) {
 void EditView_previewNote(EditView* self) {
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     if (!EditView_isPlaying(self)) {
+        Synth_noteOffAll(Application_getInstance()->synth);
         Synth_noteOn(Application_getInstance()->synth, pitch);
     }
     printf("Previewing note %s%d\n", NOTE_NAMES[pitch % NOTES_IN_OCTAVE], pitch / NOTES_IN_OCTAVE - 1);
