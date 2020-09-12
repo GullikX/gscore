@@ -129,6 +129,13 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     else {
                         bool repeat = modShift;
                         float startPosition = 0.0f;
+                        if (modControl) {
+                            double cursorX, cursorY;
+                            glfwGetCursorPos(window, &cursorX, &cursorY);
+                            int windowWidth, windowHeight;
+                            glfwGetWindowSize(window, &windowWidth, &windowHeight);
+                            startPosition = (float)cursorX / (float)windowWidth;
+                        }
                         ObjectView_playScore(objectView, startPosition, repeat);
                     }
                     break;

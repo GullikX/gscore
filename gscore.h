@@ -129,6 +129,7 @@ struct ObjectView {
     GridItem cursor;
     float viewHeight;
     int playStartTime;
+    int iPlayStartBlock;
     bool playRepeat;
     Vector4 playbackCursorColor;
 };

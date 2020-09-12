@@ -80,21 +80,22 @@ void ObjectView_removeBlock(ObjectView* self) {
 }
 
 
-void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
-    (void)startPosition; /* TODO */
+void ObjectView_playScore(ObjectView* self, float startPosition, bool repeat) {
+    self->iPlayStartBlock = startPosition * self->score->scoreLength;
     self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     float stopTime = -1.0f;
 
     for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
         for (int iBlock = 0; iBlock < self->score->scoreLength; iBlock++) {
+            if (iBlock < self->iPlayStartBlock) continue;
             if (!self->score->tracks[iTrack]->blocks[iBlock]) continue;
             Block* block = *self->score->tracks[iTrack]->blocks[iBlock];
             for (MidiMessage* midiMessage = block->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
                 if (midiMessage->time < 0) continue;
                 int channel = iTrack + 1;
                 float velocity = midiMessage->velocity * self->score->tracks[iTrack]->velocity * self->score->tracks[iTrack]->blockVelocities[iBlock];
-                float time = midiMessage->time * blockTime + blockTime * iBlock;
+                float time = midiMessage->time * blockTime + blockTime * (iBlock - self->iPlayStartBlock);
                 if (stopTime < time) stopTime = time;
 
                 switch (midiMessage->type) {
@@ -212,7 +213,7 @@ void ObjectView_drawPlaybackCursor(ObjectView* self) {
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
     float totalTime = 1000.0f * (float)(self->score->scoreLength * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
-    float progress = time / totalTime;
+    float progress = time / totalTime + (float)self->iPlayStartBlock / (float)self->score->scoreLength;
     float cursorX = -1.0f + 2.0f * progress;
 
     float x1 = cursorX - PLAYER_CURSOR_WIDTH / 2.0f;
