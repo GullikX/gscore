@@ -154,17 +154,17 @@ void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
 
 
 void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
-    (void)startPosition; /* TODO */
+    self->playStartPosition = startPosition;
     self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     Synth* synth = Application_getInstance()->synth;
 
     for (MidiMessage* midiMessage = blockCurrent->midiMessageRoot; midiMessage; midiMessage = midiMessage->next) {
-        if (midiMessage->time < 0) continue;
+        if (midiMessage->time < startPosition) continue;
         float channel = 0;
         float velocity = midiMessage->velocity * EDIT_MODE_PLAYBACK_VELOCITY;
-        float time = midiMessage->time * blockTime;
+        float time = (midiMessage->time - startPosition) * blockTime;
 
         switch (midiMessage->type) {
             case FLUID_SEQ_NOTEON:
@@ -177,7 +177,7 @@ void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
                 break;
         }
     }
-    Synth_scheduleCallback(synth, blockTime);
+    Synth_scheduleCallback(synth, blockTime * (1-startPosition));
     self->playStartTime = Synth_getTime(synth);
 }
 
@@ -258,7 +258,7 @@ void EditView_draw(EditView* self) {
                     if (EditView_isPlaying(self)) {
                         float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
                         float totalTime = 1000.0f * (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
-                        float progress = time / totalTime;
+                        float progress = time / totalTime + self->playStartPosition;
                         float cursorX = Application_getInstance()->renderer->viewportWidth * progress;
                         int iCursorColumn = EditView_xCoordToColumnIndex(cursorX);
                         highlight = iColumnStart <= iCursorColumn && iColumnEnd > iCursorColumn;
@@ -320,7 +320,7 @@ void EditView_drawPlaybackCursor(EditView* self) {
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
     float totalTime = 1000.0f * (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
-    float progress = time / totalTime;
+    float progress = time / totalTime + self->playStartPosition;
     float cursorX = -1.0f + 2.0f * progress;
 
     float x1 = cursorX - PLAYER_CURSOR_WIDTH / 2.0f;
