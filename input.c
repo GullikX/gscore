@@ -129,6 +129,9 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     ObjectView_stopPlaying(objectView);
                     Application_switchState(application);
                     break;
+                case GLFW_KEY_LEFT_CONTROL:
+                    ObjectView_setCtrlPressed(objectView, true);
+                    break;
                 case GLFW_KEY_SPACE:
                     if (ObjectView_isPlaying(objectView)) {
                         ObjectView_stopPlaying(objectView);
@@ -170,6 +173,13 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
                     }
                     break;
             }
+        }
+    }
+    else if (action == GLFW_RELEASE) {
+        switch (key) {
+            case GLFW_KEY_LEFT_CONTROL:
+                ObjectView_setCtrlPressed(objectView, false);
+                break;
         }
     }
 }
@@ -267,8 +277,8 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
                     }
                     break;
                 case GLFW_KEY_LEFT_CONTROL:
-                        EditView_setCtrlPressed(editView, true);
-                        break;
+                    EditView_setCtrlPressed(editView, true);
+                    break;
                 case GLFW_KEY_SPACE:
                     if (EditView_isPlaying(editView)) {
                         EditView_stopPlaying(editView);
@@ -295,8 +305,8 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
     else if (action == GLFW_RELEASE) {
         switch (key) {
             case GLFW_KEY_LEFT_CONTROL:
-                    EditView_setCtrlPressed(editView, false);
-                    break;
+                EditView_setCtrlPressed(editView, false);
+                break;
         }
     }
 }

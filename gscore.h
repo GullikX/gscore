@@ -132,6 +132,7 @@ struct ObjectView {
     int iPlayStartBlock;
     bool playRepeat;
     Vector4 playbackCursorColor;
+    bool ctrlPressed;
 };
 
 struct Renderer {

@@ -337,7 +337,7 @@ void EditView_drawItem(EditView* self, GridItem* item, float offset) {
     if (self->ctrlPressed && item->indicatorValue > 0.0f) {
         Vector4 indicatorColor = {1.0f - item->color.x, 1.0f - item->color.y, 1.0f - item->color.z, 1.0f};
         x1 = -1.0f + item->iColumn * columnWidth - offset;
-        x2 = -1.0f + item->iColumn * columnWidth + columnWidth * 0.5f + offset;
+        x2 = -1.0f + item->iColumn * columnWidth + columnWidth * VELOCITY_INDICATOR_WIDTH_EDIT_MODE + offset;
         y1 = -(-1.0f + (item->iRow + 1.0f - item->indicatorValue) * rowHeight) + offset;
         y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
         Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, indicatorColor);

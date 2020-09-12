@@ -30,7 +30,9 @@ ObjectView* ObjectView_new(Score* score) {
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
         self->gridlinesHorizontal[i].nColumns = nColumns;
-        hexColorToRgb(trackColors[iTrackColor], &self->gridlinesHorizontal[i].color);
+        bool success = hexColorToRgb(trackColors[iTrackColor], &self->gridlinesHorizontal[i].color);
+        if (!success) die("Invalid gridline color");
+        self->gridlinesHorizontal[i].indicatorValue = -1.0f;
         iTrackColor = !iTrackColor;
     }
 
@@ -40,10 +42,13 @@ ObjectView* ObjectView_new(Score* score) {
     self->cursor.nColumns = 1;
     bool success = hexColorToRgb(COLOR_CURSOR, &self->cursor.color);
     if (!success) die("Invalid cursor color");
+    self->cursor.indicatorValue = -1.0f;
 
     self->playStartTime = -1;
     success = hexColorToRgb(COLOR_PLAYBACK_CURSOR, &self->playbackCursorColor);
     if (!success) die("Invalid playback cursor color");
+
+    self->ctrlPressed = false;
 
     return self;
 }
@@ -77,6 +82,11 @@ void ObjectView_removeBlock(ObjectView* self) {
 
     Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
     Track_setBlock(track, iBlock, NULL);
+}
+
+
+void ObjectView_setCtrlPressed(ObjectView* self, bool ctrlPressed) {
+    self->ctrlPressed = ctrlPressed;
 }
 
 
@@ -187,6 +197,7 @@ void ObjectView_draw(ObjectView* self) {
             item.nRows = 1;
             item.nColumns = 1;
             item.color = color;
+            item.indicatorValue = tracks[iTrack]->blockVelocities[iBlock];
             ObjectView_drawItem(self, &(item), BLOCK_SIZE_OFFSET);
         }
     }
@@ -205,6 +216,15 @@ void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
     float y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
 
     Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, item->color);
+
+    if (self->ctrlPressed && item->indicatorValue > 0.0f) {
+        Vector4 indicatorColor = {1.0f - item->color.x, 1.0f - item->color.y, 1.0f - item->color.z, 1.0f};
+        x1 = -1.0f + item->iColumn * columnWidth - offset;
+        x2 = -1.0f + item->iColumn * columnWidth + columnWidth * VELOCITY_INDICATOR_WIDTH_OBJECT_MODE + offset;
+        y1 = -(-1.0f + (item->iRow + 1.0f - item->indicatorValue) * rowHeight) + offset;
+        y2 = -(-1.0f + item->iRow * rowHeight + item->nRows * rowHeight) - offset;
+        Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, indicatorColor);
+    }
 }
 
 
