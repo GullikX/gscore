@@ -126,8 +126,13 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
             printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
-                    ObjectView_stopPlaying(objectView);
-                    Application_switchState(application);
+                    if (modControl) {
+                        Application_toggleBlock(application);
+                    }
+                    else {
+                        ObjectView_stopPlaying(objectView);
+                        Application_switchState(application);
+                    }
                     break;
                 case GLFW_KEY_LEFT_CONTROL:
                     ObjectView_setCtrlPressed(objectView, true);
