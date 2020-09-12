@@ -105,6 +105,7 @@ struct EditView {
     GridItem cursor;
     MidiMessage* midiMessageHeld;
     int playStartTime;
+    bool playRepeat;
     int tempo;
     char tempoString[64];
     Vector4 playbackCursorColor;

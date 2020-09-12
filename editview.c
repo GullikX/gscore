@@ -154,7 +154,8 @@ void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
 
 
 void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
-    (void)startPosition; (void)repeat; /* TODO */
+    (void)startPosition; /* TODO */
+    self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     Synth* synth = Application_getInstance()->synth;
@@ -178,6 +179,16 @@ void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     }
     Synth_scheduleCallback(synth, blockTime);
     self->playStartTime = Synth_getTime(synth);
+}
+
+
+void EditView_sequencerCallback(EditView* self) {
+    if (self->playRepeat) {
+        EditView_playBlock(self, 0.0f, true);
+    }
+    else {
+        EditView_stopPlaying(self);
+    }
 }
 
 

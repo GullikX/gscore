@@ -197,7 +197,7 @@ void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequ
             ObjectView_stopPlaying(application->objectView);
             break;
         case EDIT_MODE:
-            EditView_stopPlaying(application->editView);
+            EditView_sequencerCallback(application->editView);
             break;
     }
 }
