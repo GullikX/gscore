@@ -90,23 +90,27 @@ int Renderer_running(Renderer* self) {
 
 
 void Renderer_updateScreen(Renderer* self) {
+    Renderer_flushVertexBuffer(self);
+    glfwSwapBuffers(self->window);
     glClearColor(self->clearColor.x, self->clearColor.y, self->clearColor.z, self->clearColor.w);
     glClear(GL_COLOR_BUFFER_BIT);
+    glfwPollEvents();
+}
 
+
+void Renderer_flushVertexBuffer(Renderer* self) {
     glBindBuffer(GL_ARRAY_BUFFER, self->vertexBufferId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(self->vertices), self->vertices);
 
     glBindVertexArray(self->vertexBufferId);
     glDrawElements(GL_QUADS, self->nVerticesEnqueued, GL_UNSIGNED_INT, NULL);
     self->nVerticesEnqueued = 0;
-    glfwSwapBuffers(self->window);
-    glfwPollEvents();
 }
 
 
 void Renderer_drawQuad(Renderer* self, float x1, float x2, float y1, float y2, Vector4 color) {
-    if (self->nVerticesEnqueued >= RENDERER_MAX_VERTICES) {
-        die("Vertex limit reached");  /* TODO: Handle this better */
+    if (self->nVerticesEnqueued + 4 >= RENDERER_MAX_VERTICES) {
+        Renderer_flushVertexBuffer(self);
     }
 
     Vector2 positions[4];
