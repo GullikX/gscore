@@ -72,9 +72,11 @@ EditView* EditView_free(EditView* self) {
 
 
 void EditView_previewNote(EditView* self) {
+    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     if (!EditView_isPlaying(self)) {
-        Synth_noteOn(Application_getInstance()->synth, EditView_rowIndexToNoteKey(self->cursor.iRow));
+        Synth_noteOn(Application_getInstance()->synth, pitch);
     }
+    printf("Previewing note %s%d\n", NOTE_NAMES[pitch % NOTES_IN_OCTAVE], pitch / NOTES_IN_OCTAVE - 1);
 }
 
 
@@ -91,6 +93,8 @@ void EditView_addNote(EditView* self) {
 
     float timeEnd = (float)(self->cursor.iColumn + 1) / (float)nColumns;
     self->midiMessageHeld = EditView_addMidiMessage(FLUID_SEQ_NOTEOFF, timeEnd, pitch, 0);
+
+    printf("Adding note %s%d\n", NOTE_NAMES[pitch % NOTES_IN_OCTAVE], pitch / NOTES_IN_OCTAVE - 1);
 }
 
 

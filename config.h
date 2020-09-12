@@ -170,6 +170,21 @@ const char* const KEY_SIGNATURE_LIST_STRING =
 
 KeySignature KEY_SIGNATURE_DEFAULT = C_MAJOR;
 
+const char* NOTE_NAMES[] = {
+    "C",
+    "C#",
+    "D",
+    "D#",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "A#",
+    "B",
+};
+
 const char* const COLOR_BACKGROUND = "263238";
 const char* const COLOR_GRIDLINES = "212D32";
 const char* const COLOR_CURSOR = "38434A";
