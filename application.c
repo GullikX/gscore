@@ -55,12 +55,12 @@ Application* Application_new(const char* const filename) {
 
 
 Application* Application_free(Application* self) {
-    /* TODO: free all the things */
-    self->editView = EditView_free(self->editView);
-    self->objectView = ObjectView_free(self->objectView);
-    self->synth = Synth_free(self->synth);
     self->xevents = XEvents_free(self->xevents);
     self->renderer = Renderer_free(self->renderer);
+    self->objectView = ObjectView_free(self->objectView);
+    self->editView = EditView_free(self->editView);
+    self->scoreCurrent = Score_free(self->scoreCurrent);
+    self->synth = Synth_free(self->synth);
     free(self);
     _application = NULL;
     return NULL;
