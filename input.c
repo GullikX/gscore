@@ -165,11 +165,9 @@ void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int act
     if (action == GLFW_PRESS) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
-                puts("Left mouse button pressed!");
                 ObjectView_addBlock(objectView);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
-                puts("Right mouse button pressed!");
                 ObjectView_removeBlock(objectView);
                 break;
         }
@@ -289,30 +287,24 @@ void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int actio
     if (action == GLFW_PRESS) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
-                puts("Left mouse button pressed!");
                 EditView_addNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
-                puts("Middle mouse button pressed!");
                 EditView_previewNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
-                puts("Right mouse button pressed!");
                 EditView_removeNote(editView);
                 break;
         }
     } else if (action == GLFW_RELEASE) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
-                puts("Left mouse button released!");
                 EditView_releaseNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
-                puts("Middle mouse button released!");
                 EditView_releaseNote(editView);
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
-                puts("Right mouse button released!");
                 break;
         }
     }
