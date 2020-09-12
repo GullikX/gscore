@@ -143,7 +143,7 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
                                         break;
                                     }
                                 }
-                                if (!*block) die("Did not find blockdef '%s'", name);
+                                if (!block) die("Did not find blockdef '%s'", name);
                                 float blockVelocity = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
                                 Track_setBlock(self->tracks[self->nTracks], iBlock, block);
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, blockVelocity);
