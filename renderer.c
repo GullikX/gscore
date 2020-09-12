@@ -73,7 +73,8 @@ Renderer* Renderer_new(void) {
 
 
 Renderer* Renderer_free(Renderer* self) {
-    /* TODO: cleanup */
+    glfwDestroyWindow(self->window);
+    glfwTerminate();
     free(self);
     return NULL;
 }
