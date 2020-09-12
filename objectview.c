@@ -81,7 +81,8 @@ void ObjectView_removeBlock(ObjectView* self) {
 
 
 void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
-    (void)startPosition; (void)repeat; /* TODO */
+    (void)startPosition; /* TODO */
+    self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     float stopTime = -1.0f;
 
@@ -111,6 +112,16 @@ void ObjectView_playScore(ObjectView* self, int startPosition, bool repeat) {
     }
     Synth_scheduleCallback(Application_getInstance()->synth, stopTime);
     self->playStartTime = Synth_getTime(Application_getInstance()->synth);
+}
+
+
+void ObjectView_sequencerCallback(ObjectView* self) {
+    if (self->playRepeat) {
+        ObjectView_playScore(self, 0.0f, true);
+    }
+    else {
+        ObjectView_stopPlaying(self);
+    }
 }
 
 

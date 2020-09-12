@@ -194,7 +194,7 @@ void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequ
     Application* application = Application_getInstance();
     switch (application->state) {
         case OBJECT_MODE:
-            ObjectView_stopPlaying(application->objectView);
+            ObjectView_sequencerCallback(application->objectView);
             break;
         case EDIT_MODE:
             EditView_sequencerCallback(application->editView);
