@@ -79,6 +79,8 @@ Synth* Synth_free(Synth* self) {
     delete_fluid_synth(self->fluidSynth);
     delete_fluid_settings(self->settings);
 
+    free(self->instrumentListString);
+
     free(self);
     return NULL;
 }
