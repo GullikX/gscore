@@ -133,8 +133,8 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
                             if (iBlock >= self->scoreLength) self->scoreLength = iBlock + 1;
 
                             const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
-                            printf("node block name='%s'\n", name);
                             if (name) {
+                                printf("node block name='%s'\n", name);
                                 Block** block = NULL;
                                 for (int i = 0; i < self->nBlocks; i++) {
                                     if (!self->blocks[i]->name) continue;
@@ -149,6 +149,7 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, blockVelocity);
                             }
                             else {
+                                puts("empty block");
                                 Track_setBlock(self->tracks[self->nTracks], iBlock, NULL);
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, DEFAULT_VELOCITY);
                             }
@@ -182,9 +183,11 @@ void Score_writeToFile(Score* self, const char* const filename) {
     xmlNode* nodeScore = xmlNewNode(NULL, BAD_CAST XMLNODE_SCORE);
     xmlDocSetRootElement(doc, nodeScore);
 
-    char buffer[XML_BUFFER_SIZE];
-    snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tempo);
-    xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO, BAD_CAST buffer);
+    {
+        char buffer[XML_BUFFER_SIZE];
+        snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tempo);
+        xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO, BAD_CAST buffer);
+    }
 
     xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_KEYSIGNATURE, BAD_CAST KEY_SIGNATURE_NAMES[self->keySignature]);
 
