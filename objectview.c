@@ -96,6 +96,18 @@ static void ObjectView_adjustBlockVelocity(ObjectView* self, float amount) {
 }
 
 
+static void ObjectView_editBlock(ObjectView* self) {
+    if (ObjectView_isPlaying(self)) return;
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
+
+    Application* application = Application_getInstance();
+    Application_switchBlock(application, self->score->tracks[iTrack]->blocks[iBlock]);
+    EditView_setProgram(self->score->tracks[iTrack]->programName);
+}
+
+
 static void ObjectView_setCtrlPressed(ObjectView* self, bool ctrlPressed) {
     self->ctrlPressed = ctrlPressed;
 }

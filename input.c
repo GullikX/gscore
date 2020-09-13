@@ -199,6 +199,9 @@ static void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, 
             case GLFW_MOUSE_BUTTON_LEFT:
                 ObjectView_addBlock(objectView);
                 break;
+            case GLFW_MOUSE_BUTTON_MIDDLE:
+                ObjectView_editBlock(objectView);
+                break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 ObjectView_removeBlock(objectView);
                 break;
