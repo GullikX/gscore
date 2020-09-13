@@ -7,8 +7,8 @@ HFILES=config.h gscore.h
 INCLUDE=$$(xml2-config --cflags)
 LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lX11 $$(xml2-config --libs)
 
-WARNINGS=-Wall -Wextra -Wunused-const-variable
-ERRORS=-pedantic -Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes
+WARNINGS=-Wall -Wextra -Wunused-const-variable -pedantic
+ERRORS=-Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -Wfatal-errors
 DEFINES=-DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
