@@ -20,3 +20,6 @@ gscore: $(CFILES) $(HFILES)
 
 clean:
 	rm -f gscore
+
+cppcheck:
+	cppcheck --enable=all gscore.c
