@@ -77,6 +77,7 @@ Synth* Synth_free(Synth* self) {
     delete_fluid_sequencer(self->sequencer);
     delete_fluid_audio_driver(self->audioDriver);
     delete_fluid_synth(self->fluidSynth);
+    delete_fluid_settings(self->settings);
 
     free(self);
     return NULL;
