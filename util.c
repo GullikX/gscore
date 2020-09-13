@@ -16,7 +16,7 @@
  *
  */
 
-void die(const char* const format, ...) {
+static void die(const char* const format, ...) {
     fputs("Error: ", stderr);
     va_list vaList;
     va_start(vaList, format);
@@ -27,7 +27,7 @@ void die(const char* const format, ...) {
 }
 
 
-void* ecalloc(size_t nItems, size_t itemSize) {
+static void* ecalloc(size_t nItems, size_t itemSize) {
     void* pointer = calloc(nItems, itemSize);
     if (!pointer) {
         die("Failed to allocate memory");
@@ -36,12 +36,12 @@ void* ecalloc(size_t nItems, size_t itemSize) {
 }
 
 
-bool fileExists(const char* const filename) {
+static bool fileExists(const char* const filename) {
     return access(filename, F_OK) != -1;
 }
 
 
-void spawnSetXProp(int atomId) {
+static void spawnSetXProp(int atomId) {
     int bufferLength = strlen(cmdQuery) + strlen(ATOM_PROMPTS[atomId]) + strlen(ATOM_NAMES[atomId]) + 64;
     char* cmd = ecalloc(bufferLength, sizeof(char));
     Window x11Window = Application_getInstance()->xevents->x11Window;
@@ -51,7 +51,7 @@ void spawnSetXProp(int atomId) {
 }
 
 
-void spawn(const char* const cmd, const char* const pipeData) {
+static void spawn(const char* const cmd, const char* const pipeData) {
     FILE* pipe = popen(cmd, "w");
     if (!pipe) {
         die("Failed to run popen");
@@ -61,7 +61,7 @@ void spawn(const char* const cmd, const char* const pipeData) {
 }
 
 
-bool hexColorToRgb(const char* const hexColor, Vector4* rgbOut) {
+static bool hexColorToRgb(const char* const hexColor, Vector4* rgbOut) {
     int stringLength = strlen(hexColor);
     if (stringLength != 6) {
         printf("The color string must contain exactly 6 hexadecimal digits (%d given)\n", stringLength);

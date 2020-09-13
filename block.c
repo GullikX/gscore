@@ -16,7 +16,7 @@
  *
  */
 
-Block* Block_new(const char* const name, const char* const hexColor) {
+static Block* Block_new(const char* const name, const char* const hexColor) {
     Block* self = ecalloc(1, sizeof(*self));
 
     Block_setName(self, name);
@@ -34,7 +34,7 @@ Block* Block_new(const char* const name, const char* const hexColor) {
 }
 
 
-Block* Block_free(Block* self) {
+static Block* Block_free(Block* self) {
     MidiMessage* midiMessage = self->midiMessageRoot;
     self->midiMessageRoot = NULL;
 
@@ -49,7 +49,7 @@ Block* Block_free(Block* self) {
 }
 
 
-void Block_setName(Block* self, const char* const name) {
+static void Block_setName(Block* self, const char* const name) {
     if (!name) {
         die("Block name cannot be null");
     }
@@ -59,7 +59,7 @@ void Block_setName(Block* self, const char* const name) {
 }
 
 
-void Block_setColor(Block* self, const char* const hexColor) {
+static void Block_setColor(Block* self, const char* const hexColor) {
     if (!hexColor) {
         die("Block color cannot be null");
     }
@@ -75,7 +75,7 @@ void Block_setColor(Block* self, const char* const hexColor) {
 }
 
 
-MidiMessage* Block_addMidiMessage(Block* self, int type, float time, int pitch, float velocity) {
+static MidiMessage* Block_addMidiMessage(Block* self, int type, float time, int pitch, float velocity) {
     MidiMessage* midiMessage = ecalloc(1, sizeof(MidiMessage));
     midiMessage->type = type;
     midiMessage->time = time;
@@ -97,7 +97,7 @@ MidiMessage* Block_addMidiMessage(Block* self, int type, float time, int pitch, 
 }
 
 
-void Block_removeMidiMessage(MidiMessage* midiMessage) {
+static void Block_removeMidiMessage(MidiMessage* midiMessage) {
     if (!midiMessage) return;
     if (midiMessage->prev) midiMessage->prev->next = midiMessage->next;
     if (midiMessage->next) midiMessage->next->prev = midiMessage->prev;
@@ -105,7 +105,7 @@ void Block_removeMidiMessage(MidiMessage* midiMessage) {
 }
 
 
-bool Block_compareMidiMessages(MidiMessage* midiMessage, MidiMessage* midiMessageOther) {
+static bool Block_compareMidiMessages(MidiMessage* midiMessage, MidiMessage* midiMessageOther) {
     if (midiMessage->time > midiMessageOther->time) return true;
     else if (midiMessage->time < midiMessageOther->time) return false;
     else if (midiMessage->type == FLUID_SEQ_NOTEON && midiMessageOther->type == FLUID_SEQ_NOTEOFF) return true;

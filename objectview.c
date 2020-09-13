@@ -16,7 +16,7 @@
  *
  */
 
-ObjectView* ObjectView_new(Score* score) {
+static ObjectView* ObjectView_new(Score* score) {
     ObjectView* self = ecalloc(1, sizeof(*self));
 
     self->score = score;
@@ -54,13 +54,13 @@ ObjectView* ObjectView_new(Score* score) {
 }
 
 
-ObjectView* ObjectView_free(ObjectView* self) {
+static ObjectView* ObjectView_free(ObjectView* self) {
     free(self);
     return NULL;
 }
 
 
-void ObjectView_addBlock(ObjectView* self) {
+static void ObjectView_addBlock(ObjectView* self) {
     if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
@@ -74,7 +74,7 @@ void ObjectView_addBlock(ObjectView* self) {
 }
 
 
-void ObjectView_removeBlock(ObjectView* self) {
+static void ObjectView_removeBlock(ObjectView* self) {
     if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
@@ -85,7 +85,7 @@ void ObjectView_removeBlock(ObjectView* self) {
 }
 
 
-void ObjectView_adjustBlockVelocity(ObjectView* self, float amount) {
+static void ObjectView_adjustBlockVelocity(ObjectView* self, float amount) {
     if (ObjectView_isPlaying(self)) return; /* TODO: allow this */
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
@@ -96,12 +96,12 @@ void ObjectView_adjustBlockVelocity(ObjectView* self, float amount) {
 }
 
 
-void ObjectView_setCtrlPressed(ObjectView* self, bool ctrlPressed) {
+static void ObjectView_setCtrlPressed(ObjectView* self, bool ctrlPressed) {
     self->ctrlPressed = ctrlPressed;
 }
 
 
-void ObjectView_playScore(ObjectView* self, float startPosition, bool repeat) {
+static void ObjectView_playScore(ObjectView* self, float startPosition, bool repeat) {
     self->iPlayStartBlock = startPosition * self->score->scoreLength;
     self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
@@ -137,7 +137,7 @@ void ObjectView_playScore(ObjectView* self, float startPosition, bool repeat) {
 }
 
 
-void ObjectView_sequencerCallback(ObjectView* self) {
+static void ObjectView_sequencerCallback(ObjectView* self) {
     if (self->playRepeat) {
         ObjectView_playScore(self, 0.0f, true);
     }
@@ -147,18 +147,18 @@ void ObjectView_sequencerCallback(ObjectView* self) {
 }
 
 
-void ObjectView_stopPlaying(ObjectView* self) {
+static void ObjectView_stopPlaying(ObjectView* self) {
     Synth_noteOffAll(Application_getInstance()->synth);
     self->playStartTime = -1;
 }
 
 
-bool ObjectView_isPlaying(ObjectView* self) {
+static bool ObjectView_isPlaying(ObjectView* self) {
     return self->playStartTime > 0;
 }
 
 
-void ObjectView_setProgram(ObjectView* self, const char* const programName) {
+static void ObjectView_setProgram(ObjectView* self, const char* const programName) {
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
@@ -168,7 +168,7 @@ void ObjectView_setProgram(ObjectView* self, const char* const programName) {
 }
 
 
-void ObjectView_toggleIgnoreNoteOff(ObjectView* self) {
+static void ObjectView_toggleIgnoreNoteOff(ObjectView* self) {
     int iTrack = self->cursor.iRow;
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
@@ -177,7 +177,7 @@ void ObjectView_toggleIgnoreNoteOff(ObjectView* self) {
 }
 
 
-void ObjectView_draw(ObjectView* self) {
+static void ObjectView_draw(ObjectView* self) {
     self->viewHeight = self->score->nTracks * MAX_TRACK_HEIGHT;
 
     for (int i = 0; i < self->score->nTracks; i++) {
@@ -217,7 +217,7 @@ void ObjectView_draw(ObjectView* self) {
 }
 
 
-void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
+static void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
     float columnWidth = 2.0f/(float)self->score->scoreLength;
     float rowHeight = self->viewHeight / self->score->nTracks;
 
@@ -239,7 +239,7 @@ void ObjectView_drawItem(ObjectView* self, GridItem* item, float offset) {
 }
 
 
-void ObjectView_drawPlaybackCursor(ObjectView* self) {
+static void ObjectView_drawPlaybackCursor(ObjectView* self) {
     if (!ObjectView_isPlaying(self)) return;
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
@@ -256,7 +256,7 @@ void ObjectView_drawPlaybackCursor(ObjectView* self) {
 }
 
 
-bool ObjectView_updateCursorPosition(ObjectView* self, float x, float y) {
+static bool ObjectView_updateCursorPosition(ObjectView* self, float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
@@ -267,13 +267,13 @@ bool ObjectView_updateCursorPosition(ObjectView* self, float x, float y) {
 }
 
 
-int ObjectView_xCoordToColumnIndex(ObjectView* self, float x) {
+static int ObjectView_xCoordToColumnIndex(ObjectView* self, float x) {
     int nColumns = self->score->scoreLength;
     return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
 }
 
 
-int ObjectView_yCoordToRowIndex(ObjectView* self, float y) {
+static int ObjectView_yCoordToRowIndex(ObjectView* self, float y) {
     int nRows = self->score->nTracks;
     return (nRows * y) / (Application_getInstance()->renderer->viewportHeight * self->viewHeight / 2.0f);
 }

@@ -16,7 +16,7 @@
  *
  */
 
-XEvents* XEvents_new(GLFWwindow* glfwWindow) {
+static XEvents* XEvents_new(GLFWwindow* glfwWindow) {
     XEvents* self = ecalloc(1, sizeof(*self));
 
     self->x11Display = glfwGetX11Display();
@@ -30,13 +30,13 @@ XEvents* XEvents_new(GLFWwindow* glfwWindow) {
 }
 
 
-XEvents* XEvents_free(XEvents* self) {
+static XEvents* XEvents_free(XEvents* self) {
     free(self);
     return NULL;
 }
 
 
-void XEvents_processXEvents(XEvents* self) {
+static void XEvents_processXEvents(XEvents* self) {
     Application* application = Application_getInstance();
     for (unsigned long i = 0; i < ATOM_COUNT; i++) {
         unsigned char* propertyValue = NULL;

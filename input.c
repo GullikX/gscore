@@ -16,7 +16,7 @@
  *
  */
 
-void Input_setupCallbacks(GLFWwindow* window) {
+static void Input_setupCallbacks(GLFWwindow* window) {
     glfwSetKeyCallback(window, Input_keyCallback);
     glfwSetMouseButtonCallback(window, Input_mouseButtonCallback);
     glfwSetCursorPosCallback(window, Input_cursorPosCallback);
@@ -25,7 +25,7 @@ void Input_setupCallbacks(GLFWwindow* window) {
 }
 
 
-void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+static void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     Application* application = Application_getInstance();
     switch (Application_getState(application)) {
         case OBJECT_MODE:
@@ -38,7 +38,7 @@ void Input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
 }
 
 
-void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+static void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     Application* application = Application_getInstance();
     switch (Application_getState(application)) {
         case OBJECT_MODE:
@@ -51,7 +51,7 @@ void Input_mouseButtonCallback(GLFWwindow* window, int button, int action, int m
 }
 
 
-void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
+static void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
     Application* application = Application_getInstance();
     switch (Application_getState(application)) {
         case OBJECT_MODE:
@@ -64,7 +64,7 @@ void Input_cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 
-void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+static void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
     Application* application = Application_getInstance();
     switch (Application_getState(application)) {
         case OBJECT_MODE:
@@ -77,7 +77,7 @@ void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 
-void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
+static void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
     (void)window;
     printf("Window size updated: (%d, %d)\n", width, height);
     Renderer_updateViewportSize(Application_getInstance()->renderer, width, height);
@@ -85,7 +85,7 @@ void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
 
 
 /* Object mode */
-void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
+static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window; (void)mods;
     Application* application = Application_getInstance();
     ObjectView* objectView = application->objectView;
@@ -190,7 +190,7 @@ void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancode, int 
 }
 
 
-void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int action, int mods) {
+static void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int action, int mods) {
     Application* application = Application_getInstance();
     ObjectView* objectView = application->objectView;
     (void)window; (void)mods;
@@ -207,7 +207,7 @@ void Input_mouseButtonCallbackObjectMode(GLFWwindow* window, int button, int act
 }
 
 
-void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
+static void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
     (void)window;
     Application* application = Application_getInstance();
     ObjectView* objectView = application->objectView;
@@ -223,7 +223,7 @@ void Input_cursorPosCallbackObjectMode(GLFWwindow* window, double x, double y) {
 }
 
 
-void Input_scrollCallbackObjectMode(GLFWwindow* window, double xoffset, double yoffset) {
+static void Input_scrollCallbackObjectMode(GLFWwindow* window, double xoffset, double yoffset) {
     (void)xoffset;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
         Application* application = Application_getInstance();
@@ -234,7 +234,7 @@ void Input_scrollCallbackObjectMode(GLFWwindow* window, double xoffset, double y
 
 
 /* Edit mode */
-void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
+static void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)window;
     Application* application = Application_getInstance();
     EditView* editView = application->editView;
@@ -322,7 +322,7 @@ void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode, int ac
 }
 
 
-void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int action, int mods) {
+static void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int action, int mods) {
     (void)window; (void)mods;
     Application* application = Application_getInstance();
     EditView* editView = application->editView;
@@ -353,7 +353,7 @@ void Input_mouseButtonCallbackEditMode(GLFWwindow* window, int button, int actio
 }
 
 
-void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y) {
+static void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y) {
     (void)window;
     Application* application = Application_getInstance();
     EditView* editView = application->editView;
@@ -372,7 +372,7 @@ void Input_cursorPosCallbackEditMode(GLFWwindow* window, double x, double y) {
 }
 
 
-void Input_scrollCallbackEditMode(GLFWwindow* window, double xoffset, double yoffset) {
+static void Input_scrollCallbackEditMode(GLFWwindow* window, double xoffset, double yoffset) {
     (void)xoffset;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
         Application* application = Application_getInstance();

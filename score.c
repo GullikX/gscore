@@ -16,7 +16,7 @@
  *
  */
 
-Score* Score_new(Synth* synth) {
+static Score* Score_new(Synth* synth) {
     Score* self = ecalloc(1, sizeof(*self));
     self->tempo = TEMPO_BPM;
 
@@ -33,7 +33,7 @@ Score* Score_new(Synth* synth) {
 }
 
 
-Score* Score_free(Score* self) {
+static Score* Score_free(Score* self) {
     for (int iTrack = 0; iTrack < self->nTracks; iTrack++) {
         self->tracks[iTrack] = Track_free(self->tracks[iTrack]);
     }
@@ -45,7 +45,7 @@ Score* Score_free(Score* self) {
 }
 
 
-Score* Score_readFromFile(const char* const filename, Synth* synth) {
+static Score* Score_readFromFile(const char* const filename, Synth* synth) {
     Score* self = ecalloc(1, sizeof(*self));
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
@@ -251,7 +251,7 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
 }
 
 
-void Score_writeToFile(Score* self, const char* const filename) {
+static void Score_writeToFile(Score* self, const char* const filename) {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST XML_VERSION);
     xmlNode* nodeScore = xmlNewNode(NULL, BAD_CAST XMLNODE_SCORE);
     xmlDocSetRootElement(doc, nodeScore);
@@ -328,7 +328,7 @@ void Score_writeToFile(Score* self, const char* const filename) {
 }
 
 
-void Score_regenerateBlockListString(Score* self) {
+static void Score_regenerateBlockListString(Score* self) {
     memset(self->blockListString, 0, MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1);
     for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (iBlock > 0) {
@@ -339,14 +339,14 @@ void Score_regenerateBlockListString(Score* self) {
 }
 
 
-const char* Score_getBlockListString(void) {  /* called from input callback (no instance reference) */
+static const char* Score_getBlockListString(void) {
     Score* self = Application_getInstance()->scoreCurrent;
     Score_regenerateBlockListString(self);
     return self->blockListString;
 }
 
 
-void Score_setBlockByName(Score* self, const char* const name) {
+static void Score_setBlockByName(Score* self, const char* const name) {
     Application* application = Application_getInstance();
 
     for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
@@ -368,13 +368,13 @@ void Score_setBlockByName(Score* self, const char* const name) {
 }
 
 
-const char* Score_getCurrentBlockName(void) {  /* called from input callback (no instance reference) */
+static const char* Score_getCurrentBlockName(void) {
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     return blockCurrent->name;
 }
 
 
-void Score_renameBlock(Score* self, const char* const name) {
+static void Score_renameBlock(Score* self, const char* const name) {
     for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         if (!strcmp(name, self->blocks[iBlock]->name)) {
             if (self->blocks[iBlock] == *Application_getInstance()->blockCurrent) {
@@ -393,19 +393,19 @@ void Score_renameBlock(Score* self, const char* const name) {
 }
 
 
-const char* Score_getCurrentBlockColor(void) {  /* called from input callback (no instance reference) */
+static const char* Score_getCurrentBlockColor(void) {
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     return blockCurrent->hexColor;
 }
 
 
-void Score_setBlockColor(const char* const hexColor) {
+static void Score_setBlockColor(const char* const hexColor) {
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     Block_setColor(blockCurrent, hexColor);
 }
 
 
-void Score_increaseLength(Score* self) {
+static void Score_increaseLength(Score* self) {
     if (self->scoreLength == SCORE_LENGTH_MAX) {
         printf("Already at max score length (%d)\n", SCORE_LENGTH_MAX);
         return;
@@ -415,7 +415,7 @@ void Score_increaseLength(Score* self) {
 }
 
 
-void Score_decreaseLength(Score* self) {
+static void Score_decreaseLength(Score* self) {
     if (self->scoreLength == 1) {
         printf("Already at minimum score length (%d)\n", 1);
         return;
@@ -425,7 +425,7 @@ void Score_decreaseLength(Score* self) {
 }
 
 
-void Score_addTrack(Score* self) {
+static void Score_addTrack(Score* self) {
     if (self->nTracks == N_TRACKS_MAX) {
         printf("Already at maximum number of tracks (%d)\n", N_TRACKS_MAX);
         return;
@@ -439,7 +439,7 @@ void Score_addTrack(Score* self) {
 }
 
 
-void Score_removeTrack(Score* self) {
+static void Score_removeTrack(Score* self) {
     if (self->nTracks == 1) {
         printf("Already at minimum number of tracks (%d)\n", 1);
         return;
@@ -449,12 +449,12 @@ void Score_removeTrack(Score* self) {
 }
 
 
-const char* Score_getKeySignatureName(void) {
+static const char* Score_getKeySignatureName(void) {
     return KEY_SIGNATURE_LIST_STRING;
 }
 
 
-void Score_setKeySignatureByName(Score* self, const char* const name) {
+static void Score_setKeySignatureByName(Score* self, const char* const name) {
     for (int iKey = 0; iKey < KEY_SIGNATURE_COUNT; iKey++) {
         if (!strcmp(name, KEY_SIGNATURE_NAMES[iKey])) {
             self->keySignature = iKey;

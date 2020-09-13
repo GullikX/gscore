@@ -16,10 +16,10 @@
  *
  */
 
-Application* _application = NULL;  /* Must only be accessed by Application_{new, free, getInstance} */
+static Application* _application = NULL;  /* Must only be accessed by Application_{new, free, getInstance} */
 
 
-Application* Application_new(const char* const filename) {
+static Application* Application_new(const char* const filename) {
     Application* self = ecalloc(1, sizeof(*self));
     self->state = OBJECT_MODE;
     self->scoreCurrent = NULL;
@@ -54,7 +54,7 @@ Application* Application_new(const char* const filename) {
 }
 
 
-Application* Application_free(Application* self) {
+static Application* Application_free(Application* self) {
     self->xevents = XEvents_free(self->xevents);
     self->renderer = Renderer_free(self->renderer);
     self->objectView = ObjectView_free(self->objectView);
@@ -67,13 +67,13 @@ Application* Application_free(Application* self) {
 }
 
 
-Application* Application_getInstance(void) {
+static Application* Application_getInstance(void) {
     if (!_application) die("Application instance not created yet");
     return _application;
 }
 
 
-void Application_run(Application* self) {
+static void Application_run(Application* self) {
     while(Renderer_running(self->renderer)) {
         switch (Application_getState(self)) {
             case OBJECT_MODE:
@@ -89,30 +89,30 @@ void Application_run(Application* self) {
 }
 
 
-State Application_getState(Application* self) {
+static State Application_getState(Application* self) {
     return self->state;
 }
 
 
-void Application_switchState(Application* self) {
+static void Application_switchState(Application* self) {
     self->state = !self->state;
     printf("Switched state to %s\n", self->state ? "edit mode" : "object mode");
 }
 
 
-void Application_switchBlock(Application* self, Block** block) {
+static void Application_switchBlock(Application* self, Block** block) {
     printf("Switching to block '%s'\n", (*block)->name);
     self->blockPrevious = self->blockCurrent;
     self->blockCurrent = block;
 }
 
 
-void Application_toggleBlock(Application* self) {
+static void Application_toggleBlock(Application* self) {
     if (!self->blockPrevious) return;
     Application_switchBlock(self, self->blockPrevious);
 }
 
 
-void Application_writeScore(Application* self) {
+static void Application_writeScore(Application* self) {
     Score_writeToFile(self->scoreCurrent, self->filename);
 }

@@ -16,7 +16,7 @@
  *
  */
 
-Renderer* Renderer_new(void) {
+static Renderer* Renderer_new(void) {
     Renderer* self = ecalloc(1, sizeof(*self));
 
     if (!glfwInit()) {
@@ -72,7 +72,7 @@ Renderer* Renderer_new(void) {
 }
 
 
-Renderer* Renderer_free(Renderer* self) {
+static Renderer* Renderer_free(Renderer* self) {
     glfwDestroyWindow(self->window);
     glfwTerminate();
     free(self);
@@ -80,17 +80,17 @@ Renderer* Renderer_free(Renderer* self) {
 }
 
 
-void Renderer_stop(Renderer* self) {
+static void Renderer_stop(Renderer* self) {
     glfwSetWindowShouldClose(self->window, GL_TRUE);
 }
 
 
-int Renderer_running(Renderer* self) {
+static int Renderer_running(Renderer* self) {
     return !glfwWindowShouldClose(self->window);
 }
 
 
-void Renderer_updateScreen(Renderer* self) {
+static void Renderer_updateScreen(Renderer* self) {
     Renderer_flushVertexBuffer(self);
     glfwSwapBuffers(self->window);
     glClearColor(self->clearColor.x, self->clearColor.y, self->clearColor.z, self->clearColor.w);
@@ -99,7 +99,7 @@ void Renderer_updateScreen(Renderer* self) {
 }
 
 
-void Renderer_flushVertexBuffer(Renderer* self) {
+static void Renderer_flushVertexBuffer(Renderer* self) {
     glBindBuffer(GL_ARRAY_BUFFER, self->vertexBufferId);
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(self->vertices), self->vertices);
 
@@ -109,7 +109,7 @@ void Renderer_flushVertexBuffer(Renderer* self) {
 }
 
 
-void Renderer_drawQuad(Renderer* self, float x1, float x2, float y1, float y2, Vector4 color) {
+static void Renderer_drawQuad(Renderer* self, float x1, float x2, float y1, float y2, Vector4 color) {
     if (self->nVerticesEnqueued + 4 >= RENDERER_MAX_VERTICES) {
         Renderer_flushVertexBuffer(self);
     }
@@ -128,14 +128,14 @@ void Renderer_drawQuad(Renderer* self, float x1, float x2, float y1, float y2, V
 }
 
 
-void Renderer_updateViewportSize(Renderer* self, int width, int height) {
+static void Renderer_updateViewportSize(Renderer* self, int width, int height) {
     self->viewportWidth = width;
     self->viewportHeight = height;
     glViewport(0, 0, width, height);
 }
 
 
-GLuint createShader(const GLenum type, const char* const shaderSource) {
+static GLuint createShader(const GLenum type, const char* const shaderSource) {
     const char* const typeString = type == GL_VERTEX_SHADER ? "vertex" : "fragment";
     GLuint shaderId = glCreateShader(type);
     glShaderSource(shaderId, 1, &shaderSource, NULL);
@@ -156,7 +156,7 @@ GLuint createShader(const GLenum type, const char* const shaderSource) {
 }
 
 
-GLuint createProgram(void) {
+static GLuint createProgram(void) {
     GLuint programId = glCreateProgram();
 
     GLuint vertexShaderId = createShader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);

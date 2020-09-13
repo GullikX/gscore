@@ -16,7 +16,7 @@
  *
  */
 
-Track* Track_new(const char* const programName, float velocity, bool ignoreNoteOff) {
+static Track* Track_new(const char* const programName, float velocity, bool ignoreNoteOff) {
     Track* self = ecalloc(1, sizeof(*self));
 
     Track_setProgram(self, programName);
@@ -33,34 +33,34 @@ Track* Track_new(const char* const programName, float velocity, bool ignoreNoteO
 }
 
 
-Track* Track_free(Track* self) {
+static Track* Track_free(Track* self) {
     free(self);
     return NULL;
 }
 
 
-void Track_setProgram(Track* self, const char* const programName) {
+static void Track_setProgram(Track* self, const char* const programName) {
     strncpy(self->programName, programName, SYNTH_PROGRAM_NAME_LENGTH_MAX);
     self->programName[SYNTH_PROGRAM_NAME_LENGTH_MAX - 1] = '\0';
 }
 
 
-void Track_setVelocity(Track* self, float velocity) {
+static void Track_setVelocity(Track* self, float velocity) {
     self->velocity = velocity;
 }
 
 
-void Track_setBlock(Track* self, int iBlock, Block** block) {
+static void Track_setBlock(Track* self, int iBlock, Block** block) {
     self->blocks[iBlock] = block;
 }
 
 
-void Track_setBlockVelocity(Track* self, int iBlock, float blockVelocity) {
+static void Track_setBlockVelocity(Track* self, int iBlock, float blockVelocity) {
     self->blockVelocities[iBlock] = blockVelocity;
 }
 
 
-void Track_adjustBlockVelocity(Track* self, int iBlock, float amount) {
+static void Track_adjustBlockVelocity(Track* self, int iBlock, float amount) {
     if (!self->blocks[iBlock]) return;
     self->blockVelocities[iBlock] += amount;
     if (self->blockVelocities[iBlock] > 1.0f) self->blockVelocities[iBlock] = 1.0f;
@@ -69,7 +69,7 @@ void Track_adjustBlockVelocity(Track* self, int iBlock, float amount) {
 }
 
 
-void Track_toggleIgnoreNoteOff(Track* self) {
+static void Track_toggleIgnoreNoteOff(Track* self) {
     self->ignoreNoteOff = !self->ignoreNoteOff;
     printf("%s note off events for track\n", self->ignoreNoteOff ? "Disabled" : "Enabled");
 }

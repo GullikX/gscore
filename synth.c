@@ -16,7 +16,7 @@
  *
  */
 
-Synth* Synth_new(void) {
+static Synth* Synth_new(void) {
     Synth* self = ecalloc(1, sizeof(*self));
 
     self->settings = new_fluid_settings();
@@ -72,7 +72,7 @@ Synth* Synth_new(void) {
 }
 
 
-Synth* Synth_free(Synth* self) {
+static Synth* Synth_free(Synth* self) {
     fluid_sequencer_unregister_client(self->sequencer, self->callbackId);
     delete_fluid_sequencer(self->sequencer);
     delete_fluid_audio_driver(self->audioDriver);
@@ -86,7 +86,7 @@ Synth* Synth_free(Synth* self) {
 }
 
 
-void Synth_setProgramById(Synth* self, int channel, int iBank, int iProgram) {
+static void Synth_setProgramById(Synth* self, int channel, int iBank, int iProgram) {
     printf("Synth_setProgramById channel:%d program:(%d, %d)\n", channel, iBank, iProgram);
     if (fluid_synth_program_select(self->fluidSynth, channel, self->soundFontId, iBank, iProgram) == FLUID_FAILED) {
         puts("Error: Failed to set midi program");
@@ -94,7 +94,7 @@ void Synth_setProgramById(Synth* self, int channel, int iBank, int iProgram) {
 }
 
 
-void Synth_setProgramByName(Synth* self, int channel, const char* const programName) {
+static void Synth_setProgramByName(Synth* self, int channel, const char* const programName) {
     for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
         for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
             fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
@@ -109,7 +109,7 @@ void Synth_setProgramByName(Synth* self, int channel, const char* const programN
 }
 
 
-void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
+static void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
     int velocity = 127.0f * midiMessage->velocity;
     switch (midiMessage->type) {
         case FLUID_SEQ_NOTE:
@@ -127,12 +127,12 @@ void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
 }
 
 
-void Synth_noteOn(Synth* self, int key) {
+static void Synth_noteOn(Synth* self, int key) {
     fluid_synth_noteon(self->fluidSynth, 0, key, EDIT_MODE_PREVIEW_VELOCITY);
 }
 
 
-void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity, float time) {
+static void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity, float time) {
     int velocityInt = 127.0f * velocity;
     int timeInt = 1000.0f * time;
 
@@ -146,12 +146,12 @@ void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity, float
 }
 
 
-void Synth_noteOff(Synth* self, int key) {
+static void Synth_noteOff(Synth* self, int key) {
     fluid_synth_noteoff(self->fluidSynth, 0, key);
 }
 
 
-void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time) {
+static void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time) {
     int timeInt = 1000.0f * time;
 
     fluid_event_t* event = new_fluid_event();
@@ -164,7 +164,7 @@ void Synth_sendNoteOff(Synth* self, int channel, int pitch, float time) {
 }
 
 
-void Synth_noteOffAll(Synth* self) {
+static void Synth_noteOffAll(Synth* self) {
     fluid_sequencer_remove_events(self->sequencer, -1, -1, -1);
     for (int iChannel = 0; iChannel < SYNTH_MIDI_CHANNELS; iChannel++) {
         fluid_synth_all_notes_off(self->fluidSynth, iChannel);
@@ -172,7 +172,7 @@ void Synth_noteOffAll(Synth* self) {
 }
 
 
-void Synth_scheduleCallback(Synth* self, float time) {
+static void Synth_scheduleCallback(Synth* self, float time) {
     int timeInt = 1000.0f * time;
 
     fluid_event_t* event = new_fluid_event();
@@ -185,12 +185,12 @@ void Synth_scheduleCallback(Synth* self, float time) {
 }
 
 
-int Synth_getTime(Synth* self) {
+static int Synth_getTime(Synth* self) {
     return fluid_sequencer_get_tick(self->sequencer);
 }
 
 
-void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequencer_t* sequencer, void* data) {
+static void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequencer_t* sequencer, void* data) {
     (void)time; (void)sequencer; (void)data;
     if (fluid_event_get_type(event) != FLUID_SEQ_TIMER) return;
 
@@ -206,7 +206,7 @@ void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, fluid_sequ
 }
 
 
-const char* Synth_getDefaultProgramName(Synth* self) {
+static const char* Synth_getDefaultProgramName(Synth* self) {
     fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, SYNTH_BANK_DEFAULT, SYNTH_PROGRAM_DEFAULT);
     if (!preset) die("Could not determine default program name");
     const char* name = fluid_preset_get_name(preset);
@@ -216,6 +216,6 @@ const char* Synth_getDefaultProgramName(Synth* self) {
 }
 
 
-const char* Synth_getInstrumentListString(void) {  /* called from input callback (no instance reference) */
+static const char* Synth_getInstrumentListString(void) {
     return Application_getInstance()->synth->instrumentListString;
 }

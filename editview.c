@@ -16,7 +16,7 @@
  *
  */
 
-EditView* EditView_new(Score* score) {
+static EditView* EditView_new(Score* score) {
     EditView* self = ecalloc(1, sizeof(*self));
 
     self->score = score;
@@ -65,13 +65,13 @@ EditView* EditView_new(Score* score) {
 }
 
 
-EditView* EditView_free(EditView* self) {
+static EditView* EditView_free(EditView* self) {
     free(self);
     return NULL;
 }
 
 
-void EditView_previewNote(EditView* self) {
+static void EditView_previewNote(EditView* self) {
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     if (!EditView_isPlaying(self)) {
         Synth_noteOffAll(Application_getInstance()->synth);
@@ -81,7 +81,7 @@ void EditView_previewNote(EditView* self) {
 }
 
 
-void EditView_addNote(EditView* self) {
+static void EditView_addNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
@@ -99,7 +99,7 @@ void EditView_addNote(EditView* self) {
 }
 
 
-void EditView_dragNote(EditView* self) {
+static void EditView_dragNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     if (!self->midiMessageHeld) return;
 
@@ -113,7 +113,7 @@ void EditView_dragNote(EditView* self) {
 }
 
 
-void EditView_releaseNote(EditView* self) {
+static void EditView_releaseNote(EditView* self) {
     self->midiMessageHeld = NULL;
     if (!EditView_isPlaying(self)) {
         Synth_noteOffAll(Application_getInstance()->synth);
@@ -121,7 +121,7 @@ void EditView_releaseNote(EditView* self) {
 }
 
 
-void EditView_removeNote(EditView* self) {
+static void EditView_removeNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
@@ -149,7 +149,7 @@ void EditView_removeNote(EditView* self) {
 }
 
 
-void EditView_adjustNoteVelocity(EditView* self, float amount) {
+static void EditView_adjustNoteVelocity(EditView* self, float amount) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
@@ -179,12 +179,12 @@ void EditView_adjustNoteVelocity(EditView* self, float amount) {
 }
 
 
-void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
+static void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
     self->ctrlPressed = ctrlPressed;
 }
 
 
-void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
+static void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     self->playStartPosition = startPosition;
     self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
@@ -213,7 +213,7 @@ void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
 }
 
 
-void EditView_sequencerCallback(EditView* self) {
+static void EditView_sequencerCallback(EditView* self) {
     if (self->playRepeat) {
         EditView_playBlock(self, 0.0f, true);
     }
@@ -223,35 +223,35 @@ void EditView_sequencerCallback(EditView* self) {
 }
 
 
-void EditView_stopPlaying(EditView* self) {
+static void EditView_stopPlaying(EditView* self) {
     Synth_noteOffAll(Application_getInstance()->synth);
     self->playStartTime = -1;
 }
 
 
-bool EditView_isPlaying(EditView* self) {
+static bool EditView_isPlaying(EditView* self) {
     return self->playStartTime > 0;
 }
 
 
-void EditView_setProgram(const char* const programName) {
+static void EditView_setProgram(const char* const programName) {
     Synth_setProgramByName(Application_getInstance()->synth, 0, programName);
 }
 
 
-void EditView_setTempo(EditView* self, int tempo) {
+static void EditView_setTempo(EditView* self, int tempo) {
     self->tempo = tempo;
 }
 
 
-const char* EditView_getTempoString(void) {  /* called from input callback (no instance reference) */
+static const char* EditView_getTempoString(void) {
     EditView* self = Application_getInstance()->editView;
     snprintf(self->tempoString, 64, "%d", self->tempo);
     return self->tempoString;
 }
 
 
-void EditView_draw(EditView* self) {
+static void EditView_draw(EditView* self) {
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
         EditView_drawItem(self, &(self->gridlinesVertical[i]), 0);
@@ -325,7 +325,7 @@ void EditView_draw(EditView* self) {
 }
 
 
-void EditView_drawItem(EditView* self, GridItem* item, float offset) {
+static void EditView_drawItem(EditView* self, GridItem* item, float offset) {
     float columnWidth = 2.0f/(BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
@@ -346,7 +346,7 @@ void EditView_drawItem(EditView* self, GridItem* item, float offset) {
 }
 
 
-void EditView_drawPlaybackCursor(EditView* self) {
+static void EditView_drawPlaybackCursor(EditView* self) {
     if (!EditView_isPlaying(self)) return;
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
@@ -363,7 +363,7 @@ void EditView_drawPlaybackCursor(EditView* self) {
 }
 
 
-bool EditView_updateCursorPosition(EditView* self, float x, float y) {
+static bool EditView_updateCursorPosition(EditView* self, float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
@@ -384,41 +384,41 @@ bool EditView_updateCursorPosition(EditView* self, float x, float y) {
 }
 
 
-int EditView_rowIndexToNoteKey(int iRow) {
+static int EditView_rowIndexToNoteKey(int iRow) {
     return 95 - iRow;
 }
 
 
-int EditView_pitchToRowIndex(int pitch) {
+static int EditView_pitchToRowIndex(int pitch) {
     return 95 - pitch;
 }
 
 
-MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, float velocity) {
+static MidiMessage* EditView_addMidiMessage(int type, float time, int pitch, float velocity) {
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     MidiMessage* midiMessage = Block_addMidiMessage(blockCurrent, type, time, pitch, velocity);
     return midiMessage;
 }
 
 
-void EditView_removeMidiMessage(MidiMessage* midiMessage) {
+static void EditView_removeMidiMessage(MidiMessage* midiMessage) {
     Block_removeMidiMessage(midiMessage);
 }
 
 
-int EditView_xCoordToColumnIndex(float x) {
+static int EditView_xCoordToColumnIndex(float x) {
     int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
     return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
 }
 
 
-int EditView_yCoordToRowIndex(float y) {
+static int EditView_yCoordToRowIndex(float y) {
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
     return (nRows * y) / Application_getInstance()->renderer->viewportHeight;
 }
 
 
-void EditView_toggleIgnoreNoteOff(EditView* self) {
+static void EditView_toggleIgnoreNoteOff(EditView* self) {
     self->ignoreNoteOff = !self->ignoreNoteOff;
     printf("%s note off events for edit mode\n", self->ignoreNoteOff ? "Disabled" : "Enabled");
 }
