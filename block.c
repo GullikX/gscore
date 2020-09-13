@@ -50,12 +50,20 @@ Block* Block_free(Block* self) {
 
 
 void Block_setName(Block* self, const char* const name) {
+    if (!name) {
+        die("Block name cannot be null");
+    }
+
     strncpy(self->name, name, MAX_BLOCK_NAME_LENGTH);
     self->name[MAX_BLOCK_NAME_LENGTH - 1] = '\0';
 }
 
 
 void Block_setColor(Block* self, const char* const hexColor) {
+    if (!hexColor) {
+        die("Block color cannot be null");
+    }
+
     bool success = hexColorToRgb(hexColor, &self->color);
     if (success) {
         strncpy(self->hexColor, hexColor, 6);

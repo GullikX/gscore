@@ -57,15 +57,21 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
     }
 
     self->tempo = TEMPO_BPM;
-    const char* tempoProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO);
-    if (tempoProp) {
-        self->tempo = atoi(tempoProp);
+    {
+        char* tempoProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO);
+        if (tempoProp) {
+            self->tempo = atoi(tempoProp);
+        }
+        xmlFree(tempoProp);
     }
 
     self->keySignature = KEY_SIGNATURE_DEFAULT;
-    const char* keySignatureProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_KEYSIGNATURE);
-    if (keySignatureProp) {
-        Score_setKeySignatureByName(self, keySignatureProp);
+    {
+        char* keySignatureProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_KEYSIGNATURE);
+        if (keySignatureProp) {
+            Score_setKeySignatureByName(self, keySignatureProp);
+        }
+        xmlFree(keySignatureProp);
     }
 
     /* Read block definitions */
@@ -75,17 +81,65 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
             for (xmlNode* nodeBlockDef = node->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
                 if (nodeBlockDef->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEF, (char*)nodeBlockDef->name)) {
                     if (self->nBlocks >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
-                    const char* const name = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-                    const char* const hexColor = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR);
-                    self->blocks[self->nBlocks] = Block_new(name, hexColor);
+
+                    {
+                        const char* blockName = NULL;
+                        char* blockNameProp = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
+                        if (blockNameProp) {
+                            blockName = blockNameProp;
+                        }
+
+                        const char* blockColor = COLOR_BLOCK_DEFAULT;
+                        char* blockColorProp = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR);
+                        if (blockColorProp) {
+                            blockColor = blockColorProp;
+                        }
+
+                        self->blocks[self->nBlocks] = Block_new(blockName, blockColor);
+
+                        xmlFree(blockNameProp);
+                        xmlFree(blockColorProp);
+                    }
+
 
                     for (xmlNode* nodeMessage = nodeBlockDef->children; nodeMessage; nodeMessage = nodeMessage->next) {
                         if (nodeMessage->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_MESSAGE, (char*)nodeMessage->name)) {
-                            /* TODO: error checking */
-                            int type = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE));
-                            float time = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME));
-                            int pitch = atoi((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH));
-                            float velocity = atof((char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY));
+                            int type = 0;
+                            {
+                                char* typeProp = (char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TYPE);
+                                if (typeProp) {
+                                    type = atoi(typeProp);
+                                }
+                                xmlFree(typeProp);
+                            }
+
+                            float time = -1.0f;
+                            {
+                                char* timeProp = (char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_TIME);
+                                if (timeProp) {
+                                    time = atof(timeProp);
+                                }
+                                xmlFree(timeProp);
+                            }
+
+                            int pitch = -1;
+                            {
+                                char* pitchProp = (char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_PITCH);
+                                if (pitchProp) {
+                                    pitch = atoi(pitchProp);
+                                }
+                                xmlFree(pitchProp);
+                            }
+
+                            float velocity = 0.0f;
+                            {
+                                char* velocityProp = (char*)xmlGetProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY);
+                                if (velocityProp) {
+                                    velocity = atof(velocityProp);
+                                }
+                                xmlFree(velocityProp);
+                            }
+
                             Block_addMidiMessage(self->blocks[self->nBlocks], type, time, pitch, velocity);
                         }
                     }
@@ -106,25 +160,31 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
             self->nTracks = 0;
             for (xmlNode* nodeTrack = node->children; nodeTrack; nodeTrack = nodeTrack ->next) {
                 if (nodeTrack->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACK, (char*)nodeTrack->name)) {
-                    const char* programName = Synth_getDefaultProgramName(synth);
-                    const char* programProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM);
-                    if (programProp) {
-                        programName = programProp;
-                    }
+                    {
+                        const char* programName = Synth_getDefaultProgramName(synth);
+                        char* programProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_PROGRAM);
+                        if (programProp) {
+                            programName = programProp;
+                        }
 
-                    float velocity = DEFAULT_VELOCITY;
-                    const char* velocityProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY);
-                    if (velocityProp) {
-                        velocity = atof(velocityProp);
-                    }
+                        float velocity = DEFAULT_VELOCITY;
+                        char* velocityProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_VELOCITY);
+                        if (velocityProp) {
+                            velocity = atof(velocityProp);
+                        }
 
-                    bool ignoreNoteOff = IGNORE_NOTE_OFF_DEFAULT;
-                    const char* ignoreNoteOffProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_IGNORENOTEOFF);
-                    if (ignoreNoteOffProp) {
-                        ignoreNoteOff = atoi(ignoreNoteOffProp);
-                    }
+                        bool ignoreNoteOff = IGNORE_NOTE_OFF_DEFAULT;
+                        char* ignoreNoteOffProp = (char*)xmlGetProp(nodeTrack, BAD_CAST XMLATTRIB_IGNORENOTEOFF);
+                        if (ignoreNoteOffProp) {
+                            ignoreNoteOff = atoi(ignoreNoteOffProp);
+                        }
 
-                    self->tracks[self->nTracks] = Track_new(programName, velocity, ignoreNoteOff);
+                        self->tracks[self->nTracks] = Track_new(programName, velocity, ignoreNoteOff);
+
+                        xmlFree(programProp);
+                        xmlFree(velocityProp);
+                        xmlFree(ignoreNoteOffProp);
+                    }
 
                     int iBlock = 0;
                     for (xmlNode* nodeBlock = nodeTrack->children; nodeBlock; nodeBlock = nodeBlock->next) {
@@ -132,19 +192,31 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
                             if (iBlock >= SCORE_LENGTH_MAX) die("Too many blocks (max is %d)", SCORE_LENGTH_MAX);
                             if (iBlock >= self->scoreLength) self->scoreLength = iBlock + 1;
 
-                            const char* name = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
-                            if (name) {
-                                printf("node block name='%s'\n", name);
+                            char* nameProp = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
+                            if (nameProp) {
+                                printf("node block name='%s'\n", nameProp);
                                 Block** block = NULL;
                                 for (int i = 0; i < self->nBlocks; i++) {
                                     if (!self->blocks[i]->name) continue;
-                                    if (!strcmp(self->blocks[i]->name, name)) {
+                                    if (!strcmp(self->blocks[i]->name, nameProp)) {
                                         block = &self->blocks[i];
                                         break;
                                     }
                                 }
-                                if (!block) die("Did not find blockdef '%s'", name);
-                                float blockVelocity = atof((char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY));
+
+                                if (!block) {
+                                    die("Did not find blockdef '%s'", nameProp);
+                                }
+
+                                float blockVelocity = DEFAULT_VELOCITY;
+                                {
+                                    char* blockVelocityProp = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_VELOCITY);
+                                    if (blockVelocityProp) {
+                                        blockVelocity = atof(blockVelocityProp);
+                                    }
+                                    xmlFree(blockVelocityProp);
+                                }
+
                                 Track_setBlock(self->tracks[self->nTracks], iBlock, block);
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, blockVelocity);
                             }
@@ -153,6 +225,7 @@ Score* Score_readFromFile(const char* const filename, Synth* synth) {
                                 Track_setBlock(self->tracks[self->nTracks], iBlock, NULL);
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, DEFAULT_VELOCITY);
                             }
+                            xmlFree(nameProp);
                             iBlock++;
                         }
                     }
