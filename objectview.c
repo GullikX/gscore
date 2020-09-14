@@ -102,9 +102,13 @@ static void ObjectView_editBlock(ObjectView* self) {
     int iBlock = self->cursor.iColumn;
     if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
 
-    Application* application = Application_getInstance();
-    Application_switchBlock(application, self->score->tracks[iTrack]->blocks[iBlock]);
-    EditView_setProgram(self->score->tracks[iTrack]->programName);
+    Block** block = self->score->tracks[iTrack]->blocks[iBlock];
+
+    if (block) {
+        Application* application = Application_getInstance();
+        Application_switchBlock(application, self->score->tracks[iTrack]->blocks[iBlock]);
+        EditView_setProgram(self->score->tracks[iTrack]->programName);
+    }
 }
 
 
