@@ -102,8 +102,10 @@ static void Application_switchState(Application* self) {
 
 static void Application_switchBlock(Application* self, Block** block) {
     printf("Switching to block '%s'\n", (*block)->name);
-    self->blockPrevious = self->blockCurrent;
-    self->blockCurrent = block;
+    if (block != self->blockCurrent) {
+        self->blockPrevious = self->blockCurrent;
+        self->blockCurrent = block;
+    }
 }
 
 
