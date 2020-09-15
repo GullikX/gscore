@@ -24,6 +24,7 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <libxml/xmlschemas.h>
 
 #include <X11/Xatom.h>
 
@@ -49,6 +50,10 @@ typedef enum {
 
 /* Function declarations (auto-generated at compile-time) */
 #include "functiondeclarations.h"
+
+
+/* XSD-schema for file format (auto-generated at compile-time) */
+#include "fileformatschema.h"
 
 
 /* Configuration */

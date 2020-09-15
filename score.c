@@ -46,15 +46,46 @@ static Score* Score_free(Score* self) {
 
 
 static Score* Score_readFromFile(const char* const filename, Synth* synth) {
-    Score* self = ecalloc(1, sizeof(*self));
+    /* Read and validate file */
     xmlDocPtr doc = xmlReadFile(filename, NULL, 0);
+
+    {
+        xmlSchemaParserCtxtPtr parserContext = xmlSchemaNewMemParserCtxt(FILE_FORMAT_SCHEMA, strlen(FILE_FORMAT_SCHEMA));
+        if (!parserContext) {
+            die("Could not create XSD-schema parsing context");
+        }
+
+        xmlSchemaPtr schema = xmlSchemaParse(parserContext);
+        if (!schema) {
+            die("Could not parse XSD-schema");
+        }
+
+        xmlSchemaValidCtxtPtr validationContext = xmlSchemaNewValidCtxt(schema);
+        if (!validationContext) {
+            die("Could not create XSD-schema validation context");
+        }
+
+        int result = xmlSchemaValidateDoc(validationContext, doc);
+        if (result != 0) {
+            die("Validation of input file '%s' failed with exit code %d", filename, result);
+        }
+
+        if (parserContext) {
+            xmlSchemaFreeParserCtxt(parserContext);
+        }
+
+        if (schema) {
+            xmlSchemaFree(schema);
+        }
+
+        if (validationContext) {
+            xmlSchemaFreeValidCtxt(validationContext);
+        }
+    }
+
+    /* Create score object */
+    Score* self = ecalloc(1, sizeof(*self));
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
-    if (!nodeRoot) {
-        die("Failed to parse input file '%s'", filename);
-    }
-    if (strcmp(XMLNODE_SCORE, (char*)nodeRoot->name)) {
-        die("Unexpected node name '%s', expected '%s'", (char*)nodeRoot->name, XMLNODE_SCORE);
-    }
 
     self->tempo = TEMPO_BPM;
     {

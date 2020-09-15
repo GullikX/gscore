@@ -15,8 +15,9 @@ OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 gscore: $(CFILES) $(HFILES)
 	grep -h -e '^static\s\S*\s.*(.*)\s{$$' *.c | sed -e 's/{/;/g' > functiondeclarations.h
 	grep '^struct\s\S*\s{$$' gscore.h | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
+	sed 's/"/\\"/g' fileformatschema.xsd | sed -e 's/.*/"&\\n"/' | sed '1s/^/const char* const FILE_FORMAT_SCHEMA = \n/' | sed '$$s/$$/;\n/' > fileformatschema.h
 	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o gscore gscore.c $(LIBS)
-	rm -f functiondeclarations.h typedeclarations.h
+	rm -f functiondeclarations.h typedeclarations.h fileformatschema.h
 
 clean:
 	rm -f gscore
