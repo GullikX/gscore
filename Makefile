@@ -2,7 +2,7 @@ CC?=cc
 #CFLAGS?=-O3 -march=native
 CFLAGS?=-Og -g
 
-CFILES=application.c block.c editview.c gscore.c input.c main.c objectview.c renderer.c score.c synth.c track.c util.c xevents.c
+CFILES=application.c block.c editview.c gscore.c hashmap.c input.c main.c objectview.c renderer.c score.c synth.c track.c util.c xevents.c
 HFILES=config.h gscore.h
 INCLUDE=$$(xml2-config --cflags)
 LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lX11 $$(xml2-config --libs)

@@ -20,6 +20,7 @@
 #include "application.c"
 #include "block.c"
 #include "editview.c"
+#include "hashmap.c"
 #include "input.c"
 #include "main.c"
 #include "objectview.c"

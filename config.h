@@ -15,7 +15,11 @@ static const char* const FRAGMENT_SHADER_SOURCE =
 static const char* const WINDOW_TITLE = "gscore";
 
 static const char* const AUDIO_DRIVER = "alsa";
-static const char* const SOUNDFONT = "soundfont.sf2";
+static const char* SOUNDFONTS[] = {
+    "soundfont0.sf2",
+    "soundfont1.sf2",
+    NULL,
+};
 
 static const char* const BLOCK_NAME_DEFAULT = "default";
 
@@ -69,6 +73,7 @@ enum {
     SYNTH_BANK_DEFAULT = 0,
     SYNTH_PROGRAM_DEFAULT = 0,
     SYNTH_PROGRAM_NAME_LENGTH_MAX = 1024,
+    MAX_SOUNDFONTS = 64,
     MAX_SYNTH_BANKS = 1024,
     MAX_SYNTH_PROGRAMS = 1024,
     SYNTH_ENABLE_REVERB = false,

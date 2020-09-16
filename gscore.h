@@ -74,6 +74,17 @@ struct Vertex {
     Vector4 color;
 };
 
+struct HashMap {
+    int nBuckets;
+    HashMapEntry** buckets;
+};
+
+struct HashMapEntry {
+    char* key;
+    int value;
+    HashMapEntry* next;
+};
+
 struct Application {
     const char* filename;
     Score* scoreCurrent;
@@ -175,11 +186,12 @@ struct Synth {
     fluid_settings_t* settings;
     fluid_synth_t* fluidSynth;
     fluid_audio_driver_t* audioDriver;
-    fluid_sfont_t* soundFont;
-    int soundFontId;
+    int soundFontIds[MAX_SOUNDFONTS];
+    int nSoundFonts;
     fluid_sequencer_t* sequencer;
     fluid_seq_id_t synthSequencerId;
     fluid_seq_id_t callbackId;
+    HashMap* instrumentMap;
     char* instrumentListString;
 };
 

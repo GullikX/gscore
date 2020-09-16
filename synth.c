@@ -31,10 +31,18 @@ static Synth* Synth_new(void) {
         die("Failed to initialize FluidSynth");
     }
 
-    self->soundFontId = fluid_synth_sfload(self->fluidSynth, SOUNDFONT, true);
-    self->soundFont = fluid_synth_get_sfont(self->fluidSynth, 0);
-    if (self->soundFontId == FLUID_FAILED || !self->soundFont) {
-        die("Failed to load soundfont");
+    self->nSoundFonts = 0;
+    for (const char** soundFont = SOUNDFONTS; *soundFont; soundFont++) {
+        if (self->nSoundFonts >= MAX_SOUNDFONTS) {
+            die("Maximum number of soundfonts reached (%d)", MAX_SOUNDFONTS);
+        }
+        printf("Loading soundfont '%s'...\n", *soundFont);
+        self->soundFontIds[self->nSoundFonts] = fluid_synth_sfload(self->fluidSynth, *soundFont, true);
+        if (self->soundFontIds[self->nSoundFonts] == FLUID_FAILED) {
+            die("Failed to load soundfont '%s'", *soundFont);
+        }
+        printf("Successfully loaded '%s'\n", *soundFont);
+        self->nSoundFonts++;
     }
 
     fluid_synth_set_gain(self->fluidSynth, SYNTH_GAIN);
@@ -45,23 +53,36 @@ static Synth* Synth_new(void) {
     self->synthSequencerId = fluid_sequencer_register_fluidsynth(self->sequencer, self->fluidSynth);
     self->callbackId = fluid_sequencer_register_client(self->sequencer, "me", Synth_sequencerCallback, NULL);
 
-    /* Generate instrument list string */
+    /* Generate instrument list */
+    int nInstruments = 0;
     int instrumentListStringSize = 1;
-    for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
-        for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
-            fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
-            if (!preset) continue;
-            instrumentListStringSize += strlen(fluid_preset_get_name(preset)) + 1;
+
+    for (int iSoundFont = 0; iSoundFont < self->nSoundFonts; iSoundFont++) {
+        for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
+            for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
+                fluid_sfont_t* soundFont = fluid_synth_get_sfont_by_id(self->fluidSynth, self->soundFontIds[iSoundFont]);
+                fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, iBank, iProgram);
+                if (!preset) continue;
+                nInstruments++;
+                instrumentListStringSize += strlen(fluid_preset_get_name(preset)) + 1;
+            }
         }
     }
+    self->instrumentMap = HashMap_new(nInstruments);
     self->instrumentListString = ecalloc(instrumentListStringSize, sizeof(char));
 
-    for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
-        for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
-            fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
-            if (!preset) continue;
-            strcat(self->instrumentListString, fluid_preset_get_name(preset));
-            strcat(self->instrumentListString, "\n");
+    for (int iSoundFont = 0; iSoundFont < self->nSoundFonts; iSoundFont++) {
+        for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
+            for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
+                fluid_sfont_t* soundFont = fluid_synth_get_sfont_by_id(self->fluidSynth, self->soundFontIds[iSoundFont]);
+                fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, iBank, iProgram);
+                if (!preset) continue;
+                const char* name = fluid_preset_get_name(preset);
+                int encodedProgram = Synth_encodeProgram(iSoundFont, iBank, iProgram);
+                HashMap_put(self->instrumentMap, name, encodedProgram);
+                strcat(self->instrumentListString, name);
+                strcat(self->instrumentListString, "\n");
+            }
         }
     }
 
@@ -79,6 +100,7 @@ static Synth* Synth_free(Synth* self) {
     delete_fluid_synth(self->fluidSynth);
     delete_fluid_settings(self->settings);
 
+    HashMap_free(self->instrumentMap);
     free(self->instrumentListString);
 
     free(self);
@@ -86,44 +108,30 @@ static Synth* Synth_free(Synth* self) {
 }
 
 
-static void Synth_setProgramById(Synth* self, int channel, int iBank, int iProgram) {
-    printf("Synth_setProgramById channel:%d program:(%d, %d)\n", channel, iBank, iProgram);
-    if (fluid_synth_program_select(self->fluidSynth, channel, self->soundFontId, iBank, iProgram) == FLUID_FAILED) {
-        puts("Error: Failed to set midi program");
-    }
+static int Synth_encodeProgram(int iSoundFont, int iBank, int iProgram) {
+    /* TODO: check for signed integer overflow */
+    return iProgram + iBank*MAX_SYNTH_PROGRAMS + iSoundFont*MAX_SYNTH_PROGRAMS*MAX_SYNTH_BANKS;
+}
+
+
+static void Synth_decodeProgram(int encodedProgram, int* iSoundFontOut, int* iBankOut, int* iProgramOut) {
+    *iProgramOut = modulo(encodedProgram, MAX_SYNTH_PROGRAMS);
+    *iBankOut = modulo(encodedProgram / MAX_SYNTH_PROGRAMS, MAX_SYNTH_BANKS);
+    *iSoundFontOut = encodedProgram / (MAX_SYNTH_BANKS * MAX_SYNTH_PROGRAMS);
 }
 
 
 static void Synth_setProgramByName(Synth* self, int channel, const char* const programName) {
-    for (int iBank = 0; iBank < MAX_SYNTH_BANKS; iBank++) {
-        for (int iProgram = 0; iProgram < MAX_SYNTH_PROGRAMS; iProgram++) {
-            fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, iBank, iProgram);
-            if (!preset) continue;
-            if (!strcmp(programName, fluid_preset_get_name(preset))) {
-                fluid_synth_program_select(self->fluidSynth, channel, self->soundFontId, iBank, iProgram);
-                return;
-            }
-        }
+    int encodedProgram = HashMap_get(self->instrumentMap, programName);
+    if (encodedProgram < 0) {
+        printf("Error: Invalid instrument name '%s'\n", programName);
+        return;
     }
-    printf("Error: Invalid instrument name '%s'\n", programName);
-}
-
-
-static void Synth_processMessage(Synth* self, int channel, MidiMessage* midiMessage) {
-    int velocity = 127.0f * midiMessage->velocity;
-    switch (midiMessage->type) {
-        case FLUID_SEQ_NOTE:
-            break;
-        case FLUID_SEQ_NOTEON:
-            fluid_synth_noteon(self->fluidSynth, channel, midiMessage->pitch, velocity);
-            break;
-        case FLUID_SEQ_NOTEOFF:
-            fluid_synth_noteoff(self->fluidSynth, channel, midiMessage->pitch);
-            break;
-        default:
-            printf("Warning: ignoring invalid midi message type %d\n", midiMessage->type);
-            break;
-    }
+    int iSoundFont = 0;
+    int iBank = 0;
+    int iProgram = 0;
+    Synth_decodeProgram(encodedProgram, &iSoundFont, &iBank, &iProgram);
+    fluid_synth_program_select(self->fluidSynth, channel, self->soundFontIds[iSoundFont], iBank, iProgram);
 }
 
 
@@ -143,11 +151,6 @@ static void Synth_sendNoteOn(Synth* self, int channel, int pitch, float velocity
 
     fluid_sequencer_send_at(self->sequencer, event, timeInt, 0);
     delete_fluid_event(event);
-}
-
-
-static void Synth_noteOff(Synth* self, int key) {
-    fluid_synth_noteoff(self->fluidSynth, 0, key);
 }
 
 
@@ -207,7 +210,8 @@ static void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, flu
 
 
 static const char* Synth_getDefaultProgramName(Synth* self) {
-    fluid_preset_t* preset = fluid_sfont_get_preset(self->soundFont, SYNTH_BANK_DEFAULT, SYNTH_PROGRAM_DEFAULT);
+    fluid_sfont_t* soundFont = fluid_synth_get_sfont_by_id(self->fluidSynth, self->soundFontIds[0]);
+    fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, SYNTH_BANK_DEFAULT, SYNTH_PROGRAM_DEFAULT);
     if (!preset) die("Could not determine default program name");
     const char* name = fluid_preset_get_name(preset);
     if (!name) die("Could not determine default program name");
