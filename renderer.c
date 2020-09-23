@@ -66,7 +66,7 @@ static Renderer* Renderer_new(void) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     bool success = hexColorToRgb(COLOR_BACKGROUND, &self->clearColor);
-    if (!success) die("Invalid clear color");
+    if (!success) die("Invalid clear color '%s'", COLOR_BACKGROUND);
 
     return self;
 }
@@ -148,9 +148,8 @@ static GLuint createShader(const GLenum type, const char* const shaderSource) {
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &messageLength);
         char* const message = ecalloc(messageLength, sizeof(char));
         glGetShaderInfoLog(shaderId, messageLength, &messageLength, message);
-        printf("Failed to compile %s shader! Message:\n    %s\n", typeString, message);
+        die("Failed to compile %s shader! Message:\n    %s", typeString, message);
         free(message);
-        die("Failed to compile shader");
     }
     return shaderId;
 }

@@ -60,7 +60,7 @@ static int HashMap_get(HashMap* self, const char* key) {
             return entry->value;
         }
     }
-    printf("Error: Did not find map entry for '%s'\n", key);
+    warn("Did not find map entry for '%s'", key);
     return -1;
 }
 

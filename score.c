@@ -200,7 +200,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
         }
     }
     if (self->nBlocks == 0) {
-        puts("The loaded file does not contain any blocks, creating one");
+        warn("The loaded file does not contain any blocks, creating one");
         self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
         self->nBlocks = 1;
     }
@@ -245,7 +245,6 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
 
                             char* nameProp = (char*)xmlGetProp(nodeBlock, BAD_CAST XMLATTRIB_NAME);
                             if (nameProp) {
-                                printf("node block name='%s'\n", nameProp);
                                 Block** block = NULL;
                                 for (int i = 0; i < self->nBlocks; i++) {
                                     if (!self->blocks[i]->name) continue;
@@ -272,7 +271,6 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, blockVelocity);
                             }
                             else {
-                                puts("empty block");
                                 Track_setBlock(self->tracks[self->nTracks], iBlock, NULL);
                                 Track_setBlockVelocity(self->tracks[self->nTracks], iBlock, DEFAULT_VELOCITY);
                             }
@@ -286,7 +284,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
         }
     }
     if (self->nTracks == 0) {
-        puts("The loaded file does not contain any tracks, creating one");
+        warn("The loaded file does not contain any tracks, creating one");
         self->tracks[0] = Track_new(Synth_getDefaultProgramName(synth), DEFAULT_VELOCITY, false);
         self->nTracks = 1;
         self->scoreLength = SCORE_LENGTH_DEFAULT;
@@ -438,7 +436,7 @@ static void Score_renameBlock(Score* self, const char* const name) {
                 printf("Block name '%s' unchanged\n", name);
             }
             else {
-                printf("Block with name '%s' already exists\n", name);
+                warn("Block with name '%s' already exists", name);
             }
             return;
         }
@@ -464,7 +462,7 @@ static void Score_setBlockColor(const char* const hexColor) {
 
 static void Score_increaseLength(Score* self) {
     if (self->scoreLength == SCORE_LENGTH_MAX) {
-        printf("Already at max score length (%d)\n", SCORE_LENGTH_MAX);
+        warn("Already at max score length (%d)", SCORE_LENGTH_MAX);
         return;
     }
     self->scoreLength++;
@@ -474,7 +472,7 @@ static void Score_increaseLength(Score* self) {
 
 static void Score_decreaseLength(Score* self) {
     if (self->scoreLength == 1) {
-        printf("Already at minimum score length (%d)\n", 1);
+        warn("Already at minimum score length (%d)", 1);
         return;
     }
     self->scoreLength--;
@@ -484,7 +482,7 @@ static void Score_decreaseLength(Score* self) {
 
 static void Score_addTrack(Score* self) {
     if (self->nTracks == N_TRACKS_MAX) {
-        printf("Already at maximum number of tracks (%d)\n", N_TRACKS_MAX);
+        warn("Already at maximum number of tracks (%d)", N_TRACKS_MAX);
         return;
     }
     if (!self->tracks[self->nTracks]) {
@@ -498,7 +496,7 @@ static void Score_addTrack(Score* self) {
 
 static void Score_removeTrack(Score* self) {
     if (self->nTracks == 1) {
-        printf("Already at minimum number of tracks (%d)\n", 1);
+        warn("Already at minimum number of tracks (%d)", 1);
         return;
     }
     self->nTracks--;
@@ -518,5 +516,5 @@ static void Score_setKeySignatureByName(Score* self, const char* const name) {
             return;
         }
     }
-    printf("Error: Invalid key signature '%s'\n", name);
+    warn("Invalid key signature '%s'", name);
 }

@@ -74,12 +74,12 @@ static void spawn(const char* const cmd, const char* const pipeData) {
 static bool hexColorToRgb(const char* const hexColor, Vector4* rgbOut) {
     int stringLength = strlen(hexColor);
     if (stringLength != 6) {
-        printf("The color string must contain exactly 6 hexadecimal digits (%d given)\n", stringLength);
+        warn("The color string must contain exactly 6 hexadecimal digits (%d given)", stringLength);
         return false;
     }
     for (int iChar = 0; iChar < stringLength; iChar++) {
         if (!isxdigit(hexColor[iChar])) {
-            printf("Character '%c' is not a hex digit\n", hexColor[iChar]);
+            warn("Character '%c' is not a hex digit", hexColor[iChar]);
             return false;
         }
     }

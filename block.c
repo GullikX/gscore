@@ -70,7 +70,7 @@ static void Block_setColor(Block* self, const char* const hexColor) {
         printf("Set block color of '%s' to '%s'\n", self->name, hexColor);
     }
     else {
-        printf("Failed to set block color '%s'\n", hexColor);
+        warn("Failed to set block color '%s'", hexColor);
     }
 }
 
@@ -112,6 +112,6 @@ static bool Block_compareMidiMessages(MidiMessage* midiMessage, MidiMessage* mid
     else if (midiMessage->type == FLUID_SEQ_NOTEOFF && midiMessageOther->type == FLUID_SEQ_NOTEON) return false;
     else if (midiMessage->pitch > midiMessageOther->pitch) return true;
     else if (midiMessage->pitch < midiMessageOther->pitch) return false;
-    else printf("Overlapping midi messages at time=%f, type=%d, pitch=%d\n", midiMessage->time, midiMessage->type, midiMessage->pitch);
+    else warn("Overlapping midi messages at time=%f, type=%d, pitch=%d", midiMessage->time, midiMessage->type, midiMessage->pitch);
     return true;
 }
