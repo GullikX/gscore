@@ -85,12 +85,10 @@ static bool hexColorToRgb(const char* const hexColor, Vector4* rgbOut) {
     }
 
     long rgbColors[3];
-    char buffer[3];
-    buffer[2] = '\0';
 
     for (int iColorChannel = 0; iColorChannel < 3; iColorChannel++) {
-        strncpy(buffer, hexColor + 2*iColorChannel, 2);
-        rgbColors[iColorChannel] = strtol(buffer, NULL, 16);
+        const char channelColor[] = {hexColor[2*iColorChannel], hexColor[2*iColorChannel + 1], '\n'};
+        rgbColors[iColorChannel] = strtol(channelColor, NULL, 16);
     }
 
     rgbOut->x = (float)rgbColors[0] / 255.0f;
