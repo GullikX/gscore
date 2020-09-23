@@ -14,7 +14,7 @@ ERRORS=-Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -Wfata
 DEFINES=-DVERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
-gscore: $(CFILES) $(HFILES)
+gscore: $(CFILES) $(HFILES) fileformatschema.xsd
 	grep -h -e '^static\s\S*\s.*(.*)\s{$$' *.c | sed -e 's/{/;/g' > functiondeclarations.h
 	grep '^struct\s\S*\s{$$' gscore.h | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
 	sed 's/"/\\"/g' fileformatschema.xsd | sed -e 's/.*/"&\\n"/' | sed '1s/^/const char* const FILE_FORMAT_SCHEMA = \n/' | sed '$$s/$$/;\n/' > fileformatschema.h
