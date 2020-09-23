@@ -88,6 +88,14 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
     Score* self = ecalloc(1, sizeof(*self));
     xmlNode* nodeRoot = xmlDocGetRootElement(doc);
 
+    {
+        char* versionProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_VERSION);
+        if (!versionProp || strcmp(versionProp, VERSION)) {
+            printf("Warning: Mismatch between gscore version (%s) and input file version (%s)\n", VERSION, versionProp);
+        }
+        xmlFree(versionProp);
+    }
+
     self->tempo = TEMPO_BPM;
     {
         char* tempoProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO);
@@ -296,6 +304,8 @@ static void Score_writeToFile(Score* self, const char* const filename) {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST XML_VERSION);
     xmlNode* nodeScore = xmlNewNode(NULL, BAD_CAST XMLNODE_SCORE);
     xmlDocSetRootElement(doc, nodeScore);
+
+    xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_VERSION, BAD_CAST VERSION);
 
     {
         char buffer[XML_BUFFER_SIZE];

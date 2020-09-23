@@ -37,6 +37,12 @@
 #include <unistd.h>
 
 
+/* Set version string if not set by makefile */
+#ifndef VERSION
+#define VERSION "UNKNOWN_VERSION"
+#endif
+
+
 /* Application states */
 typedef enum {
     OBJECT_MODE,
