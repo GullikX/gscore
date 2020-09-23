@@ -68,7 +68,7 @@ static int HashMap_get(HashMap* self, const char* key) {
 static int HashMap_djb2(const char* str) {
     int hash = 5381;
     int c;
-    while (c = *str++) {
+    while ((c = *str++)) {
         hash = ((hash << 5) + hash) + c;
     }
     return hash;
