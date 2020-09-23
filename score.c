@@ -86,19 +86,21 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
 
     /* Create score object */
     Score* self = ecalloc(1, sizeof(*self));
-    xmlNode* nodeRoot = xmlDocGetRootElement(doc);
+    xmlNode* nodeGscore = xmlDocGetRootElement(doc);
 
     {
-        char* versionProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_VERSION);
+        char* versionProp = (char*)xmlGetProp(nodeGscore, BAD_CAST XMLATTRIB_VERSION);
         if (!versionProp || strcmp(versionProp, VERSION)) {
             printf("Warning: Mismatch between gscore version (%s) and input file version (%s)\n", VERSION, versionProp);
         }
         xmlFree(versionProp);
     }
 
+    xmlNode* nodeScore = nodeGscore->children->next;  /* TODO: make this line less hacky */
+
     self->tempo = TEMPO_BPM;
     {
-        char* tempoProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_TEMPO);
+        char* tempoProp = (char*)xmlGetProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO);
         if (tempoProp) {
             self->tempo = atoi(tempoProp);
         }
@@ -107,7 +109,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
 
     self->nBeatsPerMeasure = BEATS_PER_MEASURE_DEFAULT;
     {
-        char* beatsPerMeasureProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_BEATSPERMEASURE);
+        char* beatsPerMeasureProp = (char*)xmlGetProp(nodeScore, BAD_CAST XMLATTRIB_BEATSPERMEASURE);
         if (beatsPerMeasureProp) {
             self->nBeatsPerMeasure = atoi(beatsPerMeasureProp);
         }
@@ -116,7 +118,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
 
     self->keySignature = KEY_SIGNATURE_DEFAULT;
     {
-        char* keySignatureProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_KEYSIGNATURE);
+        char* keySignatureProp = (char*)xmlGetProp(nodeScore, BAD_CAST XMLATTRIB_KEYSIGNATURE);
         if (keySignatureProp) {
             Score_setKeySignatureByName(self, keySignatureProp);
         }
@@ -124,7 +126,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
     }
 
     /* Read block definitions */
-    for (xmlNode* node = nodeRoot->children; node; node = node->next) {
+    for (xmlNode* node = nodeScore->children; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_BLOCKDEFS, (char*)node->name)) {
             self->nBlocks = 0;
             for (xmlNode* nodeBlockDef = node->children; nodeBlockDef; nodeBlockDef = nodeBlockDef->next) {
@@ -204,7 +206,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
     }
 
     /* Read tracks */
-    for (xmlNode* node = nodeRoot->children; node; node = node->next) {
+    for (xmlNode* node = nodeScore->children; node; node = node->next) {
         if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_TRACKS, (char*)node->name)) {
             self->nTracks = 0;
             for (xmlNode* nodeTrack = node->children; nodeTrack; nodeTrack = nodeTrack ->next) {
@@ -302,23 +304,21 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
 
 static void Score_writeToFile(Score* self, const char* const filename) {
     xmlDocPtr doc = xmlNewDoc(BAD_CAST XML_VERSION);
-    xmlNode* nodeScore = xmlNewNode(NULL, BAD_CAST XMLNODE_SCORE);
-    xmlDocSetRootElement(doc, nodeScore);
+    xmlNode* nodeGscore = xmlNewNode(NULL, BAD_CAST XMLNODE_GSCORE);
+    xmlDocSetRootElement(doc, nodeGscore);
+    xmlNewProp(nodeGscore, BAD_CAST XMLATTRIB_VERSION, BAD_CAST VERSION);
 
-    xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_VERSION, BAD_CAST VERSION);
-
+    xmlNode* nodeScore = xmlNewChild(nodeGscore, NULL, BAD_CAST XMLNODE_SCORE, NULL);
     {
         char buffer[XML_BUFFER_SIZE];
         snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tempo);
         xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO, BAD_CAST buffer);
     }
-
     {
         char buffer[XML_BUFFER_SIZE];
         snprintf(buffer, XML_BUFFER_SIZE, "%d", self->nBeatsPerMeasure);
         xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_BEATSPERMEASURE, BAD_CAST buffer);
     }
-
     xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_KEYSIGNATURE, BAD_CAST KEY_SIGNATURE_NAMES[self->keySignature]);
 
     /* Creat xml nodes for block definitions */

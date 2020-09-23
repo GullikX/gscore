@@ -1,58 +1,62 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-<xs:element name="gscore">
-  <xs:complexType>
-    <xs:sequence>
-      <xs:element name="blockdefs">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="blockdef" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="message" minOccurs="0" maxOccurs="unbounded">
-                    <xs:complexType>
-                      <xs:attribute name="time" type="xs:decimal" use="required"/>
-                      <xs:attribute name="type" type="xs:nonNegativeInteger" use="required"/>
-                      <xs:attribute name="pitch" type="xs:nonNegativeInteger" use="required"/>
-                      <xs:attribute name="velocity" type="xs:decimal" use="required"/>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="name" type="xs:string" use="required"/>
-                <xs:attribute name="color" type="xs:string" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="tracks">
-        <xs:complexType>
+  <xs:element name="gscore">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="score">
+          <xs:complexType>
             <xs:sequence>
-            <xs:element name="track" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="block" minOccurs="0" maxOccurs="unbounded">
-                    <xs:complexType>
-                      <xs:attribute name="name" type="xs:string"/>
-                      <xs:attribute name="velocity" type="xs:decimal"/>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="program" type="xs:string" use="required"/>
-                <xs:attribute name="velocity" type="xs:decimal" use="required"/>
-                <xs:attribute name="ignorenoteoff" type="xs:nonNegativeInteger" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="version" type="xs:string" use="required"/>
-    <xs:attribute name="tempo" type="xs:positiveInteger" use="required"/>
-    <xs:attribute name="keysignature" type="xs:string" use="required"/>
-    <xs:attribute name="beatspermeasure" type="xs:positiveInteger" use="required"/>
-  </xs:complexType>
-</xs:element>
-
+              <xs:element name="blockdefs">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="blockdef" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="message" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="time" type="xs:decimal" use="required"/>
+                              <xs:attribute name="type" type="xs:nonNegativeInteger" use="required"/>
+                              <xs:attribute name="pitch" type="xs:nonNegativeInteger" use="required"/>
+                              <xs:attribute name="velocity" type="xs:decimal" use="required"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                        <xs:attribute name="color" type="xs:string" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="tracks">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="track" minOccurs="0" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="block" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:string"/>
+                              <xs:attribute name="velocity" type="xs:decimal"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="program" type="xs:string" use="required"/>
+                        <xs:attribute name="velocity" type="xs:decimal" use="required"/>
+                        <xs:attribute name="ignorenoteoff" type="xs:nonNegativeInteger" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="tempo" type="xs:positiveInteger" use="required"/>
+            <xs:attribute name="keysignature" type="xs:string" use="required"/>
+            <xs:attribute name="beatspermeasure" type="xs:positiveInteger" use="required"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
