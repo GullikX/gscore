@@ -50,6 +50,7 @@
     </xs:sequence>
     <xs:attribute name="tempo" type="xs:positiveInteger" use="required"/>
     <xs:attribute name="keysignature" type="xs:string" use="required"/>
+    <xs:attribute name="beatspermeasure" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
 </xs:element>
 

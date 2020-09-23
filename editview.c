@@ -22,11 +22,11 @@ static EditView* EditView_new(Score* score) {
     self->score = score;
 
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES * score->nBeatsPerMeasure * MEASURE_RESOLUTION;
 
     for (int i = 0; i < BLOCK_MEASURES; i++) {
         self->gridlinesVertical[i].iRow = 0;
-        self->gridlinesVertical[i].iColumn = i*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+        self->gridlinesVertical[i].iColumn = i * score->nBeatsPerMeasure * MEASURE_RESOLUTION;
         self->gridlinesVertical[i].nRows = nRows;
         self->gridlinesVertical[i].nColumns = 1;
         bool success = hexColorToRgb(COLOR_GRIDLINES, &self->gridlinesVertical[i].color);
@@ -83,7 +83,7 @@ static void EditView_previewNote(EditView* self) {
 
 static void EditView_addNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     float velocity = DEFAULT_VELOCITY;
 
@@ -103,7 +103,7 @@ static void EditView_dragNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     if (!self->midiMessageHeld) return;
 
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     float time = (float)(self->cursor.iColumn + 1) / (float)nColumns;
     int pitch = self->midiMessageHeld->pitch;
     float velocity = self->midiMessageHeld->velocity;
@@ -123,7 +123,7 @@ static void EditView_releaseNote(EditView* self) {
 
 static void EditView_removeNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
@@ -151,7 +151,7 @@ static void EditView_removeNote(EditView* self) {
 
 static void EditView_adjustNoteVelocity(EditView* self, float amount) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
 
@@ -187,7 +187,7 @@ static void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
 static void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     self->playStartPosition = startPosition;
     self->playRepeat = repeat;
-    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
+    float blockTime = (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->tempo;
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     Synth* synth = Application_getInstance()->synth;
 
@@ -280,18 +280,18 @@ static void EditView_draw(EditView* self) {
             while (midiMessageOther) {
                 if (midiMessageOther->type == FLUID_SEQ_NOTEOFF && midiMessageOther->pitch == midiMessage->pitch) {
                     float viewportWidth = renderer->viewportWidth;
-                    int iColumnStart = EditView_xCoordToColumnIndex(midiMessage->time * viewportWidth);
-                    int iColumnEnd = EditView_xCoordToColumnIndex(midiMessageOther->time * viewportWidth);
+                    int iColumnStart = EditView_xCoordToColumnIndex(self, midiMessage->time * viewportWidth);
+                    int iColumnEnd = EditView_xCoordToColumnIndex(self, midiMessageOther->time * viewportWidth);
                     int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
                     Vector4 color = blockCurrent->color;
 
                     bool highlight;
                     if (EditView_isPlaying(self)) {
                         float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
-                        float totalTime = 1000.0f * (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
+                        float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->tempo;
                         float progress = time / totalTime + self->playStartPosition;
                         float cursorX = Application_getInstance()->renderer->viewportWidth * progress;
-                        int iCursorColumn = EditView_xCoordToColumnIndex(cursorX);
+                        int iCursorColumn = EditView_xCoordToColumnIndex(self, cursorX);
                         highlight = iColumnStart <= iCursorColumn && iColumnEnd > iCursorColumn;
                     }
                     else {
@@ -326,7 +326,7 @@ static void EditView_draw(EditView* self) {
 
 
 static void EditView_drawItem(EditView* self, GridItem* item, float offset) {
-    float columnWidth = 2.0f/(BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION);
+    float columnWidth = 2.0f/(BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION);
     float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
 
     float x1 = -1.0f + item->iColumn * columnWidth - offset;
@@ -350,7 +350,7 @@ static void EditView_drawPlaybackCursor(EditView* self) {
     if (!EditView_isPlaying(self)) return;
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
-    float totalTime = 1000.0f * (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->tempo;
+    float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->tempo;
     float progress = time / totalTime + self->playStartPosition;
     float cursorX = -1.0f + 2.0f * progress;
 
@@ -367,12 +367,12 @@ static bool EditView_updateCursorPosition(EditView* self, float x, float y) {
     int iColumnOld = self->cursor.iColumn;
     int iRowOld = self->cursor.iRow;
 
-    self->cursor.iColumn = EditView_xCoordToColumnIndex(x);
+    self->cursor.iColumn = EditView_xCoordToColumnIndex(self, x);
     if (!self->midiMessageHeld) {
         self->cursor.iRow = EditView_yCoordToRowIndex(y);
     }
 
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+    int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     int nRows = OCTAVES*NOTES_IN_OCTAVE;
 
     if (self->cursor.iColumn < 0) self->cursor.iColumn = 0;
@@ -406,8 +406,8 @@ static void EditView_removeMidiMessage(MidiMessage* midiMessage) {
 }
 
 
-static int EditView_xCoordToColumnIndex(float x) {
-    int nColumns = BLOCK_MEASURES*BEATS_PER_MEASURE*MEASURE_RESOLUTION;
+static int EditView_xCoordToColumnIndex(EditView* self, float x) {
+    int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
 }
 

@@ -19,6 +19,7 @@
 static Score* Score_new(Synth* synth) {
     Score* self = ecalloc(1, sizeof(*self));
     self->tempo = TEMPO_BPM;
+    self->nBeatsPerMeasure = BEATS_PER_MEASURE_DEFAULT;
 
     self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
     self->nBlocks = 1;
@@ -94,6 +95,15 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
             self->tempo = atoi(tempoProp);
         }
         xmlFree(tempoProp);
+    }
+
+    self->nBeatsPerMeasure = BEATS_PER_MEASURE_DEFAULT;
+    {
+        char* beatsPerMeasureProp = (char*)xmlGetProp(nodeRoot, BAD_CAST XMLATTRIB_BEATSPERMEASURE);
+        if (beatsPerMeasureProp) {
+            self->nBeatsPerMeasure = atoi(beatsPerMeasureProp);
+        }
+        xmlFree(beatsPerMeasureProp);
     }
 
     self->keySignature = KEY_SIGNATURE_DEFAULT;
@@ -291,6 +301,12 @@ static void Score_writeToFile(Score* self, const char* const filename) {
         char buffer[XML_BUFFER_SIZE];
         snprintf(buffer, XML_BUFFER_SIZE, "%d", self->tempo);
         xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_TEMPO, BAD_CAST buffer);
+    }
+
+    {
+        char buffer[XML_BUFFER_SIZE];
+        snprintf(buffer, XML_BUFFER_SIZE, "%d", self->nBeatsPerMeasure);
+        xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_BEATSPERMEASURE, BAD_CAST buffer);
     }
 
     xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_KEYSIGNATURE, BAD_CAST KEY_SIGNATURE_NAMES[self->keySignature]);

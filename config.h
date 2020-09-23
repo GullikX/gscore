@@ -25,6 +25,7 @@ static const char* const BLOCK_NAME_DEFAULT = "default";
 
 static const char* const XML_ENCODING = "UTF-8";
 static const char* const XML_VERSION = "1.0";
+static const char* const XMLATTRIB_BEATSPERMEASURE = "beatspermeasure";
 static const char* const XMLATTRIB_COLOR = "color";
 static const char* const XMLATTRIB_IGNORENOTEOFF = "ignorenoteoff";
 static const char* const XMLATTRIB_KEYSIGNATURE = "keysignature";
@@ -56,7 +57,7 @@ enum {
     N_TRACKS_MAX = 64,
     SCORE_LENGTH_DEFAULT = 16,
     SCORE_LENGTH_MAX = 1024,
-    BEATS_PER_MEASURE = 4,
+    BEATS_PER_MEASURE_DEFAULT = 4,
     SECONDS_PER_MINUTE = 60,
     TEMPO_BPM = 100,
     TEMPO_BPM_MAX = 1024,

@@ -120,7 +120,7 @@ static void ObjectView_setCtrlPressed(ObjectView* self, bool ctrlPressed) {
 static void ObjectView_playScore(ObjectView* self, float startPosition, bool repeat) {
     self->iPlayStartBlock = startPosition * self->score->scoreLength;
     self->playRepeat = repeat;
-    float blockTime = (float)(BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
+    float blockTime = (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     float stopTime = -1.0f;
 
     for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
@@ -259,7 +259,7 @@ static void ObjectView_drawPlaybackCursor(ObjectView* self) {
     if (!ObjectView_isPlaying(self)) return;
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
-    float totalTime = 1000.0f * (float)(self->score->scoreLength * BLOCK_MEASURES * BEATS_PER_MEASURE * SECONDS_PER_MINUTE) / (float)self->score->tempo;
+    float totalTime = 1000.0f * (float)(self->score->scoreLength * BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     float progress = time / totalTime + (float)self->iPlayStartBlock / (float)self->score->scoreLength;
     float cursorX = -1.0f + 2.0f * progress;
 

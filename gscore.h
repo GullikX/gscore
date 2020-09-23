@@ -173,6 +173,7 @@ struct Track {
 
 struct Score {
     int tempo;
+    int nBeatsPerMeasure;
     Block* blocks[MAX_BLOCKS];
     Track* tracks[N_TRACKS_MAX];
     int nBlocks;
