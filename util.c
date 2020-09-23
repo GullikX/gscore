@@ -27,6 +27,16 @@ static void die(const char* const format, ...) {
 }
 
 
+static void warn(const char* const format, ...) {
+    fputs("Warning: ", stderr);
+    va_list vaList;
+    va_start(vaList, format);
+    vfprintf(stderr, format, vaList);
+    va_end(vaList);
+    fputc('\n', stderr);
+}
+
+
 static void* ecalloc(size_t nItems, size_t itemSize) {
     void* pointer = calloc(nItems, itemSize);
     if (!pointer) {

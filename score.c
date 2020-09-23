@@ -91,7 +91,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
     {
         char* versionProp = (char*)xmlGetProp(nodeGscore, BAD_CAST XMLATTRIB_VERSION);
         if (!versionProp || strcmp(versionProp, VERSION)) {
-            printf("Warning: Mismatch between gscore version (%s) and input file version (%s)\n", VERSION, versionProp);
+            warn("Mismatch between gscore version (%s) and input file version (%s)", VERSION, versionProp);
         }
         xmlFree(versionProp);
     }
