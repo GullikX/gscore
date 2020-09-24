@@ -460,6 +460,13 @@ static void Score_setBlockColor(const char* const hexColor) {
 }
 
 
+static const char* Score_getTempoString(void) {
+    Score* self = Application_getInstance()->scoreCurrent;
+    snprintf(self->tempoString, 64, "%d", self->tempo);
+    return self->tempoString;
+}
+
+
 static void Score_increaseLength(Score* self) {
     if (self->scoreLength == SCORE_LENGTH_MAX) {
         warn("Already at max score length (%d)", SCORE_LENGTH_MAX);

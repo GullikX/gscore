@@ -244,13 +244,6 @@ static void EditView_setTempo(EditView* self, int tempo) {
 }
 
 
-static const char* EditView_getTempoString(void) {
-    EditView* self = Application_getInstance()->editView;
-    snprintf(self->tempoString, 64, "%d", self->tempo);
-    return self->tempoString;
-}
-
-
 static void EditView_draw(EditView* self) {
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {

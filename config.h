@@ -230,7 +230,7 @@ static const char* ATOM_PROMPTS[] =  {
 };
 
 static const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
-    EditView_getTempoString,
+    Score_getTempoString,
     Synth_getInstrumentListString,
     Score_getBlockListString,
     Score_getCurrentBlockName,

@@ -130,7 +130,6 @@ struct EditView {
     float playStartPosition;
     bool playRepeat;
     int tempo;
-    char tempoString[64];
     Vector4 playbackCursorColor;
     bool ctrlPressed;
     bool ignoreNoteOff;
@@ -179,6 +178,7 @@ struct Track {
 
 struct Score {
     int tempo;
+    char tempoString[64];
     int nBeatsPerMeasure;
     Block* blocks[MAX_BLOCKS];
     Track* tracks[N_TRACKS_MAX];
