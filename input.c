@@ -114,6 +114,9 @@ static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancod
                 case 't':
                     spawnSetXProp(ATOM_BPM);
                     break;
+                case 'v':
+                    spawnSetXProp(ATOM_SET_TRACK_VELOCITY);
+                    break;
                 case 'w':
                     Application_writeScore(application);
                     break;

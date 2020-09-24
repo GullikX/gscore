@@ -154,6 +154,7 @@ struct ObjectView {
     bool playRepeat;
     Vector4 playbackCursorColor;
     bool ctrlPressed;
+    char trackVelocityString[64];
 };
 
 struct Renderer {

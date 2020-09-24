@@ -56,7 +56,13 @@ static void spawnSetXProp(int atomId) {
     char* cmd = ecalloc(bufferLength, sizeof(char));
     Window x11Window = Application_getInstance()->xevents->x11Window;
     snprintf(cmd, bufferLength, cmdQuery, x11Window, ATOM_PROMPTS[atomId], ATOM_NAMES[atomId]);
+
     const char* const pipeData = ATOM_FUNCTIONS[atomId]();
+    if (!pipeData) {
+        warn("Cannot spawn external command with null data");
+        return;
+    }
+
     spawn(cmd, pipeData);
 }
 

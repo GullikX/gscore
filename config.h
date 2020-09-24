@@ -91,6 +91,8 @@ static const float PLAYER_CURSOR_WIDTH = 0.005f;
 static const float MAX_TRACK_HEIGHT = 0.1f;
 static const float SYNTH_GAIN = 1.0f;
 static const float DEFAULT_VELOCITY = 0.75f;
+static const float VELOCITY_MIN = 0.0f;
+static const float VELOCITY_MAX = 1.0f;
 static const float VELOCITY_ADJUSTMENT_AMOUNT = 0.01f;
 static const float EDIT_MODE_PLAYBACK_VELOCITY = DEFAULT_VELOCITY * DEFAULT_VELOCITY;
 static const float VELOCITY_INDICATOR_WIDTH_OBJECT_MODE = 0.07f;
@@ -208,6 +210,7 @@ enum {
     ATOM_RENAME_BLOCK,
     ATOM_SET_BLOCK_COLOR,
     ATOM_SET_KEY_SIGNATURE,
+    ATOM_SET_TRACK_VELOCITY,
     ATOM_COUNT,
 };
 
@@ -218,6 +221,7 @@ static const char* ATOM_NAMES[] =  {
     "_GSCORE_RENAME_BLOCK",
     "_GSCORE_SET_BLOCK_COLOR",
     "_GSCORE_SET_KEY_SIGNATURE",
+    "_GSCORE_SET_TRACK_VELOCITY",
 };
 
 static const char* ATOM_PROMPTS[] =  {
@@ -227,6 +231,7 @@ static const char* ATOM_PROMPTS[] =  {
     "Rename block:",
     "Set block color:",
     "Set key signature:",
+    "Set track velocity:",
 };
 
 static const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
@@ -236,6 +241,7 @@ static const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
     Score_getCurrentBlockName,
     Score_getCurrentBlockColor,
     Score_getKeySignatureName,
+    ObjectView_getTrackVelocityString,
 };
 
 static const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */

@@ -193,6 +193,32 @@ static void ObjectView_toggleIgnoreNoteOff(ObjectView* self) {
 }
 
 
+static const char* ObjectView_getTrackVelocityString(void) {
+    ObjectView* self = Application_getInstance()->objectView;
+
+    if (ObjectView_isPlaying(self)) return NULL;
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return NULL;
+
+    Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
+
+    snprintf(self->trackVelocityString, 64, "%f", track->velocity);
+    return self->trackVelocityString;
+}
+
+
+static void ObjectView_setTrackVelocity(ObjectView* self, float trackVelocity) {
+    if (ObjectView_isPlaying(self)) return;
+    int iTrack = self->cursor.iRow;
+    int iBlock = self->cursor.iColumn;
+    if (iTrack < 0 || iTrack >= self->score->nTracks || iBlock < 0 || iBlock >= self->score->scoreLength) return;
+
+    Track* track = Application_getInstance()->scoreCurrent->tracks[iTrack];
+    Track_setVelocity(track, trackVelocity);
+}
+
+
 static void ObjectView_draw(ObjectView* self) {
     self->viewHeight = self->score->nTracks * MAX_TRACK_HEIGHT;
 

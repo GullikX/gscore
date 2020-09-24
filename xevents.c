@@ -71,7 +71,7 @@ static void XEvents_processXEvents(XEvents* self) {
                             application->scoreCurrent->tempo = tempoBpm;
                         }
                         else {
-                            printf("Invalid BPM value '%s'\n", propertyValue);
+                            warn("Invalid BPM value '%s'", propertyValue);
                         }
                         break;
                     case ATOM_SYNTH_PROGRAM:
@@ -85,6 +85,16 @@ static void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_SET_BLOCK_COLOR:
                         Score_setBlockColor((char*)propertyValue);
+                        break;
+                    case ATOM_SET_TRACK_VELOCITY:;
+                        float trackVelocity = atof((char*)propertyValue);
+                        if (trackVelocity >= 0.0f && trackVelocity <= 1.0f) {
+                            printf("Setting track velocity to to %f\n", trackVelocity);
+                            ObjectView_setTrackVelocity(application->objectView, trackVelocity);
+                        }
+                        else {
+                            warn("Invalid velocity value '%s', must be between %f and %f", propertyValue, VELOCITY_MIN, VELOCITY_MAX);
+                        }
                         break;
                 }
             }
