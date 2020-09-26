@@ -121,7 +121,6 @@ static void ObjectView_playScore(ObjectView* self, float startPosition, bool rep
     self->iPlayStartBlock = startPosition * self->score->scoreLength;
     self->playRepeat = repeat;
     float blockTime = (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
-    float stopTime = -1.0f;
 
     for (int iTrack = 0; iTrack < self->score->nTracks; iTrack++) {
         for (int iBlock = 0; iBlock < self->score->scoreLength; iBlock++) {
@@ -133,7 +132,6 @@ static void ObjectView_playScore(ObjectView* self, float startPosition, bool rep
                 int channel = iTrack + 1;
                 float velocity = midiMessage->velocity * self->score->tracks[iTrack]->velocity * self->score->tracks[iTrack]->blockVelocities[iBlock];
                 float time = midiMessage->time * blockTime + blockTime * (iBlock - self->iPlayStartBlock);
-                if (stopTime < time) stopTime = time;
 
                 switch (midiMessage->type) {
                     case FLUID_SEQ_NOTEON:
@@ -148,6 +146,7 @@ static void ObjectView_playScore(ObjectView* self, float startPosition, bool rep
             }
         }
     }
+    float stopTime = blockTime * (self->score->scoreLength - self->iPlayStartBlock);
     Synth_scheduleCallback(Application_getInstance()->synth, stopTime);
     self->playStartTime = Synth_getTime(Application_getInstance()->synth);
 }
