@@ -97,25 +97,39 @@ static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancod
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
                 case 'b':
-                    spawnSetXProp(ATOM_SELECT_BLOCK);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_SELECT_BLOCK);
+                    }
                     break;
                 case 'c':
-                    spawnSetXProp(ATOM_SET_BLOCK_COLOR);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_SET_BLOCK_COLOR);
+                    }
                     break;
                 case 'i':
-                    spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    }
                     break;
                 case 'n':
-                    ObjectView_toggleIgnoreNoteOff(objectView);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        ObjectView_toggleIgnoreNoteOff(objectView);
+                    }
                     break;
                 case 'r':
-                    spawnSetXProp(ATOM_RENAME_BLOCK);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_RENAME_BLOCK);
+                    }
                     break;
                 case 't':
-                    spawnSetXProp(ATOM_BPM);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_BPM);
+                    }
                     break;
                 case 'v':
-                    spawnSetXProp(ATOM_SET_TRACK_VELOCITY);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_SET_TRACK_VELOCITY);
+                    }
                     break;
                 case 'w':
                     Application_writeScore(application);
@@ -162,22 +176,30 @@ static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancod
                     break;
                 case GLFW_KEY_UP:
                     if (modControl) {
-                        Score_removeTrack(application->scoreCurrent);
+                        if (!ObjectView_isPlaying(objectView)) {
+                            Score_removeTrack(application->scoreCurrent);
+                        }
                     }
                     break;
                 case GLFW_KEY_DOWN:
                     if (modControl) {
-                        Score_addTrack(application->scoreCurrent);
+                        if (!ObjectView_isPlaying(objectView)) {
+                            Score_addTrack(application->scoreCurrent);
+                        }
                     }
                     break;
                 case GLFW_KEY_LEFT:
                     if (modControl) {
-                        Score_decreaseLength(application->scoreCurrent);
+                        if (!ObjectView_isPlaying(objectView)) {
+                            Score_decreaseLength(application->scoreCurrent);
+                        }
                     }
                     break;
                 case GLFW_KEY_RIGHT:
                     if (modControl) {
-                        Score_increaseLength(application->scoreCurrent);
+                        if (!ObjectView_isPlaying(objectView)) {
+                            Score_increaseLength(application->scoreCurrent);
+                        }
                     }
                     break;
             }
@@ -252,25 +274,39 @@ static void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode,
             printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
                 case 'b':
-                    spawnSetXProp(ATOM_SELECT_BLOCK);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_SELECT_BLOCK);
+                    }
                     break;
                 case 'c':
-                    spawnSetXProp(ATOM_SET_BLOCK_COLOR);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_SET_BLOCK_COLOR);
+                    }
                     break;
                 case 'i':
-                    spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_SYNTH_PROGRAM);
+                    }
                     break;
                 case 'k':
-                    spawnSetXProp(ATOM_SET_KEY_SIGNATURE);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_SET_KEY_SIGNATURE);
+                    }
                     break;
                 case 'n':
-                    EditView_toggleIgnoreNoteOff(editView);
+                    if (!EditView_isPlaying(editView)) {
+                        EditView_toggleIgnoreNoteOff(editView);
+                    }
                     break;
                 case 'r':
-                    spawnSetXProp(ATOM_RENAME_BLOCK);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_RENAME_BLOCK);
+                    }
                     break;
                 case 't':
-                    spawnSetXProp(ATOM_BPM);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_BPM);
+                    }
                     break;
                 case 'w':
                     Application_writeScore(application);
