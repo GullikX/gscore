@@ -322,10 +322,25 @@ static void Score_writeToFile(Score* self, const char* const filename) {
     /* Creat xml nodes for block definitions */
     xmlNode* nodeBlockDefs = xmlNewChild(nodeScore, NULL, BAD_CAST XMLNODE_BLOCKDEFS, NULL);
     for (int iBlockDef = 0; iBlockDef < self->nBlocks; iBlockDef++) {
-        const char* name = self->blocks[iBlockDef]->name;
-        if (name) {
+        if (!self->blocks[iBlockDef]) {
+            continue;
+        }
+
+        bool blockDefUsed = false;
+        for (int iTrack = 0; iTrack < self->nTracks; iTrack++) {
+            if (blockDefUsed) break;
+            for (int iBlock = 0; iBlock < self->scoreLength; iBlock++) {
+                Block** block = self->tracks[iTrack]->blocks[iBlock];
+                if (block && *block == self->blocks[iBlockDef]) {
+                    blockDefUsed = true;
+                    break;
+                }
+            }
+        }
+
+        if (blockDefUsed) {
             xmlNode* nodeBlockDef = xmlNewChild(nodeBlockDefs, NULL, BAD_CAST XMLNODE_BLOCKDEF, NULL);
-            xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME, BAD_CAST name);
+            xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME, BAD_CAST self->blocks[iBlockDef]->name);
             xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR, BAD_CAST self->blocks[iBlockDef]->hexColor);
             for (MidiMessage* message = self->blocks[iBlockDef]->midiMessageRoot; message; message = message->next) {
                 if (message == self->blocks[iBlockDef]->midiMessageRoot) continue;
@@ -340,6 +355,9 @@ static void Score_writeToFile(Score* self, const char* const filename) {
                 snprintf(buffer, XML_BUFFER_SIZE, "%f", message->velocity);
                 xmlNewProp(nodeMessage, BAD_CAST XMLATTRIB_VELOCITY, BAD_CAST buffer);
             }
+        }
+        else {
+            warn("Discarding unused block definition '%s'", self->blocks[iBlockDef]->name);
         }
     }
 
