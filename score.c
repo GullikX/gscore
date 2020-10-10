@@ -30,6 +30,8 @@ static Score* Score_new(Synth* synth) {
     self->scoreLength = SCORE_LENGTH_DEFAULT;
     self->keySignature = KEY_SIGNATURE_DEFAULT;
 
+    self->nodeMetadata = xmlNewNode(NULL, BAD_CAST XMLNODE_METADATA);
+
     return self;
 }
 
@@ -41,6 +43,7 @@ static Score* Score_free(Score* self) {
     for (int iBlock = 0; iBlock < self->nBlocks; iBlock++) {
         self->blocks[iBlock] = Block_free(self->blocks[iBlock]);
     }
+    xmlFree(self->nodeMetadata);
     free(self);
     return NULL;
 }
@@ -123,6 +126,17 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
             Score_setKeySignatureByName(self, keySignatureProp);
         }
         xmlFree(keySignatureProp);
+    }
+
+    /* Read metadata */
+    for (xmlNode* node = nodeScore->children; node; node = node->next) {
+        if (node->type == XML_ELEMENT_NODE && !strcmp(XMLNODE_METADATA, (char*)node->name)) {
+            self->nodeMetadata = xmlCopyNodeList(node);
+            break;
+        }
+    }
+    if (!self->nodeMetadata) {
+        self->nodeMetadata = xmlNewNode(NULL, BAD_CAST XMLNODE_METADATA);
     }
 
     /* Read block definitions */
@@ -318,6 +332,9 @@ static void Score_writeToFile(Score* self, const char* const filename) {
         xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_BEATSPERMEASURE, BAD_CAST buffer);
     }
     xmlNewProp(nodeScore, BAD_CAST XMLATTRIB_KEYSIGNATURE, BAD_CAST KEY_SIGNATURE_NAMES[self->keySignature]);
+
+    /* Add metadata node */
+    xmlAddChild(nodeScore, xmlCopyNodeList(self->nodeMetadata));
 
     /* Creat xml nodes for block definitions */
     xmlNode* nodeBlockDefs = xmlNewChild(nodeScore, NULL, BAD_CAST XMLNODE_BLOCKDEFS, NULL);

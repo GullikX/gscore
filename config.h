@@ -44,6 +44,7 @@ static const char* const XMLNODE_BLOCKDEFS = "blockdefs";
 static const char* const XMLNODE_BLOCKS = "blocks";
 static const char* const XMLNODE_GSCORE = "gscore";
 static const char* const XMLNODE_MESSAGE = "message";
+static const char* const XMLNODE_METADATA = "metadata";
 static const char* const XMLNODE_SCORE = "score";
 static const char* const XMLNODE_TRACK = "track";
 static const char* const XMLNODE_TRACKS = "tracks";

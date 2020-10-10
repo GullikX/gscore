@@ -188,6 +188,7 @@ struct Score {
     int scoreLength;
     char blockListString[MAX_BLOCKS * (MAX_BLOCK_NAME_LENGTH + 1) + 1];
     KeySignature keySignature;
+    xmlNode* nodeMetadata;
 };
 
 struct Synth {
