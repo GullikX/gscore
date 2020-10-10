@@ -412,7 +412,7 @@ static void Score_setBlockByName(Score* self, const char* const name) {
     }
 
     if (self->nBlocks == MAX_BLOCKS) {
-        printf("Already at maximum number of blocks (%d)\n", MAX_BLOCKS);
+        warn("Already at maximum number of blocks (%d)", MAX_BLOCKS);
         return;
     }
 
