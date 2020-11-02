@@ -108,6 +108,7 @@ static void ObjectView_editBlock(ObjectView* self) {
         Application* application = Application_getInstance();
         Application_switchBlock(application, self->score->tracks[iTrack]->blocks[iBlock]);
         EditView_setProgram(self->score->tracks[iTrack]->programName);
+        EditView_setIgnoreNoteOff(Application_getInstance()->editView, self->score->tracks[iTrack]->ignoreNoteOff);
     }
 }
 

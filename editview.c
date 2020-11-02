@@ -415,3 +415,8 @@ static void EditView_toggleIgnoreNoteOff(EditView* self) {
     self->ignoreNoteOff = !self->ignoreNoteOff;
     printf("%s note off events for edit mode\n", self->ignoreNoteOff ? "Disabled" : "Enabled");
 }
+
+
+static void EditView_setIgnoreNoteOff(EditView* self, bool ignoreNoteOff) {
+    self->ignoreNoteOff = ignoreNoteOff;
+}
