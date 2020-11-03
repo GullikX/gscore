@@ -1,12 +1,12 @@
 image: alpine/latest
 
 packages:
-  - fluidsynth
+  - fluidsynth-dev
   - gcc
-  - glew
-  - glfw
+  - glew-dev
+  - glfw-dev
   - libx11-dev
-  - libxml2
+  - libxml2-dev
   - make
 
 sources:
