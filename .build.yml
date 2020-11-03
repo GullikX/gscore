@@ -1,6 +1,7 @@
 image: alpine/latest
 
 packages:
+  - cppcheck
   - fluidsynth-dev
   - glew-dev
   - glfw-dev
@@ -14,3 +15,6 @@ tasks:
   - build: |
       cd gscore
       make
+  - cppcheck: |
+      cd gscore
+      make cppcheck
