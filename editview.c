@@ -123,6 +123,9 @@ static void EditView_releaseNote(EditView* self) {
 
 static void EditView_removeNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
+
+    EditView_releaseNote(self);
+
     int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
     int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
