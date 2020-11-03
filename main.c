@@ -19,7 +19,8 @@
 int main(int argc, char* argv[]) {
     puts("This is gscore "VERSION);
     if (argc != 2) {
-        die("Needs a filename argument");
+        printf("usage: %s filename\n", argv[0]);
+        return 1;
     }
     Application* application = Application_new(argv[1]);
     Application_run(application);
