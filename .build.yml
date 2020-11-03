@@ -5,8 +5,8 @@ packages:
   - gcc
   - glew-dev
   - glfw-dev
-  - libx11-dev
   - libxml2-dev
+  - libxrandr-dev
   - make
 
 sources:
