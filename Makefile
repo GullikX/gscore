@@ -21,8 +21,10 @@ gscore: $(CFILES) $(HFILES) fileformatschema.xsd
 	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o gscore gscore.c $(LIBS)
 	rm -f functiondeclarations.h typedeclarations.h fileformatschema.h
 
+.PHONY: clean
 clean:
 	rm -f gscore
 
+.PHONY: cppcheck
 cppcheck:
 	cppcheck --enable=all gscore.c
