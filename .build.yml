@@ -1,0 +1,18 @@
+image: alpine/latest
+
+packages:
+  - fluidsynth
+  - gcc
+  - glew
+  - glfw
+  - libx11-dev
+  - libxml2
+  - make
+
+sources:
+  - https://git.sr.ht/~gullik/gscore
+
+tasks:
+  - build: |
+      cd gscore
+      make
