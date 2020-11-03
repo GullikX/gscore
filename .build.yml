@@ -2,12 +2,10 @@ image: alpine/latest
 
 packages:
   - fluidsynth-dev
-  - gcc
   - glew-dev
   - glfw-dev
   - libxml2-dev
   - libxrandr-dev
-  - make
 
 sources:
   - https://git.sr.ht/~gullik/gscore
