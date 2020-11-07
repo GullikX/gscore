@@ -104,7 +104,7 @@ static void XEvents_processXEvents(XEvents* self) {
                         int tempoBpm = atoi((char*)propertyValue);
                         if (tempoBpm > 0 && tempoBpm < TEMPO_BPM_MAX) {
                             printf("Setting BPM to %d\n", tempoBpm);
-                            EditView_setTempo(application->editView, tempoBpm);
+                            application->scoreCurrent->tempo = tempoBpm;
                         }
                         else {
                             printf("Invalid BPM value '%s'\n", propertyValue);

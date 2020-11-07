@@ -129,7 +129,6 @@ struct EditView {
     int playStartTime;
     float playStartPosition;
     bool playRepeat;
-    int tempo;
     Vector4 playbackCursorColor;
     bool ctrlPressed;
     bool ignoreNoteOff;

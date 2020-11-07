@@ -53,7 +53,6 @@ static EditView* EditView_new(Score* score) {
     self->cursor.indicatorValue = -1.0f;
 
     self->playStartTime = -1;
-    self->tempo = score->tempo;
     success = hexColorToRgb(COLOR_PLAYBACK_CURSOR, &self->playbackCursorColor);
     if (!success) die("Invalid playback cursor color '%s'", COLOR_PLAYBACK_CURSOR);
 
@@ -190,7 +189,7 @@ static void EditView_setCtrlPressed(EditView* self, bool ctrlPressed) {
 static void EditView_playBlock(EditView* self, float startPosition, bool repeat) {
     self->playStartPosition = startPosition;
     self->playRepeat = repeat;
-    float blockTime = (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->tempo;
+    float blockTime = (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     Synth* synth = Application_getInstance()->synth;
 
@@ -242,11 +241,6 @@ static void EditView_setProgram(const char* const programName) {
 }
 
 
-static void EditView_setTempo(EditView* self, int tempo) {
-    self->tempo = tempo;
-}
-
-
 static void EditView_draw(EditView* self) {
     /* Vertical gridlines marking start of measures */
     for (int i = 0; i < BLOCK_MEASURES; i++) {
@@ -284,7 +278,7 @@ static void EditView_draw(EditView* self) {
                     bool highlight;
                     if (EditView_isPlaying(self)) {
                         float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
-                        float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->tempo;
+                        float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
                         float progress = time / totalTime + self->playStartPosition;
                         float cursorX = Application_getInstance()->renderer->viewportWidth * progress;
                         int iCursorColumn = EditView_xCoordToColumnIndex(self, cursorX);
@@ -346,7 +340,7 @@ static void EditView_drawPlaybackCursor(EditView* self) {
     if (!EditView_isPlaying(self)) return;
 
     float time = Synth_getTime(Application_getInstance()->synth) - self->playStartTime;
-    float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->tempo;
+    float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
     float progress = time / totalTime + self->playStartPosition;
     float cursorX = -1.0f + 2.0f * progress;
 
