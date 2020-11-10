@@ -281,8 +281,10 @@ static void EditView_draw(EditView* self) {
                         float totalTime = 1000.0f * (float)(BLOCK_MEASURES * self->score->nBeatsPerMeasure * SECONDS_PER_MINUTE) / (float)self->score->tempo;
                         float progress = time / totalTime + self->playStartPosition;
                         float cursorX = Application_getInstance()->renderer->viewportWidth * progress;
-                        int iCursorColumn = EditView_xCoordToColumnIndex(self, cursorX);
-                        highlight = iColumnStart <= iCursorColumn && iColumnEnd > iCursorColumn;
+                        float noteStartX = midiMessage->time * viewportWidth;
+                        float noteEndX = midiMessageOther->time * viewportWidth;
+
+                        highlight = noteStartX < cursorX && noteEndX > cursorX;
                     }
                     else {
                         highlight = iRow == self->cursor.iRow && iColumnStart <= self->cursor.iColumn && iColumnEnd > self->cursor.iColumn;
@@ -398,7 +400,7 @@ static void EditView_removeMidiMessage(MidiMessage* midiMessage) {
 
 static int EditView_xCoordToColumnIndex(EditView* self, float x) {
     int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
-    return (nColumns * x) / Application_getInstance()->renderer->viewportWidth;
+    return round((nColumns * x) / Application_getInstance()->renderer->viewportWidth);
 }
 
 
