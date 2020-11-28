@@ -1,5 +1,5 @@
 CC?=cc
-#CFLAGS?=-O3 -march=native
+#CFLAGS?=-O2
 CFLAGS?=-Og -g
 
 VERSION = 0.0.1-git
