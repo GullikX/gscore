@@ -7,7 +7,7 @@ VERSION = 0.0.1-git
 CFILES=application.c block.c editview.c gscore.c hashmap.c input.c main.c objectview.c renderer.c score.c synth.c track.c util.c xevents.c
 HFILES=config.h gscore.h
 INCLUDE=$$(xml2-config --cflags)
-LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lX11 $$(xml2-config --libs)
+LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lm -lX11 $$(xml2-config --libs)
 
 WARNINGS=-Wall -Wextra -Wunused-const-variable -pedantic
 ERRORS=-Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -Wfatal-errors
