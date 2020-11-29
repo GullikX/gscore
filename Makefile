@@ -14,16 +14,21 @@ ERRORS=-Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -Wfata
 DEFINES=-DVERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
-gscore: $(CFILES) $(HFILES) fileformatschema.xsd
-	grep -h -e '^static\s\S*\s.*(.*)\s{$$' *.c | sed -e 's/{/;/g' > functiondeclarations.h
-	grep '^struct\s\S*\s{$$' gscore.h | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
-	sed 's/"/\\"/g' fileformatschema.xsd | sed -e 's/.*/"&\\n"/' | sed '1s/^/const char* const FILE_FORMAT_SCHEMA = \n/' | sed '$$s/$$/;\n/' > fileformatschema.h
+gscore: $(CFILES) $(HFILES) fileformatschema.h functiondeclarations.h typedeclarations.h
 	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o gscore gscore.c $(LIBS)
-	rm -f functiondeclarations.h typedeclarations.h fileformatschema.h
+
+fileformatschema.h: fileformatschema.xsd
+	sed 's/"/\\"/g' $^ | sed -e 's/.*/"&\\n"/' | sed '1s/^/const char* const FILE_FORMAT_SCHEMA = \n/' | sed '$$s/$$/;\n/' > fileformatschema.h
+
+functiondeclarations.h: $(CFILES)
+	grep -h -e '^static\s\S*\s.*(.*)\s{$$' $^ | sed -e 's/{/;/g' > functiondeclarations.h
+
+typedeclarations.h: gscore.h
+	grep '^struct\s\S*\s{$$' $^ | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
 
 .PHONY: clean
 clean:
-	rm -f gscore
+	rm -f gscore functiondeclarations.h typedeclarations.h fileformatschema.h
 
 .PHONY: cppcheck
 cppcheck:
