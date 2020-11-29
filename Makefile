@@ -15,7 +15,7 @@ DEFINES=-DVERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
 gscore: $(CFILES) $(HFILES) fileformatschema.h functiondeclarations.h typedeclarations.h
-	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o gscore gscore.c $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o $@ gscore.c $(LIBS)
 
 fileformatschema.h: fileformatschema.xsd
 	sed 's/"/\\"/g' $^ | sed -e 's/.*/"&\\n"/' | sed '1s/^/const char* const FILE_FORMAT_SCHEMA = \n/' | sed '$$s/$$/;\n/' > fileformatschema.h
