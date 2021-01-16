@@ -29,10 +29,12 @@ static Block* Block_new(const char* const name, const char* const hexColor) {
         if (strcmp(name, BLOCK_NAME_DEFAULT)) {
             /* Add some color variation */
             int hash = djb2(self->name);
-            char* hashptr = (char*)&hash;
-            self->color.x += BLOCK_NEW_COLOR_VARIATION * (float)hashptr[0] / 255.0f;
-            self->color.y += BLOCK_NEW_COLOR_VARIATION * (float)hashptr[1] / 255.0f;
-            self->color.z += BLOCK_NEW_COLOR_VARIATION * (float)hashptr[2] / 255.0f;
+            int rOffset = (hash >> 16) & 0xff;
+            int gOffset = (hash >> 8) & 0xff;
+            int bOffset = hash & 0xff;
+            self->color.x += BLOCK_NEW_COLOR_VARIATION * (float)rOffset / 255.0f;
+            self->color.y += BLOCK_NEW_COLOR_VARIATION * (float)gOffset / 255.0f;
+            self->color.z += BLOCK_NEW_COLOR_VARIATION * (float)bOffset / 255.0f;
 
             if (self->color.x > 1.0f) self->color.x = 1.0f;
             if (self->color.y > 1.0f) self->color.y = 1.0f;
@@ -71,20 +73,12 @@ static Block* Block_free(Block* self) {
 
 
 static void Block_setName(Block* self, const char* const name) {
-    if (!name) {
-        die("Block name cannot be null");
-    }
-
     strncpy(self->name, name, MAX_BLOCK_NAME_LENGTH);
     self->name[MAX_BLOCK_NAME_LENGTH - 1] = '\0';
 }
 
 
 static void Block_setColor(Block* self, const char* const hexColor) {
-    if (!hexColor) {
-        die("Block color cannot be null");
-    }
-
     bool success = hexColorToRgb(hexColor, &self->color);
     if (success) {
         printf("Set block color of '%s' to '%s'\n", self->name, hexColor);

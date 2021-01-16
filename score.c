@@ -148,19 +148,13 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
                     if (self->nBlocks >= MAX_BLOCKS) die("To many blocks (max is %d)", MAX_BLOCKS);
 
                     {
-                        const char* blockName = NULL;
                         char* blockNameProp = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME);
-                        if (blockNameProp) {
-                            blockName = blockNameProp;
-                        }
+                        if (!blockNameProp) die("Block name cannot be null");
 
-                        const char* blockColor = NULL;
                         char* blockColorProp = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR);
-                        if (blockColorProp) {
-                            blockColor = blockColorProp;
-                        }
+                        if (!blockColorProp) die("Block color cannot be null");
 
-                        self->blocks[self->nBlocks] = Block_new(blockName, blockColor);
+                        self->blocks[self->nBlocks] = Block_new(blockNameProp, blockColorProp);
 
                         xmlFree(blockNameProp);
                         xmlFree(blockColorProp);
