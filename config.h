@@ -212,6 +212,7 @@ enum {
     ATOM_SET_BLOCK_COLOR,
     ATOM_SET_KEY_SIGNATURE,
     ATOM_SET_TRACK_VELOCITY,
+    ATOM_QUIT,
     ATOM_COUNT,
 };
 
@@ -223,6 +224,7 @@ static const char* ATOM_NAMES[] =  {
     "_GSCORE_SET_BLOCK_COLOR",
     "_GSCORE_SET_KEY_SIGNATURE",
     "_GSCORE_SET_TRACK_VELOCITY",
+    "_GSCORE_QUIT",
 };
 
 static const char* ATOM_PROMPTS[] =  {
@@ -233,6 +235,7 @@ static const char* ATOM_PROMPTS[] =  {
     "Set block color:",
     "Set key signature:",
     "Set track velocity:",
+    "Quit?",
 };
 
 static const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
@@ -243,7 +246,10 @@ static const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
     Score_getCurrentBlockColor,
     Score_getKeySignatureName,
     ObjectView_getTrackVelocityString,
+    returnYes,
 };
+
+static const char* YES = "Yes";
 
 static const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */
     "export WINDOWID=\"%lu\";"

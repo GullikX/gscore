@@ -109,3 +109,8 @@ static bool hexColorToRgb(const char* const hexColor, Vector4* rgbOut) {
 static int modulo(int a, int b) {
     return (a % b + b) % b;
 }
+
+
+static const char* returnYes(void) {
+    return YES;
+}

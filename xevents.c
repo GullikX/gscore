@@ -96,6 +96,11 @@ static void XEvents_processXEvents(XEvents* self) {
                             warn("Invalid velocity value '%s', must be between %f and %f", propertyValue, VELOCITY_MIN, VELOCITY_MAX);
                         }
                         break;
+                    case ATOM_QUIT:
+                        if (!strcmp((char*)propertyValue, YES)) {
+                            Renderer_stop(application->renderer);
+                        }
+                        break;
                 }
             }
             else if (state == EDIT_MODE) {
@@ -124,6 +129,11 @@ static void XEvents_processXEvents(XEvents* self) {
                         break;
                     case ATOM_SET_KEY_SIGNATURE:
                         Score_setKeySignatureByName(application->scoreCurrent, (char*)propertyValue);
+                        break;
+                    case ATOM_QUIT:
+                        if (!strcmp((char*)propertyValue, YES)) {
+                            Renderer_stop(application->renderer);
+                        }
                         break;
                 }
                 break;

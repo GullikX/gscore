@@ -135,7 +135,9 @@ static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancod
                     Application_writeScore(application);
                     break;
                 case 'q':
-                    Renderer_stop(application->renderer);
+                    if (!ObjectView_isPlaying(objectView)) {
+                        spawnSetXProp(ATOM_QUIT);
+                    }
                     break;
             }
         }
@@ -312,7 +314,9 @@ static void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode,
                     Application_writeScore(application);
                     break;
                 case 'q':
-                    Renderer_stop(application->renderer);
+                    if (!EditView_isPlaying(editView)) {
+                        spawnSetXProp(ATOM_QUIT);
+                    }
                     break;
             }
         }
