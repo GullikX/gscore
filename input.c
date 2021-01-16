@@ -79,7 +79,6 @@ static void Input_scrollCallback(GLFWwindow* window, double xoffset, double yoff
 
 static void Input_windowSizeCallback(GLFWwindow* window, int width, int height) {
     (void)window;
-    printf("Window size updated: (%d, %d)\n", width, height);
     Renderer_updateViewportSize(Application_getInstance()->renderer, width, height);
 }
 
@@ -94,7 +93,6 @@ static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancod
     if (action == GLFW_PRESS) {
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
-            printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
                 case 'b':
                     if (!ObjectView_isPlaying(objectView)) {
@@ -142,7 +140,6 @@ static void Input_keyCallbackObjectMode(GLFWwindow* window, int key, int scancod
             }
         }
         else {
-            printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
                     if (modControl) {
@@ -273,7 +270,6 @@ static void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode,
     if (action == GLFW_PRESS) {
         const char* const keyName = glfwGetKeyName(key, scancode);
         if (keyName) {
-            printf("Key pressed: %s\n", keyName);
             switch (*keyName) {
                 case 'b':
                     if (!EditView_isPlaying(editView)) {
@@ -321,7 +317,6 @@ static void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode,
             }
         }
         else {
-            printf("Key pressed: %d\n", key);
             switch (key) {
                 case GLFW_KEY_TAB:
                     EditView_stopPlaying(editView);
