@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Martin Gulliksson <martin@gullik.cc>
+/* Copyright (C) 2020-2021 Martin Gulliksson <martin@gullik.cc>
  *
  * This file is part of gscore.
  *
