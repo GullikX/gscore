@@ -11,7 +11,7 @@ LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lm -lX11 $$(xml2-config --libs)
 
 WARNINGS=-Wall -Wextra -Wunused-const-variable -pedantic
 ERRORS=-Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -Wfatal-errors
-DEFINES=-DVERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_SOURCE
+DEFINES=-DVERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_C_SOURCE=200809L
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
 gscore: $(CFILES) $(HFILES) fileformatschema.h functiondeclarations.h typedeclarations.h
