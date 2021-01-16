@@ -52,10 +52,10 @@ static bool fileExists(const char* const filename) {
 
 
 static void spawnSetXProp(int atomId) {
-    int bufferLength = strlen(cmdQuery) + strlen(ATOM_PROMPTS[atomId]) + strlen(ATOM_NAMES[atomId]) + 64;
-    char* cmd = ecalloc(bufferLength, sizeof(char));
+    int bufferLength = strlen(CMD_QUERY) + strlen(ATOM_PROMPTS[atomId]) + strlen(ATOM_NAMES[atomId]) + 64;
+    char* cmdQuery = ecalloc(bufferLength, sizeof(char));
     Window x11Window = Application_getInstance()->xevents->x11Window;
-    snprintf(cmd, bufferLength, cmdQuery, x11Window, ATOM_PROMPTS[atomId], ATOM_NAMES[atomId]);
+    snprintf(cmdQuery, bufferLength, CMD_QUERY, x11Window, ATOM_PROMPTS[atomId], ATOM_NAMES[atomId]);
 
     const char* const pipeData = ATOM_FUNCTIONS[atomId]();
     if (!pipeData) {
@@ -63,7 +63,7 @@ static void spawnSetXProp(int atomId) {
         return;
     }
 
-    spawn(cmd, pipeData);
+    spawn(cmdQuery, pipeData);
 }
 
 

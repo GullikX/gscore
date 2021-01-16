@@ -251,7 +251,7 @@ static const char* (*ATOM_FUNCTIONS[ATOM_COUNT])(void) = {
 
 static const char* YES = "Yes";
 
-static const char* const cmdQuery =  /* sprintf(cmdQueryFull, cmdQuery, windowId, prompt, atomName) */
+static const char* const CMD_QUERY =  /* sprintf(cmdQuery, CMD_QUERY, windowId, prompt, atomName) */
     "export WINDOWID=\"%lu\";"
     "export PROMPT=\"%s\";"
     "export ATOM_NAME=\"%s\";"
