@@ -82,11 +82,13 @@ enum {
     SYNTH_ENABLE_REVERB = false,
     SYNTH_ENABLE_CHORUS = false,
     XML_BUFFER_SIZE = 1024,
+    HEX_COLOR_BUFFER_SIZE = 7,
 };
 
 static const float CURSOR_SIZE_OFFSET = -0.005f;
 static const float NOTE_SIZE_OFFSET = -0.002f;
 static const float BLOCK_SIZE_OFFSET = -0.002f;
+static const float BLOCK_NEW_COLOR_VARIATION = 0.25f;
 static const float HIGHLIGHT_STRENGTH = 0.4f;
 static const float PLAYER_CURSOR_WIDTH = 0.005f;
 static const float MAX_TRACK_HEIGHT = 0.1f;
@@ -198,11 +200,11 @@ static const char* NOTE_NAMES[] = {
     "B",
 };
 
-static const char* const COLOR_BACKGROUND = "263238";
-static const char* const COLOR_GRIDLINES = "212D32";
-static const char* const COLOR_CURSOR = "38434A";
-static const char* const COLOR_PLAYBACK_CURSOR = "C5C8C6";
-static const char* const COLOR_BLOCK_DEFAULT = "81A2BE";
+static const Vector4 COLOR_BACKGROUND = {0.1490f, 0.1960f, 0.2196f, 1.0000f};
+static const Vector4 COLOR_GRIDLINES = {0.1294f, 0.1764f, 0.1960f, 1.0000f};
+static const Vector4 COLOR_CURSOR = {0.2196f, 0.262f , 0.2901f, 1.0000f};
+static const Vector4 COLOR_PLAYBACK_CURSOR = {0.7725f, 0.7843f, 0.7764f, 1.0000f};
+static const Vector4 COLOR_BLOCK_DEFAULT = {0.5058f, 0.6352f, 0.7450f, 1.0000f};
 
 enum {
     ATOM_BPM,

@@ -63,11 +63,7 @@ typedef enum {
 #include "fileformatschema.h"
 
 
-/* Configuration */
-#include "config.h"
-
-
-/* Type definitions */
+/* Simple types */
 struct Vector2 {
     float x, y;
 };
@@ -81,6 +77,12 @@ struct Vertex {
     Vector4 color;
 };
 
+
+/* Configuration */
+#include "config.h"
+
+
+/*Type definitions*/
 struct HashMap {
     int nBuckets;
     HashMapEntry** buckets;
@@ -108,7 +110,6 @@ struct Application {
 struct Block {
     char name[MAX_BLOCK_NAME_LENGTH];
     Vector4 color;
-    char hexColor[7];
     MidiMessage* midiMessageRoot;
 };
 
@@ -130,7 +131,6 @@ struct EditView {
     int playStartTime;
     float playStartPosition;
     bool playRepeat;
-    Vector4 playbackCursorColor;
     bool ctrlPressed;
     bool ignoreNoteOff;
 };
@@ -152,7 +152,6 @@ struct ObjectView {
     int playStartTime;
     int iPlayStartBlock;
     bool playRepeat;
-    Vector4 playbackCursorColor;
     bool ctrlPressed;
     char trackVelocityString[64];
 };

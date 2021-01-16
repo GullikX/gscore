@@ -20,7 +20,28 @@ static Block* Block_new(const char* const name, const char* const hexColor) {
     Block* self = ecalloc(1, sizeof(*self));
 
     Block_setName(self, name);
-    Block_setColor(self, hexColor);
+    if (hexColor) {
+        Block_setColor(self, hexColor);
+    }
+    else {
+        self->color = COLOR_BLOCK_DEFAULT;
+
+        if (strcmp(name, BLOCK_NAME_DEFAULT)) {
+            /* Add some color variation */
+            int hash = djb2(self->name);
+            char* hashptr = (char*)&hash;
+            self->color.x += BLOCK_NEW_COLOR_VARIATION * (float)hashptr[0] / 255.0f;
+            self->color.y += BLOCK_NEW_COLOR_VARIATION * (float)hashptr[1] / 255.0f;
+            self->color.z += BLOCK_NEW_COLOR_VARIATION * (float)hashptr[2] / 255.0f;
+
+            if (self->color.x > 1.0f) self->color.x = 1.0f;
+            if (self->color.y > 1.0f) self->color.y = 1.0f;
+            if (self->color.z > 1.0f) self->color.z = 1.0f;
+            if (self->color.x < 0.0f) self->color.x = 0.0f;
+            if (self->color.y < 0.0f) self->color.y = 0.0f;
+            if (self->color.z < 0.0f) self->color.z = 0.0f;
+        }
+    }
 
     self->midiMessageRoot = ecalloc(1, sizeof(MidiMessage));
     self->midiMessageRoot->type = FLUID_SEQ_NOTE;
@@ -66,12 +87,18 @@ static void Block_setColor(Block* self, const char* const hexColor) {
 
     bool success = hexColorToRgb(hexColor, &self->color);
     if (success) {
-        strncpy(self->hexColor, hexColor, 6);
         printf("Set block color of '%s' to '%s'\n", self->name, hexColor);
     }
     else {
         warn("Failed to set block color '%s'", hexColor);
     }
+
+    if (self->color.x > 1.0f) self->color.x = 1.0f;
+    if (self->color.y > 1.0f) self->color.y = 1.0f;
+    if (self->color.z > 1.0f) self->color.z = 1.0f;
+    if (self->color.x < 0.0f) self->color.x = 0.0f;
+    if (self->color.y < 0.0f) self->color.y = 0.0f;
+    if (self->color.z < 0.0f) self->color.z = 0.0f;
 }
 
 

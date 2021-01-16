@@ -22,31 +22,26 @@ static ObjectView* ObjectView_new(Score* score) {
     self->score = score;
 
     int nColumns = SCORE_LENGTH_MAX;
-    const char* trackColors[2] = {COLOR_GRIDLINES, COLOR_BACKGROUND};
-    int iTrackColor = 0;
 
     for (int i = 0; i < N_TRACKS_MAX; i++) {
         self->gridlinesHorizontal[i].iRow = i;
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
         self->gridlinesHorizontal[i].nColumns = nColumns;
-        bool success = hexColorToRgb(trackColors[iTrackColor], &self->gridlinesHorizontal[i].color);
-        if (!success) die("Invalid gridline color '%s'", trackColors[iTrackColor]);
+
+        Vector4 trackColors[2] = {COLOR_GRIDLINES, COLOR_BACKGROUND};
+        self->gridlinesHorizontal[i].color = trackColors[i % 2];
         self->gridlinesHorizontal[i].indicatorValue = -1.0f;
-        iTrackColor = !iTrackColor;
     }
 
     self->cursor.iRow = 0;
     self->cursor.iColumn = 0;
     self->cursor.nRows = 1;
     self->cursor.nColumns = 1;
-    bool success = hexColorToRgb(COLOR_CURSOR, &self->cursor.color);
-    if (!success) die("Invalid cursor color '%s'", COLOR_CURSOR);
+    self->cursor.color = COLOR_CURSOR;
     self->cursor.indicatorValue = -1.0f;
 
     self->playStartTime = -1;
-    success = hexColorToRgb(COLOR_PLAYBACK_CURSOR, &self->playbackCursorColor);
-    if (!success) die("Invalid playback cursor color '%s'", COLOR_PLAYBACK_CURSOR);
 
     self->ctrlPressed = false;
 
@@ -294,7 +289,7 @@ static void ObjectView_drawPlaybackCursor(ObjectView* self) {
     float y1 = -1.0f;
     float y2 = 1.0f;
 
-    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, self->playbackCursorColor);
+    Renderer_drawQuad(Application_getInstance()->renderer, x1, x2, y1, y2, COLOR_PLAYBACK_CURSOR);
 }
 
 

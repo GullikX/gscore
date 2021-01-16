@@ -21,7 +21,7 @@ static Score* Score_new(Synth* synth) {
     self->tempo = TEMPO_BPM;
     self->nBeatsPerMeasure = BEATS_PER_MEASURE_DEFAULT;
 
-    self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
+    self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, NULL);
     self->nBlocks = 1;
 
     self->tracks[0] = Track_new(Synth_getDefaultProgramName(synth), DEFAULT_VELOCITY, false);
@@ -154,7 +154,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
                             blockName = blockNameProp;
                         }
 
-                        const char* blockColor = COLOR_BLOCK_DEFAULT;
+                        const char* blockColor = NULL;
                         char* blockColorProp = (char*)xmlGetProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR);
                         if (blockColorProp) {
                             blockColor = blockColorProp;
@@ -215,7 +215,7 @@ static Score* Score_readFromFile(const char* const filename, Synth* synth) {
     }
     if (self->nBlocks == 0) {
         warn("The loaded file does not contain any blocks, creating one");
-        self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, COLOR_BLOCK_DEFAULT);
+        self->blocks[0] = Block_new(BLOCK_NAME_DEFAULT, NULL);
         self->nBlocks = 1;
     }
 
@@ -358,7 +358,15 @@ static void Score_writeToFile(Score* self, const char* const filename) {
         if (blockDefUsed) {
             xmlNode* nodeBlockDef = xmlNewChild(nodeBlockDefs, NULL, BAD_CAST XMLNODE_BLOCKDEF, NULL);
             xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_NAME, BAD_CAST self->blocks[iBlockDef]->name);
-            xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR, BAD_CAST self->blocks[iBlockDef]->hexColor);
+            {
+                static char hexColor[HEX_COLOR_BUFFER_SIZE] = {0};
+                Block* blockCurrent = self->blocks[iBlockDef];
+                unsigned int r = 255.0f * blockCurrent->color.x;
+                unsigned int g = 255.0f * blockCurrent->color.y;
+                unsigned int b = 255.0f * blockCurrent->color.z;
+                snprintf(hexColor, HEX_COLOR_BUFFER_SIZE, "%X%X%X", r, g, b);
+                xmlNewProp(nodeBlockDef, BAD_CAST XMLATTRIB_COLOR, BAD_CAST hexColor);
+            }
             for (MidiMessage* message = self->blocks[iBlockDef]->midiMessageRoot; message; message = message->next) {
                 if (message == self->blocks[iBlockDef]->midiMessageRoot) continue;
                 xmlNode* nodeMessage = xmlNewChild(nodeBlockDef, NULL, BAD_CAST XMLNODE_MESSAGE, NULL);
@@ -452,7 +460,7 @@ static void Score_setBlockByName(Score* self, const char* const name) {
     }
 
     printf("Creating new block '%s'\n", name);
-    self->blocks[self->nBlocks] = Block_new(name, COLOR_BLOCK_DEFAULT);
+    self->blocks[self->nBlocks] = Block_new(name, NULL);
     Application_switchBlock(application, &self->blocks[self->nBlocks]);
     self->nBlocks++;
 }
@@ -484,8 +492,13 @@ static void Score_renameBlock(Score* self, const char* const name) {
 
 
 static const char* Score_getCurrentBlockColor(void) {
+    static char hexColor[HEX_COLOR_BUFFER_SIZE] = {0};
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
-    return blockCurrent->hexColor;
+    unsigned int r = 255.0f * blockCurrent->color.x;
+    unsigned int g = 255.0f * blockCurrent->color.y;
+    unsigned int b = 255.0f * blockCurrent->color.z;
+    snprintf(hexColor, HEX_COLOR_BUFFER_SIZE, "%X%X%X", r, g, b);
+    return hexColor;
 }
 
 

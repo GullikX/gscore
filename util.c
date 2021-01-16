@@ -114,3 +114,13 @@ static int modulo(int a, int b) {
 static const char* returnYes(void) {
     return YES;
 }
+
+
+static int djb2(const char* str) {
+    int hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash;
+}

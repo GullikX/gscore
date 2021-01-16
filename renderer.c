@@ -65,9 +65,6 @@ static Renderer* Renderer_new(void) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    bool success = hexColorToRgb(COLOR_BACKGROUND, &self->clearColor);
-    if (!success) die("Invalid clear color '%s'", COLOR_BACKGROUND);
-
     return self;
 }
 
@@ -93,7 +90,7 @@ static int Renderer_running(Renderer* self) {
 static void Renderer_updateScreen(Renderer* self) {
     Renderer_flushVertexBuffer(self);
     glfwSwapBuffers(self->window);
-    glClearColor(self->clearColor.x, self->clearColor.y, self->clearColor.z, self->clearColor.w);
+    glClearColor(COLOR_BACKGROUND.x, COLOR_BACKGROUND.y, COLOR_BACKGROUND.z, COLOR_BACKGROUND.w);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
 }

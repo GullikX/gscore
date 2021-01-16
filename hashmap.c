@@ -41,7 +41,7 @@ static HashMap* HashMap_free(HashMap* self) {
 
 
 static void HashMap_put(HashMap* self, const char* key, int value) {
-    int iBucket = modulo(HashMap_djb2(key), self->nBuckets);
+    int iBucket = modulo(djb2(key), self->nBuckets);
     if (!self->buckets[iBucket]) {
         self->buckets[iBucket] = HashMapEntry_new(key, value);
     }
@@ -54,7 +54,7 @@ static void HashMap_put(HashMap* self, const char* key, int value) {
 
 
 static int HashMap_get(HashMap* self, const char* key) {
-    int iBucket = modulo(HashMap_djb2(key), self->nBuckets);
+    int iBucket = modulo(djb2(key), self->nBuckets);
     for (HashMapEntry* entry = self->buckets[iBucket]; entry; entry = entry->next) {
         if (!strcmp(entry->key, key)) {
             return entry->value;
@@ -62,16 +62,6 @@ static int HashMap_get(HashMap* self, const char* key) {
     }
     warn("Did not find map entry for '%s'", key);
     return -1;
-}
-
-
-static int HashMap_djb2(const char* str) {
-    int hash = 5381;
-    int c;
-    while ((c = *str++)) {
-        hash = ((hash << 5) + hash) + c;
-    }
-    return hash;
 }
 
 
