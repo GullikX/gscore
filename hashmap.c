@@ -54,6 +54,10 @@ static void HashMap_put(HashMap* self, const char* key, int value) {
 
 
 static int HashMap_get(HashMap* self, const char* key) {
+    if (!self->nBuckets) {
+        warn("Cannot find map entry for '%s' since map is empty", key);
+        return -1;
+    }
     int iBucket = modulo(djb2(key), self->nBuckets);
     for (HashMapEntry* entry = self->buckets[iBucket]; entry; entry = entry->next) {
         if (!strcmp(entry->key, key)) {

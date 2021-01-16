@@ -34,12 +34,14 @@ static Synth* Synth_new(void) {
     self->nSoundFonts = 0;
     for (const char** soundFont = SOUNDFONTS; *soundFont; soundFont++) {
         if (self->nSoundFonts >= MAX_SOUNDFONTS) {
-            die("Maximum number of soundfonts reached (%d)", MAX_SOUNDFONTS);
+            warn("Maximum number of soundfonts reached (%d)", MAX_SOUNDFONTS);
+            break;
         }
         printf("Loading soundfont '%s'...\n", *soundFont);
         self->soundFontIds[self->nSoundFonts] = fluid_synth_sfload(self->fluidSynth, *soundFont, true);
         if (self->soundFontIds[self->nSoundFonts] == FLUID_FAILED) {
-            die("Failed to load soundfont '%s'", *soundFont);
+            warn("Failed to load soundfont '%s'", *soundFont);
+            continue;
         }
         printf("Successfully loaded '%s'\n", *soundFont);
         self->nSoundFonts++;
@@ -122,9 +124,10 @@ static void Synth_decodeProgram(int encodedProgram, int* iSoundFontOut, int* iBa
 
 
 static void Synth_setProgramByName(Synth* self, int channel, const char* const programName) {
+    if (!programName) return;
     int encodedProgram = HashMap_get(self->instrumentMap, programName);
     if (encodedProgram < 0) {
-        printf("Error: Invalid instrument name '%s'\n", programName);
+        warn("Invalid instrument name '%s'", programName);
         return;
     }
     int iSoundFont = 0;
@@ -210,6 +213,10 @@ static void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, flu
 
 
 static const char* Synth_getDefaultProgramName(Synth* self) {
+    if (!self->soundFontIds[0]) {
+        warn("No soundfonts loaded");
+        return NULL;
+    }
     fluid_sfont_t* soundFont = fluid_synth_get_sfont_by_id(self->fluidSynth, self->soundFontIds[0]);
     fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, SYNTH_BANK_DEFAULT, SYNTH_PROGRAM_DEFAULT);
     if (!preset) die("Could not determine default program name");
