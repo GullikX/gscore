@@ -124,8 +124,9 @@ struct GridItem {
 
 struct EditView {
     Score* score;
+    int transpose;
     GridItem gridlinesVertical[BLOCK_MEASURES];
-    GridItem gridlinesHorizontal[OCTAVES * NOTES_IN_OCTAVE];
+    GridItem gridlinesHorizontal[EDIT_MODE_OCTAVES * NOTES_IN_OCTAVE];
     GridItem cursor;
     MidiMessage* midiMessageHeld;
     int playStartTime;

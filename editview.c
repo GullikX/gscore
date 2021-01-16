@@ -21,7 +21,9 @@ static EditView* EditView_new(Score* score) {
 
     self->score = score;
 
-    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+    self->transpose = EDIT_MODE_TRANSPOSE_DEFAULT;
+
+    int nRows = EDIT_MODE_OCTAVES*NOTES_IN_OCTAVE;
     int nColumns = BLOCK_MEASURES * score->nBeatsPerMeasure * MEASURE_RESOLUTION;
 
     for (int i = 0; i < BLOCK_MEASURES; i++) {
@@ -33,7 +35,7 @@ static EditView* EditView_new(Score* score) {
         self->gridlinesVertical[i].indicatorValue = -1.0f;
     }
 
-    for (int i = 0; i < OCTAVES*NOTES_IN_OCTAVE; i++) {
+    for (int i = 0; i < EDIT_MODE_OCTAVES*NOTES_IN_OCTAVE; i++) {
         self->gridlinesHorizontal[i].iRow = i;
         self->gridlinesHorizontal[i].iColumn = 0;
         self->gridlinesHorizontal[i].nRows = 1;
@@ -66,7 +68,9 @@ static EditView* EditView_free(EditView* self) {
 
 
 static void EditView_previewNote(EditView* self) {
-    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
+    int pitch = EditView_rowIndexToNoteKey(self, self->cursor.iRow);
+    if (pitch < MIDI_PITCH_MIN || pitch > MIDI_PITCH_MAX) return;
+
     if (!EditView_isPlaying(self)) {
         Synth_noteOffAll(Application_getInstance()->synth);
         Synth_noteOn(Application_getInstance()->synth, pitch);
@@ -77,8 +81,11 @@ static void EditView_previewNote(EditView* self) {
 
 static void EditView_addNote(EditView* self) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
+
+    int pitch = EditView_rowIndexToNoteKey(self, self->cursor.iRow);
+    if (pitch < MIDI_PITCH_MIN || pitch > MIDI_PITCH_MAX) return;
+
     int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
-    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
     float velocity = DEFAULT_VELOCITY;
 
     Synth_noteOn(Application_getInstance()->synth, pitch);
@@ -122,7 +129,7 @@ static void EditView_removeNote(EditView* self) {
 
     int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
-    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
+    int pitch = EditView_rowIndexToNoteKey(self, self->cursor.iRow);
 
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     MidiMessage* midiMessage = blockCurrent->midiMessageRoot;
@@ -150,7 +157,7 @@ static void EditView_adjustNoteVelocity(EditView* self, float amount) {
     if (EditView_isPlaying(self)) return; /* TODO: allow this */
     int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
     float time = (float)self->cursor.iColumn / (float)nColumns;
-    int pitch = EditView_rowIndexToNoteKey(self->cursor.iRow);
+    int pitch = EditView_rowIndexToNoteKey(self, self->cursor.iRow);
 
     Block* blockCurrent = *Application_getInstance()->blockCurrent;
     MidiMessage* midiMessage = blockCurrent->midiMessageRoot;
@@ -243,7 +250,7 @@ static void EditView_draw(EditView* self) {
     }
 
     /* Horizontal gridlines for current key signature */
-    for (int i = 0; i < OCTAVES*NOTES_IN_OCTAVE; i++) {
+    for (int i = 0; i < EDIT_MODE_OCTAVES*NOTES_IN_OCTAVE; i++) {
         int note = NOTES_IN_OCTAVE - i % NOTES_IN_OCTAVE - 1;
         KeySignature keySignature = self->score->keySignature;
         if (KEY_SIGNATURES[keySignature][note]) {
@@ -267,7 +274,7 @@ static void EditView_draw(EditView* self) {
                     float viewportWidth = renderer->viewportWidth;
                     int iColumnStart = EditView_xCoordToColumnIndex(self, midiMessage->time * viewportWidth);
                     int iColumnEnd = EditView_xCoordToColumnIndex(self, midiMessageOther->time * viewportWidth);
-                    int iRow = EditView_pitchToRowIndex(midiMessage->pitch);
+                    int iRow = EditView_pitchToRowIndex(self, midiMessage->pitch);
                     Vector4 color = blockCurrent->color;
 
                     bool highlight;
@@ -314,7 +321,7 @@ static void EditView_draw(EditView* self) {
 
 static void EditView_drawItem(EditView* self, GridItem* item, float offset) {
     float columnWidth = 2.0f/(BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION);
-    float rowHeight = 2.0f/(OCTAVES * NOTES_IN_OCTAVE);
+    float rowHeight = 2.0f/(EDIT_MODE_OCTAVES * NOTES_IN_OCTAVE);
 
     float x1 = -1.0f + item->iColumn * columnWidth - offset;
     float x2 = -1.0f + item->iColumn * columnWidth + item->nColumns * columnWidth + offset;
@@ -360,7 +367,7 @@ static bool EditView_updateCursorPosition(EditView* self, float x, float y) {
     }
 
     int nColumns = BLOCK_MEASURES * self->score->nBeatsPerMeasure * MEASURE_RESOLUTION;
-    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+    int nRows = EDIT_MODE_OCTAVES*NOTES_IN_OCTAVE;
 
     if (self->cursor.iColumn < 0) self->cursor.iColumn = 0;
     else if (self->cursor.iColumn > nColumns - 1) self->cursor.iColumn = nColumns - 1;
@@ -371,13 +378,13 @@ static bool EditView_updateCursorPosition(EditView* self, float x, float y) {
 }
 
 
-static int EditView_rowIndexToNoteKey(int iRow) {
-    return 95 - iRow;
+static int EditView_rowIndexToNoteKey(EditView* self, int iRow) {
+    return self->transpose * NOTES_IN_OCTAVE - 1 - iRow;
 }
 
 
-static int EditView_pitchToRowIndex(int pitch) {
-    return 95 - pitch;
+static int EditView_pitchToRowIndex(EditView* self, int pitch) {
+    return self->transpose * NOTES_IN_OCTAVE - 1 - pitch;
 }
 
 
@@ -400,7 +407,7 @@ static int EditView_xCoordToColumnIndex(EditView* self, float x) {
 
 
 static int EditView_yCoordToRowIndex(float y) {
-    int nRows = OCTAVES*NOTES_IN_OCTAVE;
+    int nRows = EDIT_MODE_OCTAVES*NOTES_IN_OCTAVE;
     return (nRows * y) / Application_getInstance()->renderer->viewportHeight;
 }
 
@@ -413,4 +420,11 @@ static void EditView_toggleIgnoreNoteOff(EditView* self) {
 
 static void EditView_setIgnoreNoteOff(EditView* self, bool ignoreNoteOff) {
     self->ignoreNoteOff = ignoreNoteOff;
+}
+
+
+static void EditView_transpose(EditView* self, int amount) {
+    self->transpose += amount;
+    if (self->transpose < EDIT_MODE_TRANSPOSE_MIN) self->transpose = EDIT_MODE_TRANSPOSE_MIN;
+    if (self->transpose > EDIT_MODE_TRANSPOSE_MAX) self->transpose = EDIT_MODE_TRANSPOSE_MAX;
 }

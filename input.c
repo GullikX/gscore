@@ -355,6 +355,16 @@ static void Input_keyCallbackEditMode(GLFWwindow* window, int key, int scancode,
                 case GLFW_KEY_ESCAPE:
                     EditView_stopPlaying(editView);
                     break;
+                case GLFW_KEY_UP:
+                    if (modControl) {
+                        EditView_transpose(editView, 1);
+                    }
+                    break;
+                case GLFW_KEY_DOWN:
+                    if (modControl) {
+                        EditView_transpose(editView, -1);
+                    }
+                    break;
             }
         }
     }
