@@ -59,7 +59,7 @@ static void XEvents_processXEvents(XEvents* self) {
             &propertyValue
         );
 
-        if (result == Success && propertyValue) {
+        if (result == Success && propertyValue && strlen((char*)propertyValue)) {
             printf("Received: %s='%s'\n", ATOM_NAMES[i], propertyValue);
             State state = Application_getState(application);
             if (state == OBJECT_MODE) {
