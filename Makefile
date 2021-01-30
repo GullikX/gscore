@@ -2,6 +2,8 @@ CC?=cc
 #CFLAGS?=-O2
 CFLAGS?=-Og -g
 
+PREFIX=/usr/local
+
 VERSION = 0.0.1-git
 
 CFILES=application.c block.c editview.c gscore.c hashmap.c input.c main.c objectview.c renderer.c score.c synth.c track.c util.c xevents.c
@@ -29,6 +31,14 @@ typedeclarations.h: gscore.h
 .PHONY: clean
 clean:
 	rm -f gscore functiondeclarations.h typedeclarations.h fileformatschema.h
+
+.PHONY: install
+install: gscore
+	install -Dm 755 gscore "${DESTDIR}${PREFIX}/bin/gscore"
+
+.PHONY: uninstall
+uninstall:
+	rm -f "${DESTDIR}${PREFIX}/bin/gscore"
 
 .PHONY: cppcheck
 cppcheck:
