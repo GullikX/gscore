@@ -4,7 +4,7 @@ CFLAGS?=-Og -g
 
 PREFIX=/usr/local
 
-VERSION = 0.0.1-git
+VERSION = 0.1.0-git
 
 CFILES=application.c block.c editview.c gscore.c hashmap.c input.c main.c objectview.c renderer.c score.c synth.c track.c util.c xevents.c
 HFILES=config.h gscore.h
