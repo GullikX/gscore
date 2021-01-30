@@ -31,20 +31,49 @@ static Synth* Synth_new(void) {
         die("Failed to initialize FluidSynth");
     }
 
-    self->nSoundFonts = 0;
-    for (const char** soundFont = SOUNDFONTS; *soundFont; soundFont++) {
-        if (self->nSoundFonts >= MAX_SOUNDFONTS) {
-            warn("Maximum number of soundfonts reached (%d)", MAX_SOUNDFONTS);
-            break;
+    {
+        const char* soundFonts = NULL;
+        if (getenv(ENVVAR_SOUNDFONTS)) {
+            soundFonts = getenv(ENVVAR_SOUNDFONTS);
         }
-        printf("Loading soundfont '%s'...\n", *soundFont);
-        self->soundFontIds[self->nSoundFonts] = fluid_synth_sfload(self->fluidSynth, *soundFont, true);
-        if (self->soundFontIds[self->nSoundFonts] == FLUID_FAILED) {
-            warn("Failed to load soundfont '%s'", *soundFont);
-            continue;
+        else if (SOUNDFONTS_DEFAULT) {
+            soundFonts = SOUNDFONTS_DEFAULT;
         }
-        printf("Successfully loaded '%s'\n", *soundFont);
-        self->nSoundFonts++;
+        else {
+            fluid_settings_getstr_default(self->settings, "synth.default-soundfont", (char**)&soundFonts);
+            warn("%s not set in environment and SOUNDFONTS_DEFAULT not set in config.h, falling back to fluidsynth default '%s'", ENVVAR_SOUNDFONTS, soundFonts);
+        }
+        if (!soundFonts) {
+            die("Soundfonts string is null");
+        }
+
+        self->nSoundFonts = 0;
+
+        char* soundFontsDuped = estrdup(soundFonts);
+        char* soundFont;
+        soundFont = strtok(soundFontsDuped, SOUNDFONTS_DELIMITER);
+        while(soundFont) {
+            if (self->nSoundFonts >= MAX_SOUNDFONTS) {
+                warn("Maximum number of soundfonts reached (%d)", MAX_SOUNDFONTS);
+                break;
+            }
+            printf("Loading soundfont '%s'...\n", soundFont);
+            self->soundFontIds[self->nSoundFonts] = fluid_synth_sfload(self->fluidSynth, soundFont, true);
+            if (self->soundFontIds[self->nSoundFonts] == FLUID_FAILED) {
+                warn("Failed to load soundfont '%s'", soundFont);
+            }
+            else {
+                printf("Successfully loaded '%s'\n", soundFont);
+                self->nSoundFonts++;
+            }
+
+            soundFont = strtok(NULL, SOUNDFONTS_DELIMITER);
+        }
+        free(soundFontsDuped);
+
+        if (!self->nSoundFonts) {
+            warn("No soundfonts could be loaded, you won't be able to hear anything");
+        }
     }
 
     fluid_synth_set_gain(self->fluidSynth, SYNTH_GAIN);
@@ -213,8 +242,7 @@ static void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, flu
 
 
 static const char* Synth_getDefaultProgramName(Synth* self) {
-    if (!self->soundFontIds[0]) {
-        warn("No soundfonts loaded");
+    if (!self->nSoundFonts) {
         return NULL;
     }
     fluid_sfont_t* soundFont = fluid_synth_get_sfont_by_id(self->fluidSynth, self->soundFontIds[0]);

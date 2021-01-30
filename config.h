@@ -13,15 +13,12 @@ static const char* const FRAGMENT_SHADER_SOURCE =
     "}";
 
 static const char* const WINDOW_TITLE = "gscore";
-
 static const char* const AUDIO_DRIVER = "alsa";
-static const char* SOUNDFONTS[] = {
-    "soundfont0.sf2",
-    "soundfont1.sf2",
-    NULL,
-};
-
+static const char* const SOUNDFONTS_DEFAULT = NULL;  /* NULL for fluidsynth default */
+static const char* const SOUNDFONTS_DELIMITER = ":";
 static const char* const BLOCK_NAME_DEFAULT = "default";
+
+static const char* const ENVVAR_SOUNDFONTS = "GSCORE_SOUNDFONTS";
 
 static const char* const XML_ENCODING = "UTF-8";
 static const char* const XML_VERSION = "1.0";

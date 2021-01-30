@@ -40,9 +40,18 @@ static void warn(const char* const format, ...) {
 static void* ecalloc(size_t nItems, size_t itemSize) {
     void* pointer = calloc(nItems, itemSize);
     if (!pointer) {
-        die("Failed to allocate memory");
+        die("ecalloc: Failed to allocate memory");
     }
     return pointer;
+}
+
+
+static char* estrdup(const char* const string) {
+    char* stringDuped = strdup(string);
+    if (!stringDuped) {
+        die("estrdup: Failed to allocate memory");
+    }
+    return stringDuped;
 }
 
 
