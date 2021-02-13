@@ -33,12 +33,14 @@ clean:
 	rm -f gscore functiondeclarations.h typedeclarations.h fileformatschema.h
 
 .PHONY: install
-install: gscore
+install: gscore gscore-export-midi.py
 	install -Dm 755 gscore "${DESTDIR}${PREFIX}/bin/gscore"
+	install -Dm 755 gscore-export-midi.py "${DESTDIR}${PREFIX}/bin/gscore-export-midi"
 
 .PHONY: uninstall
 uninstall:
 	rm -f "${DESTDIR}${PREFIX}/bin/gscore"
+	rm -f "${DESTDIR}${PREFIX}/bin/gscore-export-midi"
 
 .PHONY: cppcheck
 cppcheck:
