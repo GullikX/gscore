@@ -111,6 +111,7 @@ def main(argv):
         midiFile.tracks.append(midiTrack)
 
     midiFile.save(f"{argv[1]}.mid")
+    print(f"Saved midi file as '{argv[1]}.mid'")
     return 0
 
 
