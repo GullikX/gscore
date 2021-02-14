@@ -45,3 +45,7 @@ uninstall:
 .PHONY: cppcheck
 cppcheck:
 	cppcheck --enable=all gscore.c
+
+.PHONY: black
+black:
+	black --check --line-length 120 gscore-export-midi.py
