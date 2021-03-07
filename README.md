@@ -59,6 +59,7 @@ gscore is configured by editing the file `config.h` and recompiling.
 
 * Think of gscore as a midi editor, not a DAW. There are no effects, filters or any other kind of audio processing. Export the scores using midi format and import them into another application for additional tinkering.
 * gscore only supports sf2 soundfonts for audio, not vst's or anything fancy (TODO maybe?).
+* For a list of downloadable soundfonts, check out the FluidSynth wiki: https://github.com/FluidSynth/fluidsynth/wiki/SoundFont
 * Unused block definitions and empty tracks are automatically discarded when saving a score. Instantiate any blocks you want to keep!
 * Changing the instrument while editing block definitions in edit mode only affects the sound inside of edit mode.
 * Project files created by gscore has a `metadata` tag inside of them. You can put whatever you want in there and it will be preserved when reading/saving the file.
