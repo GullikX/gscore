@@ -153,7 +153,6 @@ static void Synth_decodeProgram(int encodedProgram, int* iSoundFontOut, int* iBa
 
 
 static void Synth_setProgramByName(Synth* self, int channel, const char* const programName) {
-    if (!programName) return;
     int encodedProgram = HashMap_get(self->instrumentMap, programName);
     if (encodedProgram < 0) {
         warn("Invalid instrument name '%s'", programName);
@@ -243,7 +242,7 @@ static void Synth_sequencerCallback(unsigned int time, fluid_event_t* event, flu
 
 static const char* Synth_getDefaultProgramName(Synth* self) {
     if (!self->nSoundFonts) {
-        return NULL;
+        return SYNTH_PROGRAM_NAME_DEFAULT;
     }
     fluid_sfont_t* soundFont = fluid_synth_get_sfont_by_id(self->fluidSynth, self->soundFontIds[0]);
     fluid_preset_t* preset = fluid_sfont_get_preset(soundFont, SYNTH_BANK_DEFAULT, SYNTH_PROGRAM_DEFAULT);
