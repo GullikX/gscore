@@ -109,11 +109,8 @@ gscore-export-midi projectfile.gsx
 
 ## Links
 
-* Project page: https://sr.ht/~gullik/gscore
-* Source code repo: https://git.sr.ht/~gullik/gscore
+* Main repo: https://github.com/GullikX/gscore
 * Repo mirrors:
     * https://bitbucket.org/Gullik/gscore
-    * https://github.com/GullikX/gscore
-* Mailing list (discuss, report issues, submit patches, etc): https://lists.sr.ht/~gullik/gscore
-* Ticket tracker: https://todo.sr.ht/~gullik/gscore
+    * https://git.sr.ht/~gullik/gscore
 * Build service: https://builds.sr.ht/~gullik/gscore
