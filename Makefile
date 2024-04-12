@@ -6,31 +6,51 @@ PREFIX=/usr/local
 
 VERSION = 0.2.0-git
 
-CFILES=application.c block.c editview.c gscore.c hashmap.c input.c main.c objectview.c renderer.c score.c synth.c track.c util.c xevents.c
-HFILES=config.h gscore.h
-INCLUDE=$$(xml2-config --cflags)
+INCLUDE=$$(xml2-config --cflags) -Isrc
 LIBS=-lGL -lGLEW -lglfw -lfluidsynth -lm -lX11 $$(xml2-config --libs)
 
-WARNINGS=-Wall -Wextra -Wunused-const-variable -pedantic
+WARNINGS=-Wall -Wextra -pedantic
 ERRORS=-Werror=vla -Werror=implicit-fallthrough -Werror=strict-prototypes -Wfatal-errors
-DEFINES=-DVERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_C_SOURCE=200809L
+DEFINES=-DMAKEFILE_DEFINED_VERSION=\"${VERSION}\" -DGLEW_NO_GLU -DGLFW_EXPOSE_NATIVE_X11 -D_POSIX_C_SOURCE=200809L
 OPTS=-std=c99 $(WARNINGS) $(ERRORS) $(DEFINES)
 
-gscore: $(CFILES) $(HFILES) fileformatschema.h functiondeclarations.h typedeclarations.h
-	$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o $@ gscore.c $(LIBS)
+OBJS=\
+	src/application/application.o \
+	src/common/constants/fluidmidi.o \
+	src/common/constants/input.o \
+	src/common/score/score.o \
+	src/common/util/alloc.o \
+	src/common/util/colors.o \
+	src/common/util/inputmatcher.o \
+	src/common/util/hash.o \
+	src/common/util/hashmap.o \
+	src/common/util/hashset.o \
+	src/common/util/log.o \
+	src/common/util/math.o \
+	src/common/util/stringmap.o \
+	src/common/util/stringset.o \
+	src/common/visual/grid/grid.o \
+	src/events/events.o \
+	src/main/main.o \
+	src/ui/editview/editview.o \
+	src/ui/objectview/objectview.o \
+	src/window/renderer.o \
+	src/window/renderwindow.o \
+	src/synth/synth.o
 
-fileformatschema.h: fileformatschema.xsd
-	sed 's/"/\\"/g' $^ | sed -e 's/.*/"&\\n"/' | sed '1s/^/const char* const FILE_FORMAT_SCHEMA = \n/' | sed '$$s/$$/;\n/' > fileformatschema.h
+gscore: $(OBJS)
+	@$(CC) $(CFLAGS) $(INCLUDE) $(OPTS) -o $@ $(OBJS) $(LIBS)
 
-functiondeclarations.h: $(CFILES)
-	grep -h -e '^static\s\S*\s.*(.*)\s{$$' $^ | sed -e 's/{/;/g' > functiondeclarations.h
+-include $(OBJS:.o=.d)
 
-typedeclarations.h: gscore.h
-	grep '^struct\s\S*\s{$$' $^ | sed 's/^struct/typedef struct/g; s/ {//g; s/\S*$$/& &;/g' > typedeclarations.h
+%.o: %.c
+	@$(CC) -MD $(CFLAGS) $(INCLUDE) $(OPTS) -o $@ -c $<
 
 .PHONY: clean
 clean:
-	rm -f gscore functiondeclarations.h typedeclarations.h fileformatschema.h
+	@rm -f gscore
+	@find * -name "*.d" | xargs rm -f
+	@find * -name "*.o" | xargs rm -f
 
 .PHONY: install
 install: gscore gscore-export-midi.py
@@ -44,8 +64,8 @@ uninstall:
 
 .PHONY: cppcheck
 cppcheck:
-	cppcheck --enable=all gscore.c
+	cppcheck --enable=all --suppress=missingIncludeSystem -Isrc $(OBJS:.o=.c)
 
 .PHONY: black
 black:
-	black --check --line-length 120 gscore-export-midi.py
+	black --check --line-length 120 src/export/gscore-export-midi.py

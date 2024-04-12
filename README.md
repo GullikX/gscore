@@ -69,7 +69,7 @@ gscore is configured by editing the file `config.h` and recompiling.
 ## Dependencies
 
 * dmenu
-* fluidsynth
+* libfluidsynth 1.x
 * glew
 * glfw
 * libX11
@@ -88,7 +88,7 @@ gscore is configured by editing the file `config.h` and recompiling.
 Installing:
 
 ```
-make && sudo make install
+gmake && sudo gmake install
 ```
 
 Running:
